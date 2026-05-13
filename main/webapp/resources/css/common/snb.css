@@ -1,0 +1,59 @@
+/* ==============================
+   SNB DETAIL
+============================== */
+
+.snb {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    padding: 16px 12px;
+}
+
+.snb-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.snb-menu {
+    height: 42px;
+    padding: 0 12px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    border-radius: 6px;
+
+    color: #333;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.snb-menu:hover {
+    background-color: var(--white-hover);
+    color: var(--main-green);
+    text-decoration: none;
+}
+
+.snb-menu.active {
+    background-color: #E8F2EC;
+    color: var(--main-green);
+}
+
+.snb-icon {
+    width: 18px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.snb-arrow {
+    margin-left: auto;
+    color: #999;
+}
+
+.snb-bottom {
+    padding-top: 16px;
+    border-top: 1px solid var(--light-gray);
+}

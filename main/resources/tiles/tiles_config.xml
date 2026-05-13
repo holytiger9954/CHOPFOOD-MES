@@ -7,8 +7,12 @@
 	<definition name="baseLayout" template="/WEB-INF/views/layout/layout.jsp">
 		<put-attribute name="header" value="/WEB-INF/views/common/header.jsp" />
 		<put-attribute name="snb" value="/WEB-INF/views/common/snb.jsp" />
-		<put-attribute name="footer" value="/WEB-INF/views/common/footer.jsp" />
 		<put-attribute name="title" value="chopchop" />
+	</definition>
+	
+	<definition name="home.tiles" extends="baseLayout">
+    	<put-attribute name="content" value="/WEB-INF/views/home.jsp" />
+    	<put-attribute name="title" value="chopchop - home" />
 	</definition>
 	
 	<definition name="*.tiles" extends="baseLayout">

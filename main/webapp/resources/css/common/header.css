@@ -1,0 +1,72 @@
+/* ==============================
+   HEADER DETAIL
+============================== */
+
+.header {
+    justify-content: space-between;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.header-left,
+.header-right {
+    display: flex;
+    align-items: center;
+}
+
+.header-left {
+    gap: 36px;
+}
+
+.header-right {
+    gap: 18px;
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.logo-icon {
+    width: 28px;
+    height: 28px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    border-radius: 6px;
+
+    font-size: 14px;
+}
+
+.btn-menu,
+.header-icon {
+    color: #fff;
+    font-size: 18px;
+}
+
+.header-profile {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.profile-img {
+    width: 32px;
+    height: 32px;
+
+    border-radius: 50%;
+    background-color: #e5e5e5;
+}
+
+.profile-arrow {
+    font-size: 12px;
+}
