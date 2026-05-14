@@ -10,7 +10,7 @@
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/common/common.css">
 <link rel="stylesheet"
-	href="${pageContext.request.contextPath}/resources/css/coomon/header.css">
+	href="${pageContext.request.contextPath}/resources/css/common/header.css">
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/common/snb.css">
 <link rel="stylesheet"

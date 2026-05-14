@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.P17_vendor">
+
+	<select id="selectVendorList"
+		parameterType="kr.or.chop.P17_vendor.dto.VendorDTO"
+		resultType="kr.or.chop.P17_vendor.dto.VendorDTO">
+
+		SELECT
+			VENDOR_ID      AS vendorId,
+			VENDOR_NAME    AS vendorName,
+			VENDOR_TYPE    AS vendorType,
+			VENDOR_TEL     AS vendorTel,
+			VENDOR_EMAIL   AS vendorEmail,
+			VENDOR_ADDRESS AS vendorAddress,
+			VENDOR_USAGE   AS vendorUsage
+		FROM VENDOR
+
+		<where>
+
+			<if test="vendorName != null and vendorName != ''">
+				AND VENDOR_NAME LIKE '%' || #{vendorName} || '%'
+			</if>
+
+			<if test="vendorType != null and vendorType != ''">
+				AND VENDOR_TYPE = #{vendorType}
+			</if>
+
+			<if test="vendorUsage != null and vendorUsage != ''">
+				AND VENDOR_USAGE = #{vendorUsage}
+			</if>
+
+		</where>
+
+		ORDER BY VENDOR_ID DESC
+
+	</select>
+
+</mapper>
+
+
+
+
