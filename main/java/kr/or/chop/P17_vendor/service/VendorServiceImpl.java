@@ -7,17 +7,25 @@ import org.springframework.stereotype.Service;
 
 import kr.or.chop.P17_vendor.dao.VendorDAO;
 import kr.or.chop.P17_vendor.dto.VendorDTO;
+import kr.or.chop.common.pagination.PageInfo;
 
 @Service
 public class VendorServiceImpl implements VendorService {
 
 	@Autowired
 	private VendorDAO vendorDAO;
-
+	
 	@Override
-	public List<VendorDTO> selectVendorList(VendorDTO vendorDTO) {
+    public int selectVendorCount(VendorDTO vendorDTO) {
+        return vendorDAO.selectVendorCount(vendorDTO);
+    }
 
-		return vendorDAO.selectVendorList(vendorDTO);
-	}
+    @Override
+    public List<VendorDTO> selectVendorList(
+            VendorDTO vendorDTO,
+            PageInfo pageInfo) {
+
+        return vendorDAO.selectVendorList(vendorDTO, pageInfo);
+    }
 	
 }
