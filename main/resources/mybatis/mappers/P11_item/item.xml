@@ -14,9 +14,34 @@
 	</select>
 	
 	<select id="selectitemList"
-		parameterType="kr.or.chop.P11_item.dto.ItemDTO" resultType="map">
+		parameterType="map" resultType="kr.or.chop.P11_item.dto.ItemDTO">
 	
-		select * from item	
+		SELECT *
+		FROM
+		(
+		SELECT ROWNUM RN,
+		I.*
+		FROM
+		(
+		SELECT
+		item_id AS itemId,
+		item_name AS itemName,
+		item_type AS itemType,
+		item_unit AS unit,
+		item_spec AS spec,
+		item_unit_price AS unitPrice,
+		item_storage AS itemStorage,
+		item_vendor AS itemVendor,
+		item_usedate AS useDate,
+		item_safety_stock AS safetyStock,
+		item_usage AS itemUsage
+		FROM item
+		WHERE item_usage = 'Y'
+		ORDER BY item_id DESC
+		) I
+		)
+		WHERE RN BETWEEN #{page.startRow}
+		AND #{page.endRow}
 		
 	</select>
 

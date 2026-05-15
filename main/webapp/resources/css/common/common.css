@@ -327,6 +327,7 @@ a:hover {
     height: 42px;
     padding: 0 12px;
 
+	text-align: center;
     border-bottom: 1px solid var(--light-gray);
 }
 
