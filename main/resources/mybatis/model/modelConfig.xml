@@ -11,7 +11,26 @@
     </settings>
 
 	<typeAliases>
-		
+		<typeAlias type="kr.or.chop.P01_login.dto.EmpDTO" alias="empDTO" />
+		<typeAlias type="kr.or.chop.P01_login.dto.DeptDTO" alias="deptDTO" />
+		<typeAlias type="kr.or.chop.P01_login.dto.AlarmDTO" alias="alarmDTO" />
+		<typeAlias type="kr.or.chop.P03_notice.dto.NoticeDTO" alias="noticeDTO" />
+		<typeAlias type="kr.or.chop.P04_sugg.dto.SuggDTO" alias="suggDTO" />
+		<typeAlias type="kr.or.chop.P05_plan.dto.PlanDTO" alias="planDTO" />
+		<typeAlias type="kr.or.chop.P06_work.dto.WorkDTO" alias="workDTO" />
+		<typeAlias type="kr.or.chop.P07_qc.dto.QcDTO" alias="qcDTO" />
+		<typeAlias type="kr.or.chop.P08_stock.dto.StockDTO" alias="stockDTO" />
+		<typeAlias type="kr.or.chop.P09_lot.dto.LOTDTO" alias="lotDTO" />
+		<typeAlias type="kr.or.chop.P10_io.dto.IODTO" alias="ioDTO" />
+		<typeAlias type="kr.or.chop.P11_item.dto.ItemDTO" alias="itemDTO" />
+		<typeAlias type="kr.or.chop.P12_rout.dto.RoutDTO" alias="routDTO" />
+		<typeAlias type="kr.or.chop.P13_bom.dto.BOMDTO" alias="bomDTO" />
+		<typeAlias type="kr.or.chop.P14_warehouse.dto.WHDTO" alias="whDTO" />
+		<typeAlias type="kr.or.chop.P15_workplace.dto.WPDTO" alias="wpDTO" />
+		<typeAlias type="kr.or.chop.P16_equipment.dto.EquipDTO" alias="equipDTO" />
+		<typeAlias type="kr.or.chop.P17_vendor.dto.VendorDTO" alias="vendorDTO" />
+		<typeAlias type="kr.or.chop.P18_defect.dto.DefDTO" alias="defDTO" />
+		<typeAlias type="kr.or.chop.P19_ghp.dto.GHPDTO" alias="ghpDTO" />
     </typeAliases>
 
 </configuration>
