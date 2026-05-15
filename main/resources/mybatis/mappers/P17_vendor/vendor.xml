@@ -31,7 +31,9 @@
 		vendor_type AS vendorType,
 		vendor_tel AS vendorTel,
 		vendor_email AS vendorEmail,
-		vendor_address AS vendorAddress,
+		vendor_zipcode AS vendorZipcode,
+		vendor_addr AS vendorAddr,
+		vendor_addr_detail AS vendorAddrDetail,
 		vendor_usage AS vendorUsage
 		FROM vendor
 		WHERE vendor_usage = 'Y'
@@ -54,7 +56,9 @@
 	        vendor_type,
 	        vendor_tel,
 	        vendor_email,
-	        vendor_address,
+	        vendor_zipcode,
+	        vendor_addr,
+	        vendor_addr_detail,
 	        vendor_usage
 	    )
 	    VALUES
@@ -64,7 +68,9 @@
 	        #{vendorType},
 	        #{vendorTel},
 	        #{vendorEmail},
-	        #{vendorAddress},
+	        #{vendorZipcode},
+	        #{vendorAddr},
+	        #{vendorAddrDetail},
 	        'Y'
 	    )
 	

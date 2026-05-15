@@ -6,16 +6,11 @@
     <div class="header-row">
         <div>
             <h2 class="page-title">거래처 등록</h2>
-
-            <p class="page-subtitle">
-                새로운 거래처를 등록하세요.
-            </p>
+            <p class="page-subtitle">새로운 거래처를 등록하세요.</p>
         </div>
 
         <div>
-            <p class="page-route">
-                홈 > 거래처 > 등록
-            </p>
+            <p class="page-route">홈 > 거래처 > 등록</p>
         </div>
     </div>
 
@@ -73,12 +68,14 @@
 
             <div style="display: flex; gap: 8px;">
                 <input type="text"
-                       name="vendorAddress"
+                       name="vendorAddr"
                        placeholder="주소 조회"
                        readonly
                        required>
 
-                <button type="button" class="btn btn-main">
+                <button type="button"
+                        class="btn btn-main"
+                        onclick="execPostcode()">
                     조회
                 </button>
             </div>
@@ -87,7 +84,7 @@
         <div class="search-item keyword" style="flex-basis: 100%;">
             <label>상세주소</label>
             <input type="text"
-                   name="vendorAddressDetail"
+                   name="vendorAddrDetail"
                    placeholder="상세주소 입력 (선택)">
         </div>
 
@@ -102,3 +99,19 @@
     </form>
 
 </div>
+
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+<script>
+function execPostcode() {
+    new daum.Postcode({
+        oncomplete: function(data) {
+            document.querySelector('input[name="vendorZipcode"]').value = data.zonecode;
+            document.querySelector('input[name="vendorAddr"]').value =
+                data.roadAddress || data.jibunAddress;
+
+            document.querySelector('input[name="vendorAddrDetail"]').focus();
+        }
+    }).open();
+}
+</script>

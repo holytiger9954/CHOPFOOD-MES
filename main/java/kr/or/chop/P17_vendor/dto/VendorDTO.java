@@ -10,7 +10,9 @@ public class VendorDTO {
 	private String vendorType;
 	private String vendorTel;
 	private String vendorEmail;
-	private String vendorAddress;
+	private String vendorZipcode;
+	private String vendorAddr;
+	private String vendorAddrDetail;
 	private String vendorUsage;
 	
 }

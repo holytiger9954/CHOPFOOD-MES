@@ -116,7 +116,7 @@
 
 							<td>${vendor.vendorTel}</td>
 
-							<td>${vendor.vendorAddress}</td>
+							<td>${vendor.vendorAddr} ${vendor.vendorAddrDetail}</td>
 
 						</tr>
 					</c:forEach>
