@@ -403,9 +403,11 @@ a:hover {
     gap: 16px;
     flex-wrap: wrap;
 
-    margin-bottom: 24px;
+    margin: 0 0 10px auto;
     padding: 20px 0;
-
+	
+	width: fit-content;
+	max-width: 100%;
 
     background-color: #fff;
 }
@@ -425,7 +427,6 @@ a:hover {
 
 .search-item input,
 .search-item select {
-    min-width: 180px;
     height: 36px;
     padding: 0 12px;
 
@@ -443,12 +444,12 @@ a:hover {
     border-color: var(--main-green);
 }
 
-.search-item.keyword {
-    flex: 1;
+.search-item.keyword input {
+    min-width: 260px;
 }
 
-.search-item.keyword input {
-    width: 100%;
+.search-item select {
+	min-width: 120px;
 }
 
 .search-btn-area {
