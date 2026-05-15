@@ -38,6 +38,7 @@ public class ItemListController {
 		
 		List<ItemDTO> result = itemService.ItemSelectAll(itemDTO, pageInfo);
 		model.addAttribute("itemList", result);
+		model.addAttribute("search",itemDTO);
 		model.addAttribute("page",pageInfo);
 		
 		return "P11_item/itemList.tiles";
