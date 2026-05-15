@@ -12,11 +12,16 @@
 				거래처를 조회하고 새로운 거래처를 등록할 수 있습니다.
 			</p>
 		</div>
-
-		<a class="btn btn-white"
-			href="${pageContext.request.contextPath}/vendor/add">
-			거래처 등록
-		</a>
+		
+		<div>
+			<p class="page-route">
+				홈 > 거래처 관리
+			</p>
+			<a class="btn btn-white"
+				href="${pageContext.request.contextPath}/vendor/add">
+				거래처 등록
+			</a>
+		</div>
 	</div>
 
 	<form class="search-box"
@@ -63,7 +68,7 @@
 
 	</form>
 
-	<div class="card">
+	<div>
 
 		<div class="table-wrap">
 			<table class="table">

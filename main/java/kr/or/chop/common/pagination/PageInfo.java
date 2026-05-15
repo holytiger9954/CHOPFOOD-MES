@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 public class PageInfo {
 
     // 현재 페이지
-    private int currentPage;
+    private int currentPage = 1;
 
     // 전체 게시글 수
     private int listCount;
