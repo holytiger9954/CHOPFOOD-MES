@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.sugg">
+
+<!-- 건의사항 전체 개수 -->
+<select id="selectSuggCount"
+        parameterType="suggDTO"
+        resultType="int">
+
+    SELECT COUNT(*)
+    FROM suggestion
+    WHERE sugg_usage = 'Y'
+
+</select>
+
+<!-- 건의사항 목록 -->
+<select id="selectSuggList"
+        parameterType="map"
+        resultType="suggDTO">
+
+    SELECT *
+    FROM
+    (
+        SELECT ROWNUM RN,
+               S.*
+        FROM
+        (
+            SELECT
+                sugg_no,
+                sugg_title,
+                sugg_content,
+                sugg_writer,
+                sugg_pw,
+                sugg_answer,
+                sugg_cdate,
+                sugg_mdate,
+                sugg_usage
+            FROM suggestion
+            WHERE sugg_usage = 'Y'
+            ORDER BY sugg_no DESC
+        ) S
+    )
+    WHERE RN BETWEEN #{page.startRow}
+                 AND #{page.endRow}
+
+</select>
+
+<select id="selectSuggDetail"  
+		parameterType="int" 
+		resultType="suggDTO">
+	
+	    SELECT
+        sugg_no,
+        sugg_title,
+        sugg_content,
+        sugg_writer,
+        sugg_pw,
+        sugg_answer,
+        sugg_cdate,
+        sugg_mdate,
+        sugg_usage
+    FROM suggestion
+    WHERE sugg_no = #{sugg_no}
+     AND sugg_usage = 'Y'
+</select>
+
+<insert id="insertSugg" 
+		parameterType="suggDTO">
+	
+	  INSERT INTO suggestion (
+        sugg_no,
+        sugg_title,
+        sugg_content,
+        sugg_writer,
+        sugg_pw,
+        sugg_answer,
+        sugg_cdate,
+        sugg_usage
+    )
+    VALUES (
+        seq_suggestion.NEXTVAL,
+        #{sugg_title},
+        #{sugg_content},
+        #{sugg_writer},
+        #{sugg_pw},
+        '대기',
+        SYSDATE,
+        'Y'
+    )
+</insert>
+
+<update id="updateSugg" 
+		parameterType="suggDTO">
+	
+    UPDATE suggestion
+    SET
+        sugg_title = #{sugg_title},
+        sugg_content = #{sugg_content},
+        sugg_mdate = SYSDATE
+    WHERE sugg_no = #{sugg_no}
+     AND sugg_usage = 'Y'
+</update>
+
+<update id="deleteSugg" 
+		parameterType="int">
+	UPDATE suggestion
+    SET sugg_usage = 'N'
+    WHERE sugg_no = #{sugg_no}
+     AND sugg_usage = 'Y'
+</update>
+
+</mapper>
+
+
+
+
