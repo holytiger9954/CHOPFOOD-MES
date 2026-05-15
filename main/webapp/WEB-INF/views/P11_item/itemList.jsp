@@ -56,7 +56,7 @@
 		</div>
 		
 		<div class="search-btn-area">
-			<button type="button" class="btn btn-main">
+			<button type="submit" class="btn btn-main">
 				검색
 			</button>
 		</div>
@@ -67,13 +67,13 @@
 			<table class="table">
 				<thead>
 					<tr>
-						<th>품목 코드</th>
-						<th>품목명</th>
-						<th>품목유형</th>
-						<th>안전재고</th>
-						<th>단위</th>
-						<th>규격</th>
-						<th>단가</th>
+						<th style="width: 130px;">품목 코드</th>
+						<th style="width: 200px;">품목명</th>
+						<th style="width: 100px;">품목유형</th>
+						<th style="width: 130px;">안전재고</th>
+						<th style="width: 100px;">단위</th>
+						<th style="width: 100px;">규격</th>
+						<th style="width: 130px;">단가</th>
 					</tr>
 				</thead>
 				<tbody>

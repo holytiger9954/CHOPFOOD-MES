@@ -7,7 +7,7 @@ public class ItemDTO {
 
 	private String itemId;
 	private String itemName;
-	private int itemType;
+	private String itemType;
 	private String unit;
 	private String spec;
 	private int unitPrice;

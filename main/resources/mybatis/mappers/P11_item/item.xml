@@ -9,7 +9,15 @@
 
 		select count(*)
 		from item
-		where item_usage = 'Y'	
+			<where>
+					<if test="itemType != null and itemType != ''">
+						and item_type = #{itemType}
+					</if>
+					<if test="itemName != null and itemName != ''">
+						and upper(item_name) like upper(('%' || #{itemName} || '%')) 
+					</if>
+						and item_usage = 'Y'
+			</where>	
 		
 	</select>
 	
@@ -36,7 +44,15 @@
 		item_safety_stock AS safetyStock,
 		item_usage AS itemUsage
 		FROM item
-		WHERE item_usage = 'Y'
+			<where>
+					<if test="itemType != null and itemType != ''">
+						and item_type = #{itemType}
+					</if>
+					<if test="itemName != null and itemName != ''">
+						and upper(item_name) like upper(('%' || #{itemName} || '%')) 
+					</if>
+						and item_usage = 'Y'
+			</where>
 		ORDER BY item_id DESC
 		) I
 		)

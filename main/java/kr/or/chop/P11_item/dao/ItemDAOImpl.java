@@ -21,8 +21,10 @@ public class ItemDAOImpl implements ItemDAO {
 	public List<ItemDTO> selectAllItem(ItemDTO itemDTO, PageInfo pageInfo) {
 		
 		Map<String, Object> paramMap = new HashMap<String, Object>();
-		paramMap.put("itemDTO", itemDTO);
+		paramMap.put("itemType", itemDTO.getItemType());
+		paramMap.put("itemName", itemDTO.getItemName());
 		paramMap.put("page", pageInfo);
+		System.out.println(paramMap);
 		
 		return sqlSession.selectList("mapper.P11_item.selectitemList", paramMap);
 	}
