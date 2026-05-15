@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.P15_workplace">
+
+	<select id="selectWPCount"
+		parameterType="wpDTO" resultType="int">
+
+		select count(*)
+		from workplace
+		where wp_usage = 'Y'	
+		
+	</select>
+	
+	<select id="selectAllWP"
+		parameterType="map" resultType="wpDTO">
+	
+		SELECT *
+		FROM
+			(
+				SELECT ROWNUM RN, p.*
+				FROM
+				(
+					SELECT	
+						wp.wp_id as wpId,
+						wp.wp_name as wpName,
+						wp.wp_type as wpTypeId,
+						wt.wp_type_name as wpType,
+						wp.wp_img as wpImg
+					FROM workplace wp
+						LEFT OUTER JOIN wp_type wt ON wp.wp_type = wt.wp_type_id
+					WHERE wp_usage = 'Y'
+					ORDER BY wp_id DESC
+				) p
+			)
+		WHERE RN BETWEEN #{page.startRow}
+		AND #{page.endRow}
+		
+	</select>
+
+</mapper>
+
+
+
+

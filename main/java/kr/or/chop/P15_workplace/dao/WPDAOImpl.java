@@ -1,0 +1,44 @@
+package kr.or.chop.P15_workplace.dao;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import kr.or.chop.P11_item.dto.ItemDTO;
+import kr.or.chop.P15_workplace.dto.WPDTO;
+import kr.or.chop.common.pagination.PageInfo;
+
+@Repository
+public class WPDAOImpl implements WPDAO {
+	
+	@Autowired
+	SqlSession sqlSession;
+	
+	@Override
+	public int selectWPCount(WPDTO wpDTO) {
+
+		System.out.println("/workplace/list dao.selectWPCount");
+		System.out.println("wpDTO : " + wpDTO);
+		
+		return sqlSession.selectOne("mapper.P15_workplace.selectWPCount", wpDTO);
+	}
+
+	@Override
+	public List<WPDTO> selectAllWP(WPDTO wpDTO, PageInfo pageInfo) {
+		
+		System.out.println("/workplace/list dao.selectAllWP");
+		
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("wpDTO", wpDTO);
+		paramMap.put("page", pageInfo);
+
+		System.out.println("paramMap : " + paramMap);
+		
+		return sqlSession.selectList("mapper.P15_workplace.selectAllWP", paramMap);
+	}
+
+}
