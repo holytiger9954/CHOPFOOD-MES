@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.P18_defect">
+
+	<select id="selectDefCount"
+		parameterType="defDTO"
+		resultType="int">
+
+		SELECT COUNT(*)
+		FROM defect
+		<where>
+			<if test="searchKeyword != null and searchKeyword != ''">
+
+				<choose>
+					<when test="searchType == 'id'">
+						AND TO_CHAR(def_type_id) LIKE '%' || #{searchKeyword} || '%'
+					</when>
+
+					<when test="searchType == 'name'">
+						AND UPPER(def_type_name) LIKE UPPER('%' || #{searchKeyword} || '%')
+					</when>
+
+					<otherwise>
+						AND (
+							TO_CHAR(def_type_id) LIKE '%' || #{searchKeyword} || '%'
+							OR UPPER(def_type_name) LIKE UPPER('%' || #{searchKeyword} || '%')
+						)
+					</otherwise>
+				</choose>
+
+			</if>
+		</where>
+
+	</select>
+
+
+	<select id="selectDefList"
+		parameterType="map"
+		resultType="defDTO">
+
+		SELECT *
+		FROM
+		(
+			SELECT ROWNUM RN, D.*
+			FROM
+			(
+				SELECT
+					def_type_id AS defTypeId,
+					def_type_name AS defTypeName,
+					def_standard_action AS defStandardAction
+				FROM defect
+				<where>
+					<if test="defDTO.searchKeyword != null and defDTO.searchKeyword != ''">
+
+						<choose>
+							<when test="defDTO.searchType == 'id'">
+								AND TO_CHAR(def_type_id) LIKE '%' || #{defDTO.searchKeyword} || '%'
+							</when>
+
+							<when test="defDTO.searchType == 'name'">
+								AND UPPER(def_type_name) LIKE UPPER('%' || #{defDTO.searchKeyword} || '%')
+							</when>
+
+							<otherwise>
+								AND (
+									TO_CHAR(def_type_id) LIKE '%' || #{defDTO.searchKeyword} || '%'
+									OR UPPER(def_type_name) LIKE UPPER('%' || #{defDTO.searchKeyword} || '%')
+								)
+							</otherwise>
+						</choose>
+
+					</if>
+				</where>
+				ORDER BY def_type_id DESC
+			) D
+		)
+		WHERE RN BETWEEN #{page.startRow}
+		AND #{page.endRow}
+
+	</select>
+
+</mapper>
