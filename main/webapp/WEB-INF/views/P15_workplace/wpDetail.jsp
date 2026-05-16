@@ -67,8 +67,10 @@
 			<div class="content-content-content-title">
 				작업장 상세 이미지
 			</div>
-			<div class="info-image">
-				
+			<div class="info-image" style="padding: 10px 40px;">
+				<img src="${pageContext.request.contextPath}/resources/img/P15_workplace/${wpDTO.wpId}.png"
+					title="${wpDTO.wpId}_img" alt="${wpDTO.wpId}_img"
+					 style="min-width: 400px; max-width: 800px; min-height: 300px; margin: 0 auto;">
 			</div>
 		</div>
 		
