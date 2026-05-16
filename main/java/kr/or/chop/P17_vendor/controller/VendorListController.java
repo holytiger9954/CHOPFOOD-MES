@@ -48,19 +48,4 @@ public class VendorListController {
         return "P17_vendor/vendorList.tiles";
     }
     
-    // 등록 페이지 이동
-    @RequestMapping("/add")
-    public String vendorAddForm() {
-        return "P17_vendor/vendorAdd.tiles";
-    }
-
-    // 거래처 등록
-    @PostMapping("/insert")
-    public String insertVendor(
-            @ModelAttribute VendorDTO vendorDTO) {
-
-        vendorService.insertVendor(vendorDTO);
-
-        return "redirect:/vendor/list";
-    }
 }
