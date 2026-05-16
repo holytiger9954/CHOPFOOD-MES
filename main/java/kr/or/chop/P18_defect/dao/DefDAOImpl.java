@@ -39,4 +39,12 @@ public class DefDAOImpl implements DefDAO{
 		return sqlSession.insert("mapper.P18_defect.insertDef", defDTO);
 	}
 	
+	public int updateDefect(DefDTO defDTO) {
+	    return sqlSession.update("mapper.P18_defect.updateDefect", defDTO);
+	}
+
+	public int deleteDefect(String defTypeId) {
+	    return sqlSession.update("mapper.P18_defect.deleteDefect", defTypeId);
+	}
+	
 }

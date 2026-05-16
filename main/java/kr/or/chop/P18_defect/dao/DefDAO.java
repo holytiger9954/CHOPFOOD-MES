@@ -11,4 +11,8 @@ public interface DefDAO {
 	int selectDefCount(DefDTO defDTO);
 	
 	int insertDef(DefDTO defDTO);
+	
+	int updateDefect(DefDTO defDTO);
+	
+	int deleteDefect(String defTypeId);
 }

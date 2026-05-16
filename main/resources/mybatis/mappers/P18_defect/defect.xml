@@ -12,6 +12,8 @@
 		SELECT COUNT(*)
 		FROM defect
 		<where>
+			AND def_usage = 'Y'
+		
 			<if test="searchKeyword != null and searchKeyword != ''">
 
 				<choose>
@@ -36,7 +38,6 @@
 
 	</select>
 
-
 	<select id="selectDefList"
 		parameterType="map"
 		resultType="defDTO">
@@ -53,6 +54,8 @@
 					def_standard_action AS defStandardAction
 				FROM defect
 				<where>
+					AND def_usage = 'Y'
+				
 					<if test="defDTO.searchKeyword != null and defDTO.searchKeyword != ''">
 
 						<choose>
@@ -102,5 +105,29 @@
 	    )
 	
 	</insert>
+	
+	<!-- 불량 유형 수정 -->
+	<update id="updateDefect"
+        parameterType="kr.or.chop.P18_defect.dto.DefDTO">
+
+	    UPDATE defect
+	    SET
+	        def_type_name = #{defTypeName},
+	        def_standard_action = #{defStandardAction}
+	    WHERE def_type_id = #{defTypeId}
+	      AND def_usage = 'Y'
+	
+	</update>
+	
+	<!-- 불량 유형 논리 삭제 -->
+	<update id="deleteDefect"
+        parameterType="string">
+
+	    UPDATE defect
+	    SET def_usage = 'N'
+	    WHERE def_type_id = #{defTypeId}
+	      AND def_usage = 'Y'
+	
+	</update>
 
 </mapper>

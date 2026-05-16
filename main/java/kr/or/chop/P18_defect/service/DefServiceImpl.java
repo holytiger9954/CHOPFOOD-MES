@@ -32,4 +32,14 @@ public class DefServiceImpl implements DefService {
 		return defDAO.insertDef(defDTO);
 	}
 	
+	@Override
+	public int updateDefect(DefDTO defDTO) {
+	    return defDAO.updateDefect(defDTO);
+	}
+
+	@Override
+	public int deleteDefect(String defTypeId) {
+	    return defDAO.deleteDefect(defTypeId);
+	}
+	
 }
