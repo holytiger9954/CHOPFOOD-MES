@@ -15,4 +15,7 @@ public class VendorDTO {
 	private String vendorAddrDetail;
 	private String vendorUsage;
 	
+	String searchType;
+	String searchKeyword;
+	
 }

@@ -11,6 +11,13 @@
 		SELECT COUNT(*)
 		FROM vendor
 		WHERE vendor_usage = 'Y'
+			<if test="searchType != null and searchType != ''">
+				and vendor_type = #{searchType}
+			</if>
+			<if test="searchKeyword != null and searchKeyword != ''">
+				and ( upper(vendor_name) like trim(upper('%' || #{searchKeyword} || '%')) 
+					or upper(vendor_id) like trim(upper('%' || #{searchKeyword} || '%')) ) 
+			</if>
 
 	</select>
 
@@ -37,6 +44,13 @@
 		vendor_usage AS vendorUsage
 		FROM vendor
 		WHERE vendor_usage = 'Y'
+			<if test="vendorDTO.searchType != null and vendorDTO.searchType != ''">
+				and vendor_type = #{vendorDTO.searchType}
+			</if>
+			<if test="vendorDTO.searchKeyword != null and vendorDTO.searchKeyword != ''">
+				and ( upper(vendor_name) like trim(upper('%' || #{vendorDTO.searchKeyword} || '%')) 
+					or upper(vendor_id) like trim(upper('%' || #{vendorDTO.searchKeyword} || '%')) ) 
+			</if>
 		ORDER BY vendor_id DESC
 		) V
 		)

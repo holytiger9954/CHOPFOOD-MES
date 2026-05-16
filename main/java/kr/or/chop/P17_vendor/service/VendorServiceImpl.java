@@ -14,23 +14,21 @@ public class VendorServiceImpl implements VendorService {
 
 	@Autowired
 	private VendorDAO vendorDAO;
-	
+
 	@Override
-    public int selectVendorCount(VendorDTO vendorDTO) {
-        return vendorDAO.selectVendorCount(vendorDTO);
-    }
+	public int selectVendorCount(VendorDTO vendorDTO) {
+		return vendorDAO.selectVendorCount(vendorDTO);
+	}
 
-    @Override
-    public List<VendorDTO> selectVendorList(
-            VendorDTO vendorDTO,
-            PageInfo pageInfo) {
+	@Override
+	public List<VendorDTO> selectVendorList(VendorDTO vendorDTO, PageInfo pageInfo) {
 
-        return vendorDAO.selectVendorList(vendorDTO, pageInfo);
-    }
-    
-    @Override
-    public int insertVendor(VendorDTO vendorDTO) {
-        return vendorDAO.insertVendor(vendorDTO);
-    }
-	
+		return vendorDAO.selectVendorList(vendorDTO, pageInfo);
+	}
+
+	@Override
+	public int insertVendor(VendorDTO vendorDTO) {
+		return vendorDAO.insertVendor(vendorDTO);
+	}
+
 }

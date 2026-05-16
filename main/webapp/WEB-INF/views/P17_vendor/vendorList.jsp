@@ -15,7 +15,7 @@
 		
 		<div>
 			<p class="page-route">
-				홈 &gt; 거래처 관리
+				홈 > 거래처 관리
 			</p>
 			<a class="btn btn-white"
 				href="${pageContext.request.contextPath}/vendor/add">
@@ -31,21 +31,21 @@
 		<div class="search-item">
 			<label>유형</label>
 
-			<select name="vendorType">
+			<select name="searchType">
 				<option value="">전체</option>
 
 				<option value="S"
-					${search.vendorType == 'S' ? 'selected' : ''}>
+					${search.searchType == 'S' ? 'selected' : ''}>
 					공급업체
 				</option>
 
 				<option value="C"
-					${search.vendorType == 'C' ? 'selected' : ''}>
+					${search.searchType == 'C' ? 'selected' : ''}>
 					납품처
 				</option>
 
 				<option value="E"
-					${search.vendorType == 'E' ? 'selected' : ''}>
+					${search.searchType == 'E' ? 'selected' : ''}>
 					기타
 				</option>
 			</select>
@@ -55,8 +55,8 @@
 			<label>거래처명 / 코드 검색</label>
 
 			<input type="text"
-				name="vendorName"
-				value="${search.vendorName}"
+				name="searchKeyword"
+				value="${search.searchKeyword}"
 				placeholder="내용을 입력하세요.">
 		</div>
 
