@@ -4,9 +4,25 @@
 
 .header {
 	height: 60px;
+    padding: 0 24px;
+
+    background-color: #ffffffd4;
+    color: var(--main-green);
+    box-shadow: 0 2px 8px var(--gray);
+
+    display: flex;
     justify-content: space-between;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    align-items: center;
     overflow: hidden;
+    
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-row {
+	display: flex;
+	justify-content: space-between;
 }
 
 .header-left,

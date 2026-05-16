@@ -5,7 +5,7 @@
     <div class="header-left">
         <a href="${pageContext.request.contextPath}/dashboard" class="header-logo">
             <img
-		        src="${pageContext.request.contextPath}/resources/img/CHOP_FOOD__WHITE_.png"
+		        src="${pageContext.request.contextPath}/resources/img/CHOP_FOOD__.png"
 		        alt="CHOP FOOD"
 		        class="header-logo-img"
     		>
@@ -15,12 +15,14 @@
 
     <div class="header-right">
         <button type="button" class="header-icon">🔔</button>
-        <button type="button" class="header-icon">⚙</button>
 
         <div class="header-profile">
             <span class="profile-img"></span>
-            <span class="profile-name">홍길동</span>
-            <span class="profile-arrow">⌄</span>
+            <span class="profile-name">
+            	<a href="${pageContext.request.contextPath}/mypage?empId=">
+	            	홍길동 (EMP1001)
+            	</a>
+           	</span>
         </div>
     </div>
 </header>

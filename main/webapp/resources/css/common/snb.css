@@ -8,6 +8,17 @@
     justify-content: space-between;
 
     padding: 16px 12px;
+    
+	position: sticky;
+    top: 60px;
+
+    width: 240px;
+    height: calc(100vh - 60px);
+
+    background-color: #fff;
+    border-right: 1px solid var(--gray);
+
+    overflow-y: auto;
 }
 
 .snb-nav {

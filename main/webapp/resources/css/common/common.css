@@ -66,7 +66,7 @@ a:hover {
     --white-hover: #F4F7F5;
 	
 
-    --dark-gray: #ccc;
+    --dark-gray: #aaa;
     --gray: #ddd;
     --light-gray: #eee;
 
@@ -86,39 +86,6 @@ a:hover {
 /* ==============================
    HEADER / SIDEBAR / CONTENT
 ============================== */
-
-.header {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-
-    height: 60px;
-    padding: 0 24px;
-
-    display: flex;
-    align-items: center;
-
-    background-color: var(--main-green);
-    color: #fff;
-}
-
-.header-row {
-	display: flex;
-	justify-content: space-between;
-}
-
-.snb {
-    position: sticky;
-    top: 60px;
-
-    width: 240px;
-    height: calc(100vh - 60px);
-
-    background-color: #fff;
-    border-right: 1px solid var(--gray);
-
-    overflow-y: auto;
-}
 
 .content {
     width: 100%;
@@ -272,7 +239,7 @@ a:hover {
     height: 26px;
     padding: 0 10px;
 	
-    border: 1px solid var(--gray);
+    border: 1px solid var(--dark-gray);
     border-radius: 13px;
 
     font-size: 13px;
@@ -328,7 +295,7 @@ a:hover {
     padding: 0 12px;
 
 	text-align: center;
-    border-bottom: 1px solid var(--light-gray);
+    border-bottom: 1px solid var(--gray);
 }
 
 .table tbody tr:hover {
@@ -359,7 +326,7 @@ a:hover {
     height: 35px;
     padding: 0 10px;
 
-    border: 1px solid #ccc;
+    border: 1.5px solid var(--gray);
     border-radius: 6px;
 
     background-color: #fff;
@@ -389,7 +356,7 @@ a:hover {
 }
 
 .pagination .disabled {
-    opacity: 0.4;
+	color: var(--dark-gray);
     pointer-events: none;
 }
 
@@ -430,7 +397,7 @@ a:hover {
     height: 36px;
     padding: 0 12px;
 
-    border: 1px solid var(--gray);
+    border: 1px solid var(--dark-gray);
     border-radius: 6px;
 
     font-size: 14px;
