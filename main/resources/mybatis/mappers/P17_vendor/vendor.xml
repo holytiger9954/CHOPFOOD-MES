@@ -77,7 +77,7 @@
 	    )
 	    VALUES
 	    (
-	        'VD' || LPAD(SEQ_VENDOR.NEXTVAL, 4, '0'),
+	        'VD' || VENDOR_SEQ.NEXTVAL,
 	        #{vendorName},
 	        #{vendorType},
 	        #{vendorTel},
