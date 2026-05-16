@@ -24,8 +24,7 @@ public class WPListController {
 	public String list(
 			Model model,
 			WPDTO wpDTO,
-			@RequestParam(value="page", defaultValue="1")
-			int currentPage
+			@RequestParam(value="page", defaultValue="1") int currentPage
 		) {
 		
 		System.out.println("/workplace/list controller.list");
@@ -43,6 +42,14 @@ public class WPListController {
 		model.addAttribute("page", pageInfo);
 		
 		return "P15_workplace/wpList.tiles";
+	}
+	
+	@RequestMapping("/detail")
+	public String detail(
+			@RequestParam(value="wpId") String wpId
+		) {
+		
+		return "P15_workplace/wpDetail.tiles";
 	}
 	
 }
