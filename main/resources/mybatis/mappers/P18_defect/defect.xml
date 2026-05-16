@@ -81,5 +81,26 @@
 		AND #{page.endRow}
 
 	</select>
+	
+	<!-- 불량 유형 등록 -->
+	<insert id="insertDef"
+	    parameterType="kr.or.chop.P18_defect.dto.DefDTO">
+	
+	    INSERT INTO defect
+	    (
+	        def_type_id,
+	        def_type_name,
+	        def_standard_action,
+	        def_usage
+	    )
+	    VALUES
+	    (
+	        'DEF' || DEF_SEQ.NEXTVAL,
+	        #{defTypeName},
+	        #{defStandardAction},
+	        'Y'
+	    )
+	
+	</insert>
 
 </mapper>

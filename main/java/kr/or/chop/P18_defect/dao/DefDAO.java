@@ -10,4 +10,5 @@ public interface DefDAO {
 	List<DefDTO> selectAllDef(DefDTO defDTO, PageInfo pageInfo);
 	int selectDefCount(DefDTO defDTO);
 	
+	int insertDef(DefDTO defDTO);
 }

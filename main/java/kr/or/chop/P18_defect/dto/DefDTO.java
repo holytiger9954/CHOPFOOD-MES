@@ -5,9 +5,10 @@ import lombok.Data;
 @Data
 public class DefDTO {
 
-	private int defTypeId;
+	private String defTypeId;
 	private String defTypeName;
 	private String defStandardAction;
+	private String defUsage;
 	
 	private String searchType;
 	private String searchKeyword;

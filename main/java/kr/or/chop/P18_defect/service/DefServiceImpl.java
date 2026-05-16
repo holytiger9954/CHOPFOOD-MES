@@ -26,5 +26,10 @@ public class DefServiceImpl implements DefService {
 
 		return defDAO.selectDefCount(defDTO);
 	}
+
+	@Override
+	public int insertDef(DefDTO defDTO) {
+		return defDAO.insertDef(defDTO);
+	}
 	
 }

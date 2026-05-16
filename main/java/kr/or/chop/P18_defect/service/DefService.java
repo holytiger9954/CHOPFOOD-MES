@@ -10,4 +10,5 @@ public interface DefService {
 	public List<DefDTO> defSelectAll(DefDTO defDTO, PageInfo pageInfo);
 	public int selectDefCount(DefDTO defDTO);
 	
+	int insertDef(DefDTO defDTO);
 }
