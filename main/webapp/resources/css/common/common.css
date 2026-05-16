@@ -71,9 +71,12 @@ a:hover {
     --light-gray: #eee;
 
     --success: #2E7D32;
+    --success-back: #D0F4D1;
     --warning: #F9A825;
-    --danger: #D32F2F;
-    --info: #607D8B;
+    --warning-back: #FFE5BC;
+    --danger: #FFD2D2;
+    --safe: #2B8EFF;
+    --safe-back: #C7E1FF;
 
     --fin: #2B8EFF;
 
@@ -127,9 +130,19 @@ a:hover {
    BUTTON
 ============================== */
 
+.btn-row {
+	display: flex;
+	justify-content: space-between;
+}
+
+.btn-row>div {
+	display: flex;
+	gap: 10px;
+}
+
 .btn {
     min-width: 45px;
-    height: 26px;
+    min-height: 26px;
     padding: 5px 15px;
 
     border-radius: 6px;
@@ -169,6 +182,10 @@ a:hover {
     background-color: var(--white-hover);
     border-color: var(--main-green);
     color: var(--main-green);
+}
+
+.btn-red {
+	background-color: var(--red);
 }
 
 
