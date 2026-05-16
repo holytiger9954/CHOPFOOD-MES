@@ -133,6 +133,8 @@ a:hover {
 .btn-row {
 	display: flex;
 	justify-content: space-between;
+	
+	margin-bottom: 24px;
 }
 
 .btn-row>div {
@@ -145,7 +147,7 @@ a:hover {
     min-height: 26px;
     padding: 5px 15px;
 
-    border-radius: 6px;
+    border-radius: 4px;
 
     font-size: 14px;
     font-weight: 600;
@@ -246,6 +248,8 @@ a:hover {
 
     color: var(--dark-gray);
 }
+
+
 
 
 /* ==============================
@@ -445,3 +449,73 @@ a:hover {
     display: flex;
     gap: 8px;
 }
+
+
+
+
+/* ==============================
+   CONTENT-CONTENT
+============================== */
+
+.content-content {
+/* 	border: 1px solid red; */
+	padding: 20px;
+}
+
+.content-content-content {
+/* 	border: 1px solid green; */
+	margin-bottom: 30px;
+}
+
+.content-content-content:last-child {
+	margin-bottom: 0;
+}
+
+.content-content-content-title {
+	margin-bottom: 10px;
+	
+	font-size: 18px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.info-table-wrap {
+	width: 100%;
+	margin-top: 20px;
+	
+	padding: 0 20px;
+}
+
+.info-table {
+	width: 100%;
+	border-collapse: collapse;
+	table-layout: fixed;
+	border-top: 1px solid #bdbdbd;
+}
+
+.info-table tr {
+	border-bottom: 1px solid #bdbdbd;
+}
+
+.info-table th,
+.info-table td {
+	height: 38px;
+	padding: 0 14px;
+	font-size: 14px;
+	vertical-align: middle;
+	text-align: left;
+}
+
+.info-table th {
+	width: 16%;
+	font-weight: 700;
+	color: #222;
+	background-color: #fafafa;
+}
+
+.info-table td {
+	width: 34%;
+	color: #333;
+	background-color: #fff;
+}
+
