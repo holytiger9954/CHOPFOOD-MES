@@ -73,6 +73,13 @@
 		WHERE upper(wp.WP_ID) = upper(#{wpId})
 	</select>
 	
+	<select id="selectGlogCount" parameterType="wpDTO" resultType="int">
+		select count(*)
+		from ghp_log glog
+			left outer join ghp ghp on glog.glog_ghp = ghp.ghp_id
+		where upper(ghp.ghp_wpid) = upper(#{wpId})
+	</select>
+	
 	<select id="selectGlogList" parameterType="wpDTO" resultType="glogDTO">
 		SELECT
 			glog.glog_id glogId,

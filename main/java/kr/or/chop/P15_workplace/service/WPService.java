@@ -12,6 +12,7 @@ public interface WPService {
 	public int selectWPCount(WPDTO wpDTO);
 	
 	public WPDTO selectWpDTO(WPDTO wpDTO);
+	public int selectGlogCount(WPDTO wpDTO);
 	public List<GlogDTO> selectGlogList(WPDTO wpDTO);
 
 }

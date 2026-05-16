@@ -12,6 +12,7 @@ public interface WPDAO {
 	public List<WPDTO> selectAllWP(WPDTO wpDTO, PageInfo pageInfo);
 	
 	public WPDTO selectWPDTO(WPDTO wpDTO);
+	public int selectGlogCount(WPDTO wpDTO);
 	public List<GlogDTO> selectGlogList(WPDTO wpDTO);
 
 }

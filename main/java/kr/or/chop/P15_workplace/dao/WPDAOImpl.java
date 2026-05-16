@@ -48,6 +48,13 @@ public class WPDAOImpl implements WPDAO {
 		
 		return sqlSession.selectOne("mapper.P15_workplace.selectWPDTO", wpDTO);
 	}
+	
+	@Override
+	public int selectGlogCount(WPDTO wpDTO) {
+		System.out.println("/workplace/detail dao.selectGlogCount");
+
+		return sqlSession.selectOne("mapper.P15_workplace.selectGlogCount", wpDTO);
+	}
 
 	@Override
 	public List<GlogDTO> selectGlogList(WPDTO wpDTO) {

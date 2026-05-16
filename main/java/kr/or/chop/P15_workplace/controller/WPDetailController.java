@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import kr.or.chop.P15_workplace.dto.WPDTO;
 import kr.or.chop.P15_workplace.service.WPService;
+import kr.or.chop.P19_ghp.dto.GlogDTO;
 import kr.or.chop.common.pagination.PageInfo;
 import kr.or.chop.common.pagination.Pagination;
 
@@ -24,6 +25,7 @@ public class WPDetailController {
 	public String detail(
 			Model model,
 			WPDTO wpDTO,
+			@RequestParam(value="page", defaultValue="1") int currentPage,
 			@RequestParam(value="wpId") String wpId
 		) {
 		System.out.println("/workplace/list controller.list");
@@ -33,10 +35,17 @@ public class WPDetailController {
 		// wpDTO 가져오기
 		wpDTO = wpService.selectWpDTO(wpDTO);
 		
-		// glog 가져오기
+
+		// 개수 가져와서 페이징
+		int listCount = wpService.selectGlogCount(wpDTO);
+		PageInfo pageInfo = Pagination.getPageInfo(listCount, currentPage, 5, 10);
+		
+		// glog 가져오기s
+		List<GlogDTO> glogList = wpService.selectGlogList(wpDTO);
 		
 		model.addAttribute("wpDTO", wpDTO);
-//		model.addAttribute("page", pageInfo);
+		model.addAttribute("page", pageInfo);
+		model.addAttribute("glogList", glogList);
 		
 		return "P15_workplace/wpDetail.tiles";
 	}

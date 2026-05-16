@@ -39,6 +39,14 @@ public class WPServiceImpl implements WPService {
 		
 		return wpDAO.selectWPDTO(wpDTO);
 	}
+	
+	@Override
+	public int selectGlogCount(WPDTO wpDTO) {
+		
+		System.out.println("/workplace/detail service.selectGlogCount");
+		
+		return wpDAO.selectGlogCount(wpDTO);
+	}
 
 	@Override
 	public List<GlogDTO> selectGlogList(WPDTO wpDTO) {

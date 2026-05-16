@@ -97,17 +97,17 @@
 						</tr>
 					</thead>
 					<tbody>
-						<c:forEach var="wp" items="${wpList}">
-							<tr class="wpList">
-								<td class="wpId">${wp.wpId}</td>
-								<td>${wp.wpName}</td>
-								<td>${wp.wpType}</td>
-								<td>${wp.ghpId}</td>
-								<td>${wp.wpTypeContent}</td>
+						<c:forEach var="glog" items="${glogList}">
+							<tr class="glogList">
+								<td class="glogId">${glog.glogId}</td>
+								<td>${glog.glogWorker}</td>
+								<td>${glog.glogValue}</td>
+								<td>${glog.glogResult}</td>
+								<td>${glog.glogDate}</td>
 							</tr>	
 						</c:forEach>
 						
-						<c:if test="${empty wpList}">
+						<c:if test="${empty glogList}">
 							<tr>
 								<td colspan="5" style="text-align: center;">
 									조회된 내역이 없습니다.
@@ -117,6 +117,8 @@
 					</tbody>
 				</table>
 			</div>
+			
+			<jsp:include page="/WEB-INF/views/common/paging.jsp" />
 		</div>
 	</div>
 	
