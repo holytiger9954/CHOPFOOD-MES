@@ -2,6 +2,8 @@ package kr.or.chop.P18_defect.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -14,6 +16,16 @@ public class DefEditController {
 
 	@Autowired
 	DefService defService;
+	
+	@GetMapping("/edit")
+	public String edit(String defTypeId, Model model) {
+
+	    DefDTO def = defService.selectDefDetail(defTypeId);
+
+	    model.addAttribute("def", def);
+
+	    return "P18_defect/defectEdit.tiles";
+	}
 	
 	@PostMapping("/update")
 	public String updateDefect(DefDTO defDTO) {

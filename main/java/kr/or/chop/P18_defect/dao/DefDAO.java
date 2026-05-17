@@ -10,6 +10,8 @@ public interface DefDAO {
 	List<DefDTO> selectAllDef(DefDTO defDTO, PageInfo pageInfo);
 	int selectDefCount(DefDTO defDTO);
 	
+	DefDTO selectDefDetail(String defTypeId);
+	
 	int insertDef(DefDTO defDTO);
 	
 	int updateDefect(DefDTO defDTO);

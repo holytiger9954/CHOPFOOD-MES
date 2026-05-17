@@ -33,6 +33,11 @@ public class DefDAOImpl implements DefDAO{
 
 		return sqlSession.selectOne("mapper.P18_defect.selectDefCount", defDTO);
 	}
+	
+	@Override
+	public DefDTO selectDefDetail(String defTypeId) {
+	    return sqlSession.selectOne("mapper.P18_defect.selectDefDetail", defTypeId);
+	}
 
 	@Override
 	public int insertDef(DefDTO defDTO) {

@@ -85,6 +85,21 @@
 
 	</select>
 	
+	<select id="selectDefDetail"
+	    parameterType="string"
+	    resultType="defDTO">
+	
+	    SELECT
+	        def_type_id AS defTypeId,
+	        def_type_name AS defTypeName,
+	        def_standard_action AS defStandardAction,
+	        def_usage AS defUsage
+	    FROM defect
+	    WHERE def_type_id = #{value}
+	      AND def_usage = 'Y'
+	
+	</select>
+	
 	<!-- 불량 유형 등록 -->
 	<insert id="insertDef"
 	    parameterType="kr.or.chop.P18_defect.dto.DefDTO">
@@ -125,7 +140,7 @@
 
 	    UPDATE defect
 	    SET def_usage = 'N'
-	    WHERE def_type_id = #{defTypeId}
+	    WHERE def_type_id = #{value}
 	      AND def_usage = 'Y'
 	
 	</update>

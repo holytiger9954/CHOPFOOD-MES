@@ -1,26 +1,31 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <div class="content">
 
     <div class="header-row">
         <div>
-            <h2 class="page-title">불량 유형 등록</h2>
+            <h2 class="page-title">불량 유형 수정</h2>
 
             <p class="page-subtitle">
-                새로운 불량 유형 정보를 등록하세요.
+                불량 유형 정보를 수정할 수 있습니다.
             </p>
         </div>
 
         <div>
             <p class="page-route">
-                홈 &gt; 불량 유형 관리 &gt; 등록
+                홈 &gt; 불량 유형 관리 &gt; 수정
             </p>
         </div>
     </div>
 
-    <form action="${pageContext.request.contextPath}/defect/insert"
+    <form action="${pageContext.request.contextPath}/defect/update"
           method="post">
+
+        <input type="hidden"
+               name="defTypeId"
+               value="${def.defTypeId}">
 
         <div class="btn-row">
 
@@ -29,14 +34,14 @@
             <div class="right">
 
                 <a class="btn btn-red"
-                   href="${pageContext.request.contextPath}/defect/list"
-                   onclick="return confirm('등록을 취소하시겠습니까?');">
+                   href="${pageContext.request.contextPath}/defect/detail?defTypeId=${def.defTypeId}"
+                   onclick="return confirm('수정을 취소하시겠습니까?');">
                     취소
                 </a>
 
                 <button type="submit"
                         class="btn btn-main">
-                    등록
+                    수정완료
                 </button>
 
             </div>
@@ -48,13 +53,21 @@
             <div class="content-content-content">
 
                 <div class="content-content-content-title">
-                    불량 유형 등록정보
+                    불량 유형 수정정보
                 </div>
 
                 <div class="info-table-wrap">
 
                     <table class="info-table">
                         <tbody>
+
+                            <tr>
+                                <th>불량 유형 코드</th>
+
+                                <td colspan="3">
+                                    ${def.defTypeId}
+                                </td>
+                            </tr>
 
                             <tr>
                                 <th>
@@ -66,7 +79,7 @@
                                     <input type="text"
                                            name="defTypeName"
                                            class="def-input"
-                                           placeholder="불량 유형명을 입력하세요."
+                                           value="${def.defTypeName}"
                                            maxlength="20"
                                            required>
                                 </td>
@@ -75,6 +88,7 @@
                             <tr>
                                 <th>
                                     기준 조치
+                                    <span class="required">*</span>
                                 </th>
 
                                 <td colspan="3"
@@ -82,8 +96,8 @@
 
                                     <textarea name="defStandardAction"
                                               class="def-textarea"
-                                              placeholder="기준 조치를 입력하세요."
-                                              maxlength="100"></textarea>
+                                              maxlength="100"
+                                              required>${def.defStandardAction}</textarea>
 
                                 </td>
                             </tr>
