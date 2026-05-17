@@ -46,10 +46,6 @@ public class ItemListController {
 		return "P11_item/itemList.tiles";
 	}
 	
-	@RequestMapping("/add")
-    public String vendorAddForm() {
-        return "P11_item/itemAdd.tiles";
-    }
 	
 	
 }
