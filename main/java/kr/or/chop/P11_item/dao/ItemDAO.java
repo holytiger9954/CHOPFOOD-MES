@@ -11,7 +11,10 @@ public interface ItemDAO {
 	List<ItemDTO> selectAllItem(ItemDTO itemDTO, PageInfo pageInfo);
 	int selectItemCount(ItemDTO itemDTO);
 	int insertItem(ItemDTO itemDTO);
+<<<<<<< HEAD
 	List<VendorDTO> selectVendors(VendorDTO vendorDTO);
+=======
+>>>>>>> acb2384 (시발)
 	
 	
 }

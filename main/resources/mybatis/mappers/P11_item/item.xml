@@ -63,6 +63,7 @@
 		
 	</select>
 	
+<<<<<<< HEAD
 	<select id="selectVendors" resultType="vendorDTO">
 		select vendor_id as vendorId, vendor_name as vendorName from vendor
 		where vendor_usage = 'Y'
@@ -105,6 +106,26 @@
 			#{useDate},
 			#{safetyStock},
 			'Y'
+=======
+	<insert id="insertItem" parameterType="itemDTO">
+		
+		
+		insert into item
+		(
+		item_id,
+		item_name,
+		item_type,
+		item_unit,
+		item_spec,
+		item_unit_price,
+		item_storage,
+		item_vendor,
+		item_safety_stock,
+		item_usage
+		)
+		values (
+		
+>>>>>>> acb2384 (시발)
 		)
 		
 	</insert>

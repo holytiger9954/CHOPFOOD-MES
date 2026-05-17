@@ -33,9 +33,12 @@ public class ItemServiceImpl implements ItemService {
 		return itemDAO.insertItem(itemDTO);
 	}
 
+<<<<<<< HEAD
 	@Override
 	public List<VendorDTO> selectVendors(VendorDTO vendorDTO) {
 		return itemDAO.selectVendors(vendorDTO);
 	}
 
+=======
+>>>>>>> acb2384 (시발)
 }

@@ -10,6 +10,7 @@ public interface ItemService {
 
 	public List<ItemDTO> ItemSelectAll(ItemDTO itemDTO, PageInfo pageInfo);
 	public int selectItemCount(ItemDTO itemDTO);
+	public int insertItem(ItemDTO itemDTO);
 	
 	public int insertItem(ItemDTO itemDTO);
 	
