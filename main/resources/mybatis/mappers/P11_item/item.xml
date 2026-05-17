@@ -105,29 +105,5 @@
 			#{useDate},
 			#{safetyStock},
 			'Y'
-	<insert id="insertItem" parameterType="itemDTO">
-		
-		
-		insert into item
-		(
-		item_id,
-		item_name,
-		item_type,
-		item_unit,
-		item_spec,
-		item_unit_price,
-		item_storage,
-		item_vendor,
-		item_safety_stock,
-		item_usage
-		)
-		values (
-		
-		)
-		
-	</insert>
-
-
-
-
-
+		</insert>
+	</mapper>
