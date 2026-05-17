@@ -131,7 +131,9 @@
 	
 </div>
 
-<script>
-	
-	
-</script>
+<style>
+	.table tbody tr:hover .glogId {
+	    color: var(--main-green);
+	    text-decoration: underline;
+	}
+</style>
