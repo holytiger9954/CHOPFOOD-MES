@@ -11,7 +11,7 @@
         </div>
 
         <div>
-            <p class="page-route">홈 > 작업장 관리 > 등록</p>
+            <p class="page-route">홈 > 작업장 관리 > 수정</p>
         </div>
     </div>
 
@@ -29,7 +29,7 @@
 	            </a>
 	
 	            <button type="submit" class="btn btn-main">
-	                등록
+	                수정
 	            </button>
 			</div>
 		</div>
@@ -216,14 +216,14 @@
 		const previewImg = document.querySelector("#previewImg");
 		const imgPreviewBox = document.querySelector("#imgPreviewBox");
 		const noImg = document.querySelector("#noImg");
-		const fileName = document.querySelector("#fileName").value;
+		const fileName = document.querySelector("#fileName");
 		
 		previewImg.src = "";
 		previewImg.style.display = "none";
 		imgPreviewBox.style.display = "none";
 		wpImgFile.value = "";
 		noImg.style.display = "block";
-		fileName = "";
+		fileName.value = "";
 	}
 
 </script>
