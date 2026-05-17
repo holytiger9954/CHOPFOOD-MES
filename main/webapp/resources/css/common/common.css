@@ -159,6 +159,10 @@ a:hover {
     cursor: pointer;
 }
 
+.btn:hover {
+	text-decoration : underline;
+}
+
 .btn-main {
     background-color: var(--main-green);
     color: #fff;

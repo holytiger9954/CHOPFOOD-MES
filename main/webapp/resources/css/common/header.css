@@ -108,8 +108,13 @@
 .alarm-wrap {
     position: relative;
     display: flex;
+    gap: 15px;
     align-items: center;
     justify-content: center;
+}
+
+#alarmBtn:hover {
+	background-color: var(--white-hover);
 }
 
 .alarm-panel {
