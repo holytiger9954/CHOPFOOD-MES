@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.P16_equipment">
+
+	<select id="selectEqList" parameterType="map" resultType="eqDTO">
+
+		SELECT
+		E.EQ_ID AS eqId,
+		E.EQ_NAME AS eqName,
+		E.EQ_STATUS AS eqStatus,
+		E.EQ_SDATE AS eqSdate,
+		E.EQ_WPID AS eqWpid,
+		S.EQ_STATUS_NAME AS eqStatusName,
+
+		300 AS totalTime,
+		290 AS runTime,
+		'91.2%' AS runRate
+
+		FROM EQUIPMENT E
+		LEFT JOIN EQ_STATUS S
+		ON E.EQ_STATUS = S.EQ_STATUS_NO
+
+		<where>
+			<if test="eqWpid != null and eqWpid != ''">
+				AND E.EQ_WPID = #{eqWpid}
+			</if>
+
+			<if test="eqStatus != 0">
+				AND E.EQ_STATUS = #{eqStatus}
+			</if>
+
+			<if test="searchKeyword != null and searchKeyword != ''">
+				AND (
+				UPPER(E.EQ_ID) LIKE UPPER('%' || #{searchKeyword} || '%')
+				OR UPPER(E.EQ_NAME) LIKE UPPER('%' || #{searchKeyword} || '%')
+				)
+			</if>
+		</where>
+
+		ORDER BY E.EQ_ID DESC
+
+	</select>
+
+	<select id="selectEqTotalCount" resultType="int">
+		SELECT COUNT(*)
+		FROM EQUIPMENT
+	</select>
+
+	<select id="selectEqCountByStatus" parameterType="int"
+		resultType="int">
+
+		SELECT COUNT(*)
+		FROM EQUIPMENT
+		WHERE EQ_STATUS = #{eqStatus}
+
+	</select>
+
+	<select id="selectEqDetail" parameterType="string"
+		resultType="eqDTO">
+
+		SELECT
+		E.EQ_ID AS eqId,
+		E.EQ_NAME AS eqName,
+		E.EQ_STATUS AS eqStatus,
+		E.EQ_SDATE AS eqSdate,
+		E.EQ_WPID AS eqWpid,
+		S.EQ_STATUS_NAME AS eqStatusName,
+
+		300 AS totalTime,
+		290 AS runTime,
+		'91.2%' AS runRate
+
+		FROM EQUIPMENT E
+		LEFT JOIN EQ_STATUS S
+		ON E.EQ_STATUS = S.EQ_STATUS_NO
+		WHERE E.EQ_ID = #{eqId}
+
+	</select>
+
+
+	<select id="selectEqLogList" parameterType="string"
+		resultType="eqDTO">
+
+		SELECT
+		ELOG_ID AS elogId,
+		ELOG_EQID AS elogEqid,
+		ELOG_SDATE AS elogSdate,
+		ELOG_EDATE AS elogEdate,
+		ELOG_REASON AS elogReason,
+		ELOG_CONTENT AS elogContent,
+		ELOG_RESULT AS elogResult,
+		ELOG_WORKER AS elogWorker,
+		ELOG_USAGE AS elogUsage
+		FROM EQ_LOG
+		WHERE ELOG_EQID = #{eqId}
+		AND ELOG_USAGE = 'Y'
+		ORDER BY ELOG_SDATE DESC
+
+	</select>
+
+
+	<select id="selectEqRunList" parameterType="string"
+		resultType="eqDTO">
+
+		SELECT
+		EQ_RUN_NO AS eqRunNo,
+		EQ_RUN_EQID AS eqRunEqid,
+		EQ_RUN_STIME AS eqRunStime,
+		EQ_RUN_ETIME AS eqRunEtime,
+		EQ_STOP_REASON AS eqStopReason
+		FROM EQ_RUN
+		WHERE EQ_RUN_EQID = #{eqId}
+		ORDER BY EQ_RUN_STIME DESC
+
+	</select>
+
+</mapper>
