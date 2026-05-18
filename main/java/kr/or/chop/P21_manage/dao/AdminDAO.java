@@ -1,5 +1,13 @@
 package kr.or.chop.P21_manage.dao;
 
+import java.util.List;
+
+import kr.or.chop.P21_manage.dto.AdminDTO;
+import kr.or.chop.common.pagination.PageInfo;
+
 public interface AdminDAO {
 
+    int selectAdminCount(AdminDTO adminDTO);
+
+    List<AdminDTO> selectAdminList(AdminDTO adminDTO, PageInfo page);
 }

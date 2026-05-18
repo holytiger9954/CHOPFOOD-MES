@@ -18,4 +18,6 @@ public class AdminDTO {
 	private int empInOffice;
 	private Date empHiredate;
 	
+	private String searchType;
+    private String searchKeyword;
 }
