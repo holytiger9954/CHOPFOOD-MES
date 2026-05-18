@@ -86,7 +86,7 @@
 				</div>
 				<div class="right">
 					<a class="btn btn-main"
-						href="${pageContext.request.contextPath}/workplace/glog/add?wpId=${wpId}">
+						href="${pageContext.request.contextPath}/workplace/glog/add?wpId=${wpDTO.wpId}">
 						점검 이력 추가
 					</a>
 				</div>

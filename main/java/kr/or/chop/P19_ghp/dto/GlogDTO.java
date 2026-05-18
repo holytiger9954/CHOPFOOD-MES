@@ -8,14 +8,23 @@ import lombok.Data;
 public class GlogDTO {
 	
 	private String glogId;
+	
 	private Date glogDate;
+	private String glogDay;
+	private String glogTime;
+	
 	private String glogWorker;
 	private int glogValue = -9999;
 	private String glogResult;
+	
 	private	String glogAction;
 	private Date glogAdate;
+	private String glogAday;
+	private String glogAtime;
+	
 	private String glogImg;
 	private String glogMemo;
+	
 	private Date glogCdate;
 	
 	private String ghpId;
