@@ -8,6 +8,9 @@ import kr.or.chop.common.pagination.PageInfo;
 public interface AdminDAO {
 
     int selectAdminCount(AdminDTO adminDTO);
-
     List<AdminDTO> selectAdminList(AdminDTO adminDTO, PageInfo page);
+    
+    AdminDTO selectAdminDetail(String empId);
+    
+    int insertAdmin(AdminDTO adminDTO);
 }

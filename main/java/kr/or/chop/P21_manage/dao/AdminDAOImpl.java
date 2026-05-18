@@ -31,4 +31,14 @@ public class AdminDAOImpl implements AdminDAO {
 
         return sqlSession.selectList("mapper.P21_manage.selectAdminList", map);
     }
+    
+    @Override
+    public AdminDTO selectAdminDetail(String empId) {
+        return sqlSession.selectOne("mapper.P21_manage.selectAdminDetail", empId);
+    }
+    
+    @Override
+    public int insertAdmin(AdminDTO adminDTO) {
+        return sqlSession.insert("mapper.P21_manage.insertAdmin", adminDTO);
+    }
 }

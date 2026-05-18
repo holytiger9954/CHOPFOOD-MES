@@ -92,5 +92,60 @@
         AND #{page.endRow}
 
     </select>
+    
+    <select id="selectAdminDetail"
+	        parameterType="string"
+	        resultType="adminDTO">
+	
+	    SELECT
+	        e.emp_id AS empId,
+	        e.emp_name AS empName,
+	        e.emp_pw AS empPw,
+	        e.emp_tel AS empTel,
+	        e.emp_email AS empEmail,
+	        e.emp_deptno AS empDeptno,
+	        d.dname AS deptName,
+	        e.emp_auth AS empAuth,
+	        e.emp_first AS empFirst,
+	        e.emp_inoffice AS empInOffice,
+	        e.emp_hiredate AS empHiredate
+	    FROM emp e
+	    LEFT JOIN dept d
+	        ON e.emp_deptno = d.deptno
+	    WHERE e.emp_id = #{empId}
+	
+	</select>
+	
+	<insert id="insertAdmin"
+	        parameterType="adminDTO">
+	
+	    INSERT INTO emp
+	    (
+	        emp_id,
+	        emp_name,
+	        emp_pw,
+	        emp_tel,
+	        emp_email,
+	        emp_deptno,
+	        emp_auth,
+	        emp_first,
+	        emp_inoffice,
+	        emp_hiredate
+	    )
+	    VALUES
+	    (
+	        'EMP' || SEQ_EMP.NEXTVAL,
+	        #{empName},
+	        '1234',
+	        #{empTel},
+	        #{empEmail},
+	        #{empDeptno},
+	        #{empAuth},
+	        'Y',
+	        #{empInOffice},
+	        SYSDATE
+	    )
+	
+	</insert>
 
 </mapper>

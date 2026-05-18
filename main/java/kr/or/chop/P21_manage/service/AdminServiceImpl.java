@@ -24,4 +24,14 @@ public class AdminServiceImpl implements AdminService {
     public List<AdminDTO> selectAdminList(AdminDTO adminDTO, PageInfo page) {
         return adminDAO.selectAdminList(adminDTO, page);
     }
+    
+    @Override
+    public AdminDTO selectAdminDetail(String empId) {
+        return adminDAO.selectAdminDetail(empId);
+    }
+    
+    @Override
+    public int insertAdmin(AdminDTO adminDTO) {
+        return adminDAO.insertAdmin(adminDTO);
+    }
 }
