@@ -1,88 +1,23 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-<%@ taglib prefix="c"
-    uri="http://java.sun.com/jsp/jstl/core"%>
-
-<style>
-    .admin-page .header-row {
-        margin-bottom: 18px;
-    }
-
-    .admin-page .header-right-box {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-    }
-
-    .admin-page .search-box {
-        width: 100%;
-        justify-content: space-between;
-        margin: 0 0 20px 0;
-        padding: 10px 0 16px;
-    }
-
-    .admin-page .search-item input {
-        min-width: 360px;
-    }
-
-    .admin-page .search-item select {
-        min-width: 130px;
-    }
-
-    .admin-page .search-btn-area {
-        align-items: flex-end;
-    }
-
-    .admin-page .search-btn-area .btn {
-        height: 36px;
-        padding: 0 22px;
-    }
-
-    .admin-page .admin-row {
-        cursor: pointer;
-    }
-
-    .admin-page .status {
-        gap: 4px;
-    }
-
-    @media (max-width: 1200px) {
-        .admin-page .search-box {
-            justify-content: flex-start;
-        }
-
-        .admin-page .search-item input {
-            min-width: 260px;
-        }
-    }
-</style>
-
-<div class="admin-page">
+<div class="content">
 
     <div class="header-row">
-
         <div>
             <h2 class="page-title">사원 관리</h2>
-
-            <p class="page-subtitle">
-                사원 목록을 조회하고 새로운 사원을 등록할 수 있습니다.
-            </p>
+            <p class="page-subtitle">사원 목록을 조회하고 새로운 사원을 등록할 수 있습니다.</p>
         </div>
 
-        <div class="header-right-box">
-
-            <p class="page-route">
-                홈 &gt; 관리 &gt; 사원관리
-            </p>
+        <div>
+            <p class="page-route">홈 &gt; 사원관리</p>
 
             <a class="btn btn-white"
                href="${pageContext.request.contextPath}/admin/add">
                 사원 등록
             </a>
-
         </div>
-
     </div>
 
     <form class="search-box"
@@ -133,108 +68,123 @@
         </div>
 
         <div class="search-btn-area">
-            <button type="submit"
-                    class="btn btn-main">
+            <button type="submit" class="btn btn-main">
                 검색
             </button>
         </div>
-
     </form>
 
-    <div class="table-wrap">
-
-        <table class="table">
-
-            <thead>
-                <tr>
-                    <th>사원번호</th>
-                    <th>이름</th>
-                    <th>부서</th>
-                    <th>권한</th>
-                    <th>연락처</th>
-                    <th>입사일</th>
-                    <th>상태</th>
-                </tr>
-            </thead>
-
-            <tbody>
-
-                <c:forEach var="admin"
-                           items="${adminList}">
-
-                    <tr class="admin-row"
-                        onclick="location.href='${pageContext.request.contextPath}/admin/detail?empId=${admin.empId}'">
-
-                        <td>${admin.empId}</td>
-                        <td>${admin.empName}</td>
-                        <td>${admin.deptName}</td>
-
-                        <td>
-                            <c:choose>
-                                <c:when test="${admin.empAuth == 0}">
-                                    퇴사자
-                                </c:when>
-
-                                <c:when test="${admin.empAuth == 10}">
-                                    작업자
-                                </c:when>
-
-                                <c:when test="${admin.empAuth == 20}">
-                                    관리자
-                                </c:when>
-
-                                <c:when test="${admin.empAuth == 30}">
-                                    최고관리자
-                                </c:when>
-
-                                <c:otherwise>
-                                    권한 미지정
-                                </c:otherwise>
-                            </c:choose>
-                        </td>
-
-                        <td>${admin.empTel}</td>
-                        <td>${admin.empHiredate}</td>
-
-                        <td>
-                            <c:choose>
-                                <c:when test="${admin.empInOffice == 0}">
-                                    <span class="status status-success">● 재직</span>
-                                </c:when>
-
-                                <c:when test="${admin.empInOffice == 10}">
-                                    <span class="status status-warning">● 휴직</span>
-                                </c:when>
-
-                                <c:when test="${admin.empInOffice == 50}">
-                                    <span class="status status-info">● 퇴사</span>
-                                </c:when>
-
-                                <c:otherwise>
-                                    <span class="status status-info">● 미지정</span>
-                                </c:otherwise>
-                            </c:choose>
-                        </td>
-
-                    </tr>
-
-                </c:forEach>
-
-                <c:if test="${empty adminList}">
+    <div>
+        <div class="table-wrap">
+            <table class="table">
+                <thead>
                     <tr>
-                        <td colspan="7"
-                            style="text-align:center;">
-                            조회된 사원이 없습니다.
-                        </td>
+                        <th style="width: 130px;">사원번호</th>
+                        <th style="width: 120px;">이름</th>
+                        <th style="width: 120px;">부서</th>
+                        <th style="width: 120px;">권한</th>
+                        <th style="width: 160px;">연락처</th>
+                        <th style="width: 130px;">입사일</th>
+                        <th style="width: 120px;">상태</th>
                     </tr>
-                </c:if>
+                </thead>
 
-            </tbody>
+                <tbody>
+                    <c:forEach var="admin" items="${adminList}">
+                        <tr class="adminList">
+                            <td class="empId">${admin.empId}</td>
+                            <td>${admin.empName}</td>
+                            <td>${admin.deptName}</td>
 
-        </table>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${admin.empAuth == 0}">
+                                        퇴사자
+                                    </c:when>
+                                    <c:when test="${admin.empAuth == 10}">
+                                        작업자
+                                    </c:when>
+                                    <c:when test="${admin.empAuth == 20}">
+                                        관리자
+                                    </c:when>
+                                    <c:when test="${admin.empAuth == 30}">
+                                        최고관리자
+                                    </c:when>
+                                    <c:otherwise>
+                                        권한 미지정
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
 
+                            <td>${admin.empTel}</td>
+                            <td>${admin.empHiredate}</td>
+
+                            <td>
+                                <c:choose>
+                                    <c:when test="${admin.empInOffice == 0}">
+                                        <span class="status status-success">● 재직</span>
+                                    </c:when>
+                                    <c:when test="${admin.empInOffice == 10}">
+                                        <span class="status status-warning">● 휴직</span>
+                                    </c:when>
+                                    <c:when test="${admin.empInOffice == 50}">
+                                        <span class="status status-info">● 퇴사</span>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <span class="status status-info">● 미지정</span>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                        </tr>
+                    </c:forEach>
+
+                    <c:if test="${empty adminList}">
+                        <tr>
+                            <td colspan="7" style="text-align: center;">
+                                조회된 사원이 없습니다.
+                            </td>
+                        </tr>
+                    </c:if>
+                </tbody>
+            </table>
+        </div>
+
+        <jsp:include page="/WEB-INF/views/common/paging.jsp" />
     </div>
-
-    <jsp:include page="/WEB-INF/views/common/paging.jsp" />
-
 </div>
+
+<style>
+.table tbody tr:hover .empId {
+	color: var(--main-green);
+	text-decoration: underline;
+}
+    
+</style>
+
+<script>
+    window.addEventListener("load", () => {
+        init();
+    });
+
+    function init() {
+        bind();
+    }
+
+    function bind() {
+        moveDetail();
+    }
+
+    function moveDetail() {
+        const adminLists = document.querySelectorAll(".adminList");
+
+        for (let i = 0; i < adminLists.length; i++) {
+            adminLists[i].addEventListener("click", () => {
+                const empId = adminLists[i].querySelector(".empId").textContent.trim();
+
+                const url = "${pageContext.request.contextPath}/admin/detail?empId=" + empId;
+
+                window.location.href = url;
+            });
+        }
+    }
+</script>
