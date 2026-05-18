@@ -29,10 +29,21 @@
                 수정
             </a>
 
-            <a class="btn btn-red"
-               href="${pageContext.request.contextPath}/sugg/delete?sugg_no=${dto.sugg_no}">
-                삭제
-            </a>
+           <form action="${pageContext.request.contextPath}/sugg/delete"
+		      method="post"
+		      style="display:inline;">
+
+		    <input type="hidden"
+		           name="sugg_no"
+		           value="${dto.sugg_no}">
+		
+		    <button type="submit"
+		            class="btn btn-red"
+		            onclick="return confirm('삭제하시겠습니까?');">
+		        삭제
+		    </button>
+
+			</form>
         </div>
     </div>
 

@@ -37,8 +37,6 @@ public class SuggListController {
                  10
          );
     	
-    	
-
         List<SuggDTO> list =
                 suggService.selectSuggList(suggDTO,pageInfo);
 

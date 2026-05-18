@@ -6,7 +6,7 @@ import kr.or.chop.P04_sugg.dto.SuggDTO;
 import kr.or.chop.common.pagination.PageInfo;
 
 public interface SuggDAO {
-	 	List<SuggDTO> selectSuggList(SuggDTO suggDTO);
+//	 	List<SuggDTO> selectSuggList(SuggDTO suggDTO);
 
 	    SuggDTO selectSuggDetail(Integer sugg_no);
 

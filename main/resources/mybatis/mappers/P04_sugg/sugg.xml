@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
 	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="mapper.sugg">
+<mapper namespace="mapper.P04_sugg">
 
 <!-- 건의사항 전체 개수 -->
 <select id="selectSuggCount"
@@ -12,6 +12,21 @@
     SELECT COUNT(*)
     FROM suggestion
     WHERE sugg_usage = 'Y'
+    
+    
+    <if test="sugg_answer != null and sugg_answer != ''">
+        AND sugg_answer = #{sugg_answer}
+    </if>
+
+   <if test="keyword != null and keyword != ''">
+	    AND (
+	        UPPER(sugg_title)
+	            LIKE '%' || UPPER(#{keyword}) || '%'
+	        OR
+	        UPPER(sugg_writer)
+	            LIKE '%' || UPPER(#{keyword}) || '%'
+	    )
+	</if>
 
 </select>
 
@@ -39,6 +54,22 @@
                 sugg_usage
             FROM suggestion
             WHERE sugg_usage = 'Y'
+            
+             <if test="search.sugg_answer != null and search.sugg_answer != ''">
+                AND sugg_answer = #{search.sugg_answer}
+            </if>
+
+	         <if test="search.keyword != null and search.keyword != ''">
+			    AND (
+			        UPPER(sugg_title)
+			            LIKE '%' || UPPER(#{search.keyword}) || '%'
+			        OR
+			        UPPER(sugg_writer)
+			            LIKE '%' || UPPER(#{search.keyword}) || '%'
+			    )
+			</if>
+            
+            
             ORDER BY sugg_no asc
         ) S
     )
@@ -98,6 +129,8 @@
     SET
         sugg_title = #{sugg_title},
         sugg_content = #{sugg_content},
+        sugg_pw = #{sugg_pw},
+        sugg_answer = #{sugg_answer},
         sugg_mdate = SYSDATE
     WHERE sugg_no = #{sugg_no}
      AND sugg_usage = 'Y'
@@ -106,7 +139,9 @@
 <update id="deleteSugg" 
 		parameterType="int">
 	UPDATE suggestion
-    SET sugg_usage = 'N'
+    SET 
+    	sugg_usage = 'N',
+    	 sugg_mdate = SYSDATE
     WHERE sugg_no = #{sugg_no}
      AND sugg_usage = 'Y'
 </update>

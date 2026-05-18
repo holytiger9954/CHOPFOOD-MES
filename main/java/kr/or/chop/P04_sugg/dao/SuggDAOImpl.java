@@ -16,12 +16,12 @@ public class SuggDAOImpl implements SuggDAO{
 	@Autowired 
 	SqlSession sqlSession;
 	
-	private final String namespace = "mapper.sugg.";
+	private final String namespace = "mapper.P04_sugg.";
 
-	  @Override
-	    public List<SuggDTO> selectSuggList(SuggDTO suggDTO) {
-	        return sqlSession.selectList(namespace + "selectSuggList", suggDTO);
-	    }
+//	  @Override
+//	    public List<SuggDTO> selectSuggList(SuggDTO suggDTO) {
+//	        return sqlSession.selectList(namespace + "selectSuggList", suggDTO);
+//	    }
 
 	    @Override
 	    public SuggDTO selectSuggDetail(Integer sugg_no) {
