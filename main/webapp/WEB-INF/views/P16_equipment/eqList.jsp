@@ -21,29 +21,29 @@
         </div>
     </div>
 
-    <div style="display:flex; gap:24px; margin:50px 0 35px;">
+    <div style="display:flex; gap:16px; margin:50px 0 35px;">
 
-        <div style="width:180px; height:130px; border:1px solid var(--dark-gray); border-radius:8px; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:15px;">
+        <div style="width:171px; height:130px; border:1px solid var(--dark-gray); border-radius:8px; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:15px;">
             <div style="font-size:18px; font-weight:700;">가용 설비</div>
             <div style="font-size:42px; font-weight:800;">${totalCount}</div>
         </div>
 
-        <div style="width:180px; height:130px; border-radius:8px; background-color:var(--success); color:#fff; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:15px;">
+        <div style="width:171px; height:130px; border-radius:8px; background-color:var(--success); color:#fff; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:15px;">
             <div style="font-size:18px; font-weight:700;">가동 중 설비</div>
             <div style="font-size:42px; font-weight:800;">${runCount}</div>
         </div>
 
-        <div style="width:180px; height:130px; border-radius:8px; background-color:#777; color:#fff; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:15px;">
+        <div style="width:171px; height:130px; border-radius:8px; background-color:#777; color:#fff; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:15px;">
             <div style="font-size:18px; font-weight:700;">정지 설비</div>
             <div style="font-size:42px; font-weight:800;">${stopCount}</div>
         </div>
 
-        <div style="width:180px; height:130px; border-radius:8px; background-color:var(--warning); color:#fff; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:15px;">
+        <div style="width:171px; height:130px; border-radius:8px; background-color:var(--warning); color:#fff; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:15px;">
             <div style="font-size:18px; font-weight:700;">점검 중 설비</div>
             <div style="font-size:42px; font-weight:800;">${checkCount}</div>
         </div>
 
-        <div style="width:180px; height:130px; border-radius:8px; background-color:var(--danger); color:#fff; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:15px;">
+        <div style="width:171px; height:130px; border-radius:8px; background-color:var(--danger); color:#fff; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:15px;">
             <div style="font-size:18px; font-weight:700;">고장 설비</div>
             <div style="font-size:42px; font-weight:800;">${brokenCount}</div>
         </div>

@@ -13,13 +13,15 @@
 		E.EQ_STATUS AS eqStatus,
 		E.EQ_SDATE AS eqSdate,
 		E.EQ_WPID AS eqWpid,
-		S.EQ_STATUS_NAME AS eqStatusName,
+		S.EQ_STATUS_NAME AS
+		eqStatusName,
 
 		300 AS totalTime,
 		290 AS runTime,
 		'91.2%' AS runRate
 
-		FROM EQUIPMENT E
+		FROM
+		EQUIPMENT E
 		LEFT JOIN EQ_STATUS S
 		ON E.EQ_STATUS = S.EQ_STATUS_NO
 
@@ -34,7 +36,8 @@
 
 			<if test="searchKeyword != null and searchKeyword != ''">
 				AND (
-				UPPER(E.EQ_ID) LIKE UPPER('%' || #{searchKeyword} || '%')
+				UPPER(E.EQ_ID) LIKE UPPER('%' || #{searchKeyword} ||
+				'%')
 				OR UPPER(E.EQ_NAME) LIKE UPPER('%' || #{searchKeyword} || '%')
 				)
 			</if>
@@ -46,7 +49,8 @@
 
 	<select id="selectEqTotalCount" resultType="int">
 		SELECT COUNT(*)
-		FROM EQUIPMENT
+		FROM
+		EQUIPMENT
 	</select>
 
 	<select id="selectEqCountByStatus" parameterType="int"
@@ -64,19 +68,23 @@
 		SELECT
 		E.EQ_ID AS eqId,
 		E.EQ_NAME AS eqName,
-		E.EQ_STATUS AS eqStatus,
+		E.EQ_STATUS AS
+		eqStatus,
 		E.EQ_SDATE AS eqSdate,
 		E.EQ_WPID AS eqWpid,
-		S.EQ_STATUS_NAME AS eqStatusName,
+		S.EQ_STATUS_NAME AS
+		eqStatusName,
 
 		300 AS totalTime,
 		290 AS runTime,
 		'91.2%' AS runRate
 
-		FROM EQUIPMENT E
+		FROM
+		EQUIPMENT E
 		LEFT JOIN EQ_STATUS S
 		ON E.EQ_STATUS = S.EQ_STATUS_NO
-		WHERE E.EQ_ID = #{eqId}
+		WHERE
+		E.EQ_ID = #{eqId}
 
 	</select>
 
@@ -87,12 +95,14 @@
 		SELECT
 		ELOG_ID AS elogId,
 		ELOG_EQID AS elogEqid,
-		ELOG_SDATE AS elogSdate,
+		ELOG_SDATE AS
+		elogSdate,
 		ELOG_EDATE AS elogEdate,
 		ELOG_REASON AS elogReason,
 		ELOG_CONTENT AS elogContent,
 		ELOG_RESULT AS elogResult,
-		ELOG_WORKER AS elogWorker,
+		ELOG_WORKER AS
+		elogWorker,
 		ELOG_USAGE AS elogUsage
 		FROM EQ_LOG
 		WHERE ELOG_EQID = #{eqId}
@@ -110,11 +120,42 @@
 		EQ_RUN_EQID AS eqRunEqid,
 		EQ_RUN_STIME AS eqRunStime,
 		EQ_RUN_ETIME AS eqRunEtime,
-		EQ_STOP_REASON AS eqStopReason
-		FROM EQ_RUN
+		EQ_STOP_REASON
+		AS eqStopReason
+		FROM EQ_RUN_LOG
 		WHERE EQ_RUN_EQID = #{eqId}
-		ORDER BY EQ_RUN_STIME DESC
+		ORDER BY
+		EQ_RUN_STIME DESC
 
+	</select>
+
+	<insert id="insertEq" parameterType="eqDTO">
+
+		INSERT INTO EQUIPMENT (
+		EQ_ID,
+		EQ_NAME,
+		EQ_STATUS,
+		EQ_SDATE,
+		EQ_WPID
+		) VALUES (
+		'EQ' || EQ_SEQ.NEXTVAL,
+		#{eqName},
+		20,
+		SYSDATE,
+		#{eqWpid}
+		)
+
+	</insert>
+	
+	<select id="selectWpList"
+    resultType="kr.or.chop.P15_workplace.dto.WPDTO">
+
+	    SELECT
+	        WP_ID AS wpId,
+	        WP_NAME AS wpName
+	    FROM WORKPLACE
+	    ORDER BY WP_ID ASC
+	
 	</select>
 
 </mapper>

@@ -8,6 +8,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import kr.or.chop.P15_workplace.dto.WPDTO;
 import kr.or.chop.P16_equip.dto.EqDTO;
 import kr.or.chop.common.pagination.PageInfo;
 
@@ -38,29 +39,31 @@ public class EqDAOImpl implements EqDAO {
 	public int selectEqCountByStatus(int eqStatus) {
 		return sqlSession.selectOne("mapper.P16_equipment.selectEqCountByStatus", eqStatus);
 	}
-	
+
 	@Override
 	public EqDTO selectEqDetail(String eqId) {
-	    return sqlSession.selectOne(
-	        "mapper.P16_equipment.selectEqDetail",
-	        eqId
-	    );
+		return sqlSession.selectOne("mapper.P16_equipment.selectEqDetail", eqId);
 	}
 
 	@Override
 	public List<EqDTO> selectEqLogList(String eqId) {
-	    return sqlSession.selectList(
-	        "mapper.P16_equipment.selectEqLogList",
-	        eqId
-	    );
+		return sqlSession.selectList("mapper.P16_equipment.selectEqLogList", eqId);
 	}
 
 	@Override
 	public List<EqDTO> selectEqRunList(String eqId) {
-	    return sqlSession.selectList(
-	        "mapper.P16_equipment.selectEqRunList",
-	        eqId
-	    );
+		return sqlSession.selectList("mapper.P16_equipment.selectEqRunList", eqId);
+	}
+
+	@Override
+	public void insertEq(EqDTO eqDTO) {
+
+		sqlSession.insert("mapper.P16_equipment.insertEq", eqDTO);
+	}
+	
+	@Override
+	public List<WPDTO> selectWpList() {
+	    return sqlSession.selectList("mapper.P16_equipment.selectWpList");
 	}
 
 }

@@ -2,6 +2,7 @@ package kr.or.chop.P16_equip.service;
 
 import java.util.List;
 
+import kr.or.chop.P15_workplace.dto.WPDTO;
 import kr.or.chop.P16_equip.dto.EqDTO;
 import kr.or.chop.common.pagination.PageInfo;
 
@@ -18,6 +19,10 @@ public interface EqService {
 	List<EqDTO> selectEqLogList(String eqId);
 
 	List<EqDTO> selectEqRunList(String eqId);
+	
+	void insertEq(EqDTO eqDTO);
+	
+	List<WPDTO> selectWpList();
 	
 }
 

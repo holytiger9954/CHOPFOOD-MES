@@ -25,7 +25,7 @@ public class EqDetailController {
         List<EqDTO> eqLogList = eqService.selectEqLogList(eqId);
         List<EqDTO> eqRunList = eqService.selectEqRunList(eqId);
 
-        model.addAttribute("eq", eq);
+        model.addAttribute("eqp", eq);
         model.addAttribute("eqLogList", eqLogList);
         model.addAttribute("eqRunList", eqRunList);
 
