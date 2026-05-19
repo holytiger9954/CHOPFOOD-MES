@@ -40,7 +40,7 @@ public class WPDetailController {
 		int listCount = wpService.selectGlogCount(wpDTO);
 		PageInfo pageInfo = Pagination.getPageInfo(listCount, currentPage, 5, 10);
 		
-		// glog 가져오기s
+		// glog 가져오기
 		List<GlogDTO> glogList = wpService.selectGlogList(wpDTO);
 		
 		model.addAttribute("wpDTO", wpDTO);
