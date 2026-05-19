@@ -123,29 +123,27 @@
 				<table class="table">
 					<thead>
 						<tr>
-							<th style="width: 150px">점검 이력 번호</th>
-							<th style="width: 180px">점검자</th>
-							<th style="width: 250px">점검 기준</th>
-							<th style="width: 120px">점검 결과</th>
-							<th style="width: 230px">점검 일시</th>
+							<th>LOT 번호</th>
+							<th>품목</th>
+							<th>현재수량</th>
+							<th>입고일</th>
+							<th>유통기한</th>
+							<th>상태</th>
 						</tr>
 					</thead>
 					<tbody>
-						<c:forEach var="glog" items="${glogList}">
-							<tr class="glogList">
-								<td class="glogId">${glog.glogId}</td>
-								<td>${glog.glogWName} (${glog.glogWorker})</td>
-								<td>${glog.ghpName} (${glog.ghpId})</td>
-								<c:if test="${glog.glogResult eq 'pass'}">
-									<td>적합</td>
-								</c:if>
-								<c:if test="${glog.glogResult eq 'fail'}">
-									<td>부적합</td>
-								</c:if>
-								<c:if test="${glog.glogResult != 'fail' && glog.glogResult != 'pass'}">
-									<td>-</td>
-								</c:if>
-								<td>${glog.glogDate}</td>
+						<c:forEach var="lot" items="${lotList}">
+							<tr class="lotList">
+								<td>${lot.lotId}</td>
+								<td>(${lot.lotItem})</td>
+								<td>현재수량</td>
+								<td>${lot.lotEtw}</td>
+								<td>${lot.lotExp}</td>
+								<td>
+									<c:if test="${lot.lotStatus == 10}">
+										<span style="color: var(--success)">• 사용 가능</span>
+									</c:if>
+								</td>
 							</tr>	
 						</c:forEach>
 						
