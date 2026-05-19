@@ -356,9 +356,6 @@ textarea:focus {
     min-width: 54px;
     height: 26px;
     padding: 0 10px;
-	
-    border: 1px solid var(--dark-gray);
-    border-radius: 13px;
 
     font-size: 13px;
     font-weight: 600;
@@ -387,6 +384,9 @@ textarea:focus {
 	padding: 5px 10px;
 	border-radius: 37px;
 	
+/*     border: 1px solid var(--dark-gray); */
+    border-radius: 13px;
+    
 	background-color: var(--light-gray);
 }
 
