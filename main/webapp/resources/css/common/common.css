@@ -276,8 +276,6 @@ textarea:focus {
 
 .card {
     padding: 20px 10px;
-    
-    width: 155px;
 
     border: 1px solid var(--gray);
     border-radius: 8px;
