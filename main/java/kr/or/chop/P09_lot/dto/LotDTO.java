@@ -21,6 +21,7 @@ public class LotDTO {
 	private String lotMemo;
 	private String lotBwhsec;
 	private String lotAwhsec;
+	private String itemType;
 	
 	private String searchType;
 	private String searchKeyword;

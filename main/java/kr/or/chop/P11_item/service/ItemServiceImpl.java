@@ -34,14 +34,48 @@ public class ItemServiceImpl implements ItemService {
 		return itemDAO.insertItem(itemDTO);
 	}
 
-	@Override
-	public List<VendorDTO> selectVendors(VendorDTO vendorDTO) {
-		return itemDAO.selectVendors(vendorDTO);
-	}
 
 	@Override
 	public int selectLotCount(LotDTO lotDTO) {
 		return itemDAO.selectLotCount(lotDTO);
+	}
+
+	@Override
+	public ItemDTO selectItemDetail(ItemDTO itemDTO) {
+
+		return itemDAO.selectItemDetail(itemDTO);
+	}
+
+	@Override
+	public List<VendorDTO> selectVendorListByType(String vendorType) {
+		return itemDAO.selectVendorListByType(vendorType);
+	}
+	
+	@Override
+	public void deleteItem(String itemId) {
+
+		itemDAO.deleteItem(itemId);
+
+	}
+	
+	@Override
+	public void updateItem(ItemDTO itemDTO) {
+		itemDAO.updateItem(itemDTO);
+	}
+	
+	@Override
+	public String selectVendorTypeById(String vendorId) {
+		return itemDAO.selectVendorTypeById(vendorId);
+	}
+	
+	@Override
+	public VendorDTO selectVendorById(String vendorId) {
+		return itemDAO.selectVendorById(vendorId);
+	}
+	
+	@Override
+	public List<LotDTO> selectLotListByItem(String itemId) {
+		return itemDAO.selectLotListByItem(itemId);
 	}
 
 }

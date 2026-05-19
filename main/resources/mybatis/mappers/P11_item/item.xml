@@ -1,43 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper
-	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="mapper.P11_item">
 
 	<select id="selectItemCount"
 		parameterType="kr.or.chop.P11_item.dto.ItemDTO" resultType="int">
 
-		select count(*)
-		from item
-			<where>
-					<if test="searchType != null and searchType != ''">
-						and item_type = #{searchType}
-					</if>
-					<if test="searchKeyword != null and searchKeyword != ''">
-						and (upper(item_name) like upper(('%' || #{searchKeyword} || '%'))) or
-						 (upper(item_id) like upper(('%' || #{searchKeyword} || '%')))
-					</if>
-						and item_usage = 'Y'
-			</where>	
-		
+		SELECT COUNT(*)
+		FROM item
+
+		<where>
+			item_usage = 'Y'
+
+			<if test="searchType != null and searchType != ''">
+				AND item_type = #{searchType}
+			</if>
+
+			<if test="searchKeyword != null and searchKeyword != ''">
+				AND (
+				UPPER(item_name) LIKE UPPER('%' || #{searchKeyword}
+				|| '%')
+				OR UPPER(item_id) LIKE UPPER('%' || #{searchKeyword} || '%')
+				)
+			</if>
+		</where>
+
 	</select>
-	
-	<select id="selectLotCount"
-		parameterType="lotDTO" resultType="int">
-		
-		select count(*)
-		from lot
-			<where>
-				<if test="">
-					
-				</if>
-			</where>
-		
-	</select>
-	
-	<select id="selectitemList"
-		parameterType="map" resultType="kr.or.chop.P11_item.dto.ItemDTO">
-	
+
+
+	<select id="selectitemList" parameterType="map"
+		resultType="kr.or.chop.P11_item.dto.ItemDTO">
+
 		SELECT *
 		FROM
 		(
@@ -52,71 +47,199 @@
 		item_unit AS unit,
 		item_spec AS spec,
 		item_unit_price AS unitPrice,
-		item_storage AS itemStorage,
+		item_storage AS
+		itemStorage,
 		item_vendor AS itemVendor,
 		item_usedate AS useDate,
 		item_safety_stock AS safetyStock,
 		item_usage AS itemUsage
 		FROM item
-			<where>
-					<if test="searchType != null and searchType != ''">
-						and item_type = #{searchType}
-					</if>
-					<if test="searchKeyword != null and searchKeyword != ''">
-						and (upper(item_name) like upper(('%' || #{searchKeyword} || '%'))) or
-						 (upper(item_id) like upper(('%' || #{searchKeyword} || '%'))) 
-					</if>
-						and item_usage = 'Y'
-			</where>
+
+		<where>
+			item_usage = 'Y'
+
+			<if test="searchType != null and searchType != ''">
+				AND item_type = #{searchType}
+			</if>
+
+			<if test="searchKeyword != null and searchKeyword != ''">
+				AND (
+				UPPER(item_name) LIKE UPPER('%' || #{searchKeyword}
+				|| '%')
+				OR UPPER(item_id) LIKE UPPER('%' || #{searchKeyword} || '%')
+				)
+			</if>
+		</where>
+
 		ORDER BY item_id DESC
 		) I
 		)
 		WHERE RN BETWEEN #{page.startRow}
-		AND #{page.endRow}
-		
+		AND
+		#{page.endRow}
+
 	</select>
-	
-	<select id="selectVendors" resultType="vendorDTO">
-		select vendor_id as vendorId, vendor_name as vendorName from vendor
-		where vendor_usage = 'Y'
-	</select>
-	
+
+
 	<insert id="insertItem"
-		parameterType="itemDTO">
-	
-		insert into item (
-			item_id,
-			item_name,
-			item_type,
-			item_unit,
-			item_spec,
-			item_unit_price,
-			item_storage,
-			item_vendor,
-			item_usedate,
-			item_safety_stock,
-			item_usage
+		parameterType="kr.or.chop.P11_item.dto.ItemDTO">
+
+		INSERT INTO item (
+		item_id,
+		item_name,
+		item_type,
+		item_unit,
+		item_spec,
+		item_unit_price,
+		item_storage,
+		item_vendor,
+		item_usedate,
+		item_safety_stock,
+		item_usage
 		)
-		values
-		(
-			<if test="itemType == 10">
-				'RAW' || raw_seq.nextval
-			</if>
-			<if test="itemType == 20">
-				'SEMI' || semi_seq.nextval
-			</if>
-			<if test="itemType == 30">
-				'FIN' || fin_seq.nextval
-			</if>,
-			#{itemName},
-			#{itemType},
-			#{unit},
-			#{spec},
-			#{unitPrice},
-			#{itemStorage},
-			#{itemVendor},
-			#{useDate},
-			#{safetyStock},
-			'Y'
-		</insert>
-	</mapper>
+		VALUES (
+		<choose>
+			<when test="itemType == 10 or itemType == '10'">
+				'RAW' || raw_seq.NEXTVAL
+			</when>
+
+			<when test="itemType == 20 or itemType == '20'">
+				'SEMI' || semi_seq.NEXTVAL
+			</when>
+
+			<when test="itemType == 30 or itemType == '30'">
+				'FIN' || fin_seq.NEXTVAL
+			</when>
+
+		</choose>
+		,
+		#{itemName},
+		#{itemType},
+		#{unit},
+		#{spec},
+		#{unitPrice},
+		#{itemStorage},
+		#{itemVendor},
+		#{useDate},
+		#{safetyStock},
+		'Y'
+		)
+
+	</insert>
+
+	<select id="selectItemDetail"
+		parameterType="kr.or.chop.P11_item.dto.ItemDTO"
+		resultType="kr.or.chop.P11_item.dto.ItemDTO">
+
+		SELECT
+		I.item_id AS itemId,
+		I.item_name AS itemName,
+		I.item_type AS itemType,
+		I.item_unit AS unit,
+		I.item_spec AS spec,
+		I.item_unit_price AS unitPrice,
+		I.item_storage AS itemStorage,
+		I.item_vendor AS itemVendor,
+		V.vendor_name AS vendorName,
+		I.item_usedate AS useDate,
+		I.item_safety_stock AS safetyStock,
+		I.item_usage AS itemUsage
+		FROM item I
+		LEFT JOIN vendor V
+		ON I.item_vendor
+		= V.vendor_id
+		WHERE I.item_id = #{itemId}
+		AND I.item_usage = 'Y'
+
+	</select>
+
+	<select id="selectVendorListByType" parameterType="string"
+		resultType="vendorDTO">
+
+		SELECT
+		VENDOR_ID AS vendorId,
+		VENDOR_NAME AS vendorName,
+		VENDOR_TYPE AS vendorType
+		FROM VENDOR
+		WHERE VENDOR_USAGE = 'Y'
+		AND
+		VENDOR_TYPE = #{vendorType}
+		ORDER BY VENDOR_NAME ASC
+
+	</select>
+
+	<update id="deleteItem" parameterType="string">
+
+		update item
+		set item_usage = 'N'
+		where item_id = #{itemId}
+
+	</update>
+	
+	<select id="selectVendorTypeById"
+	parameterType="string"
+	resultType="string">
+
+		SELECT vendor_type
+		FROM vendor
+		WHERE vendor_id = #{vendorId}
+	
+	</select>
+	
+	<update id="updateItem"
+	parameterType="itemDTO">
+
+		UPDATE item
+		SET
+			item_name = #{itemName},
+			item_type = #{itemType},
+			item_unit = #{unit},
+			item_spec = #{spec},
+			item_unit_price = #{unitPrice},
+			item_storage = #{itemStorage},
+			item_vendor = #{itemVendor},
+			item_usedate = #{useDate},
+			item_safety_stock = #{safetyStock}
+		WHERE item_id = #{itemId}
+	
+	</update>
+	
+	<select id="selectVendorById"
+		parameterType="string"
+		resultType="kr.or.chop.P17_vendor.dto.VendorDTO">
+
+		SELECT
+			vendor_id AS vendorId,
+			vendor_name AS vendorName,
+			vendor_type AS vendorType
+		FROM vendor
+		WHERE vendor_id = #{vendorId}
+	
+	</select>
+	
+	<select id="selectLotListByItem"
+	parameterType="string"
+	resultType="kr.or.chop.P09_lot.dto.LotDTO">
+
+		SELECT
+			LOT_ID AS lotId,
+			LOT_ITEM AS lotItem,
+			LOT_VENDOR AS lotVendor,
+			LOT_WORK AS lotWork,
+			LOT_IQTY AS lotIqty,
+			LOT_FQTY AS lotFqty,
+			LOT_MFD AS lotMfd,
+			LOT_ETW AS lotEtw,
+			LOT_EXP AS lotExp,
+			LOT_QC AS lotQc,
+			LOT_STATUS AS lotStatus,
+			LOT_MEMO AS lotMemo,
+			LOT_BWHSEC AS lotBwhsec,
+			LOT_AWHSEC AS lotAwhsec
+		FROM LOT
+		WHERE LOT_ITEM = #{itemId}
+		ORDER BY LOT_ID DESC
+	
+	</select>
+
+</mapper>

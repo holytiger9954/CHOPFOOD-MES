@@ -52,27 +52,67 @@
 
 	</select>
 
-	<select id="selectLotDetail" parameterType="string"
-		resultType="lotDTO">
+	<select id="selectLotDetail"
+	parameterType="kr.or.chop.P09_lot.dto.LotDTO"
+	resultType="kr.or.chop.P09_lot.dto.LotDTO">
 
 		SELECT
-		lot_id AS lotId,
-		lot_item AS lotItem,
-		lot_vendor AS lotVendor,
-		lot_work AS lotWork,
-		lot_iqty AS lotIqty,
-		lot_fqty AS lotFqty,
-		lot_mfd AS lotMfd,
-		lot_etw AS lotEtw,
-		lot_exp AS lotExp,
-		lot_qc AS lotQc,
-		lot_status AS lotStatus,
-		lot_memo AS lotMemo,
-		lot_bwhsec AS lotBwhsec,
-		lot_awhsec AS lotAwhsec
-		FROM lot
-		WHERE lot_id = #{lotId}
+			L.LOT_ID AS lotId,
+			L.LOT_ITEM AS lotItem,
+			L.LOT_VENDOR AS lotVendor,
+			L.LOT_WORK AS lotWork,
+			L.LOT_IQTY AS lotIqty,
+			L.LOT_FQTY AS lotFqty,
+			L.LOT_MFD AS lotMfd,
+			L.LOT_ETW AS lotEtw,
+			L.LOT_EXP AS lotExp,
+			L.LOT_QC AS lotQc,
+			L.LOT_STATUS AS lotStatus,
+			L.LOT_MEMO AS lotMemo,
+			L.LOT_BWHSEC AS lotBwhsec,
+			L.LOT_AWHSEC AS lotAwhsec,
+			I.ITEM_TYPE AS itemType
+		FROM LOT L
+		LEFT JOIN ITEM I
+			ON L.LOT_ITEM = I.ITEM_ID
+		WHERE L.LOT_ID = #{lotId}
+	
+	</select>
+	
+	<select id="selectLotUseList"
+	parameterType="string"
+	resultType="kr.or.chop.P09_lot.dto.UseDTO">
 
+		SELECT
+			USE_ID AS useId,
+			USE_WORK AS useWork,
+			USE_LOT AS useLot,
+			USE_QTY AS useQty,
+			USE_DATE AS useDate,
+			USE_TYPE AS useType,
+			USE_MEMO AS useMemo
+		FROM LOT_USE
+		WHERE USE_LOT = #{lotId}
+		ORDER BY USE_DATE DESC
+	
+	</select>
+	
+	<select id="selectLotIoList"
+	parameterType="string"
+	resultType="kr.or.chop.P09_lot.dto.UseDTO">
+
+		SELECT
+			IO_ID AS ioId,
+			IO_TYPE AS ioType,
+			IO_REASON AS ioReason,
+			IO_LOT AS ioLot,
+			IO_QTY AS ioQty,
+			IO_DATE AS ioDate,
+			IO_MSG AS ioMsg
+		FROM IO
+		WHERE IO_LOT = #{lotId}
+		ORDER BY IO_DATE DESC
+	
 	</select>
 
 </mapper>

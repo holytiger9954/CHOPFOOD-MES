@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <div class="content">
 
@@ -9,7 +10,7 @@
 			<h2 class="page-title">품목 상세</h2>
 			<p class="page-subtitle">품목의 상세 정보와 LOT 현황을 알 수 있습니다.</p>
 		</div>
-		
+
 		<div>
 			<p class="page-route">홈 > 품목 관리 > 상세</p>
 		</div>
@@ -17,40 +18,33 @@
 	<div class="btn-row">
 		<div class="left">
 			<a class="btn btn-white"
-				href="${pageContext.request.contextPath}/item/list">
-				목록으로
-			</a>
+				href="${pageContext.request.contextPath}/item/list"> 목록으로 </a>
 		</div>
 		<div class="right">
 			<a class="btn btn-main"
-				href="${pageContext.request.contextPath}/item/edit?=itemId=${itemDTO.itemId}">
-				수정
-			</a>
-			<a class="btn btn-red"
-				href="${pageContext.request.contextPath}/item/delete">
-				삭제	
-			</a>
+				href="${pageContext.request.contextPath}/item/edit?itemId=${itemDTO.itemId}">
+				수정 </a> 
+				<a class="btn btn-red"
+				href="${pageContext.request.contextPath}/item/delete?itemId=${itemDTO.itemId}"
+				onclick="return confirm('품목을 삭제하시겠습니까?');"> 삭제 </a>
 		</div>
 	</div>
-	
+
 	<div class="content-content">
 		<div class="content-content-content">
-			<div class="content-content-content-title">
-				품목 상세정보
-			</div>
+			<div class="content-content-content-title">품목 상세정보</div>
 			<div class="info-table-wrap">
 				<table class="info-table">
 					<tbody>
 						<tr>
 							<th>품목코드</th>
-							<td>${itemDTO.itemId}</td>
-							<th>퓸목명</th>
-							<td>${itemDTO.itemName}</td>
+							<td colspan="2">${itemDTO.itemId}</td>
+							<th>품목명</th>
+							<td colspan="2">${itemDTO.itemName}</td>
 						</tr>
 						<tr>
 							<th>품목타입</th>
-							<td>
-								<c:choose>
+							<td colspan="2"><c:choose>
 									<c:when test="${itemDTO.itemType == '10'}">
 										원자재
 									</c:when>
@@ -63,33 +57,31 @@
 									<c:otherwise>
 										-
 									</c:otherwise>
-								</c:choose>
-							</td>
+								</c:choose></td>
 							<th>안전재고</th>
-							<td>${itemDTO.safetyStock}</td>
+							<td colspan="2">${itemDTO.safetyStock}</td>
 						</tr>
 						<tr>
 							<th>공급처/납품처</th>
-							<td>${itemDTO.vendorName}(${itemDTO.itemVendor})</td>
+							<td colspan="2">${itemDTO.vendorName}(${itemDTO.itemVendor})</td>
 							<th>보관방법</th>
-							<td>${itemDTO.itemStorage}</td>
+							<td colspan="2">${itemDTO.itemStorage}</td>
 						</tr>
 						<tr>
 							<th>단위</th>
 							<td>${itemDTO.unit}</td>
 							<th>규격</th>
 							<td>${itemDTO.spec}</td>
-							<th>단가</th>
-							<td>${itemDTO.unitPrice}</td>
+							<th>단가(원)</th>
+							<td><fmt:formatNumber value="${itemDTO.unitPrice}"
+									pattern="#,###" /></td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
 		</div>
 		<div class="content-content-content">
-			<div class="content-content-content-title">
-				LOT 현황
-			</div>
+			<div class="content-content-content-title">LOT 현황</div>
 			<table class="table">
 				<tr>
 					<th>LOT 번호</th>
@@ -99,7 +91,7 @@
 					<th>LOT 상태</th>
 				</tr>
 				<c:forEach var="lot" items="${lotList}">
-					<tr>
+					<tr onclick="location.href='${pageContext.request.contextPath}/lot/detail?lotId=${lot.lotId}'">
 						<td>${lot.lotId}</td>
 						<td>${lot.lotEtw}</td>
 						<td>${lot.lotExp}</td>
@@ -109,7 +101,35 @@
 						<c:if test="${not empty lot.lotAwhsec}">
 							<td>${lot.lotAwhsec}</td>
 						</c:if>
-						<td>${lot.lotStatus}</td>
+						<td>
+							<c:choose>
+
+									<c:when test="${lot.lotStatus == '10'}">
+										<span class="status status-success"> • 사용가능 </span>
+									</c:when>
+
+									<c:when test="${lot.lotStatus == '20'}">
+										<span class="status status-safe"> • 사용중 </span>
+									</c:when>
+
+									<c:when test="${lot.lotStatus == '30'}">
+										<span class="status status-info"> • 사용완료 </span>
+									</c:when>
+									
+									<c:when test="${lot.lotStatus == '40'}">
+										<span class="status status-warning"> • 보류 </span>
+									</c:when>
+
+									<c:when test="${lot.lotStatus == '0'}">
+										<span class="status status-danger"> • 폐기 </span>
+									</c:when>
+
+									<c:otherwise>
+										<span class="status"> ${lot.lotStatus} </span>
+									</c:otherwise>
+
+							</c:choose>
+						</td>
 					</tr>
 				</c:forEach>
 			</table>

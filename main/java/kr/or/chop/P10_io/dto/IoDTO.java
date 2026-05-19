@@ -1,6 +1,6 @@
 package kr.or.chop.P10_io.dto;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 import lombok.Data;
 
@@ -11,11 +11,18 @@ public class IoDTO {
     private String ioType;
     private String ioReason;
     private String ioVendor;
+    private String vendorName;
     private String ioLot;
     private int ioQty;
-    private Date ioDate;
+    private Timestamp ioDate;
+    private String ioDay;
+    private String ioTime;
+    
     private String ioWorker;
     private String ioMsg;
+    private String itemId;
+    private String itemName;
+    private String workerName;
 
     private String startDate;
     private String endDate;

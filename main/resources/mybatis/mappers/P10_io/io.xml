@@ -41,29 +41,54 @@
 				UPPER(io_vendor) LIKE UPPER('%' || #{searchKeyword} || '%')
 				)
 			</if>
+			and io_usage = 'Y'
 		</where>
 		ORDER BY io_date DESC
 
 	</select>
 
-	<select id="selectIoDetail" parameterType="string"
-		resultType="ioDTO">
+	<select id="selectIoDetail"
+    parameterType="string"
+    resultType="kr.or.chop.P10_io.dto.IoDTO">
 
-		SELECT
-		io_id AS ioId,
-		io_type AS ioType,
-		io_reason AS
-		ioReason,
-		io_vendor AS ioVendor,
-		io_lot AS ioLot,
-		io_qty AS ioQty,
-		io_date AS ioDate,
-		io_worker AS ioWorker,
-		io_msg AS ioMsg
-		FROM io
-		WHERE
-		io_id = #{ioId}
-
+	    SELECT
+	        IO.IO_ID AS ioId,
+	        IO.IO_TYPE AS ioType,
+	        IO.IO_REASON AS ioReason,
+	
+	        IO.IO_VENDOR AS ioVendor,
+	        V.VENDOR_NAME AS vendorName,
+	
+	        IO.IO_LOT AS ioLot,
+	
+	        IO.IO_QTY AS ioQty,
+	        IO.IO_DATE AS ioDate,
+	
+	        IO.IO_WORKER AS ioWorker,
+	        E.EMP_NAME AS workerName,
+	
+	        IO.IO_MSG AS ioMsg,
+	
+	        I.ITEM_ID AS itemId,
+	        I.ITEM_NAME AS itemName
+	
+	    FROM IO IO
+	
+	    LEFT JOIN VENDOR V
+	        ON IO.IO_VENDOR = V.VENDOR_ID
+	
+	    LEFT JOIN LOT L
+	        ON IO.IO_LOT = L.LOT_ID
+	
+	    LEFT JOIN ITEM I
+	        ON L.LOT_ITEM = I.ITEM_ID
+	
+	    LEFT JOIN EMP E
+	        ON IO.IO_WORKER = E.EMP_ID
+	
+	    WHERE IO.IO_ID = #{ioId}
+	    and io_usage = 'Y'
+	
 	</select>
 
 	<select id="selectInId" resultType="string">
@@ -148,14 +173,73 @@
 		#{ioVendor},
 		#{ioLot},
 		#{ioQty},
-		SYSDATE,
+		SYSDATE + (9/24),
 		#{ioWorker},
 		#{ioMsg}
 		)
 
 	</insert>
 
+	<update id="deleteIo"
+	parameterType="string">
 
+		UPDATE io
+		SET
+			io_usage = 'N'
+		WHERE io_id = #{ioId}
+	
+	</update>
 
+	<update id="updateIo"
+	parameterType="kr.or.chop.P10_io.dto.IoDTO">
+
+		UPDATE io
+		SET
+			io_type = #{ioType},
+			io_reason = #{ioReason},
+			io_vendor = #{ioVendor},
+			io_lot = #{ioLot},
+			io_qty = #{ioQty},
+			io_date = #{ioDate},
+			io_worker = #{ioWorker},
+			io_msg = #{ioMsg}
+		WHERE io_id = #{ioId}
+	
+	</update>
+
+	<select id="selectVendorTypeById"
+	parameterType="string"
+	resultType="string">
+
+		SELECT vendor_type
+		FROM vendor
+		WHERE vendor_id = #{vendorId}
+	
+	</select>
+
+	<select id="selectWorkerList"
+	parameterType="string"
+	resultType="kr.or.chop.P10_io.dto.EmpDTO">
+
+		SELECT
+			emp_id AS empId,
+			emp_name AS empName
+		FROM emp
+	
+		<where>
+			emp_usage = 'Y'
+	
+			<if test="_parameter != null and _parameter != ''">
+				AND (
+					UPPER(emp_id) LIKE UPPER('%' || #{_parameter} || '%')
+					OR
+					UPPER(emp_name) LIKE UPPER('%' || #{_parameter} || '%')
+				)
+			</if>
+		</where>
+	
+		ORDER BY emp_id
+	
+	</select>
 
 </mapper>

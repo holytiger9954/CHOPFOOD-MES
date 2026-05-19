@@ -16,6 +16,7 @@ public class ItemDTO {
 	private int useDate;
 	private int safetyStock;
 	private String itemUsage;
+	private String vendorName;
 	
 	private String searchType;
 	private String searchKeyword;

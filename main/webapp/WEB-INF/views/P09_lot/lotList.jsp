@@ -33,19 +33,19 @@
 			<label>상태</label> <select name="lotStatus">
 				<option value="">전체</option>
 
-				<option value="사용가능" ${search.lotStatus == '사용가능' ? 'selected' : ''}>
-					사용가능</option>
+				<option value="10" ${search.lotStatus == '10' ? 'selected' : ''}>
+					사용 가능</option>
 
-				<option value="사용중" ${search.lotStatus == '사용중' ? 'selected' : ''}>
+				<option value="20" ${search.lotStatus == '20' ? 'selected' : ''}>
 					사용중</option>
 
-				<option value="사용완료" ${search.lotStatus == '사용완료' ? 'selected' : ''}>
+				<option value="30" ${search.lotStatus == '30' ? 'selected' : ''}>
 					사용완료</option>
 
-				<option value="보류" ${search.lotStatus == '보류' ? 'selected' : ''}>
+				<option value="40" ${search.lotStatus == '40' ? 'selected' : ''}>
 					보류</option>
 
-				<option value="폐기" ${search.lotStatus == '폐기' ? 'selected' : ''}>
+				<option value="0" ${search.lotStatus == '0' ? 'selected' : ''}>
 					폐기</option>
 			</select>
 		</div>
@@ -76,7 +76,7 @@
 
 				<tbody>
 					<c:forEach var="lot" items="${lotList}">
-						<tr>
+						<tr onclick="location.href='${pageContext.request.contextPath}/lot/detail?lotId=${lot.lotId}'">
 							<td>${lot.lotId}</td>
 							<td>${lot.lotItem}</td>
 							<td>${lot.lotAwhsec}</td>
@@ -85,20 +85,24 @@
 							<td>
 								<c:choose>
 
-									<c:when test="${lot.lotStatus == '사용가능'}">
-										<span class="status status-success"> 사용가능 </span>
+									<c:when test="${lot.lotStatus == '10'}">
+										<span class="status status-success"> • 사용가능 </span>
 									</c:when>
 
-									<c:when test="${lot.lotStatus == '사용중'}">
-										<span class="status status-info"> 사용중 </span>
+									<c:when test="${lot.lotStatus == '20'}">
+										<span class="status status-safe"> • 사용중 </span>
 									</c:when>
 
-									<c:when test="${lot.lotStatus == '사용완료'}">
-										<span class="status status-warning"> 사용완료 </span>
+									<c:when test="${lot.lotStatus == '30'}">
+										<span class="status status-info"> • 사용완료 </span>
+									</c:when>
+									
+									<c:when test="${lot.lotStatus == '40'}">
+										<span class="status status-warning"> • 보류 </span>
 									</c:when>
 
-									<c:when test="${lot.lotStatus == '폐기'}">
-										<span class="status status-danger"> 폐기 </span>
+									<c:when test="${lot.lotStatus == '0'}">
+										<span class="status status-danger"> • 폐기 </span>
 									</c:when>
 
 									<c:otherwise>

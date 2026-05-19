@@ -10,6 +10,7 @@ import kr.or.chop.P10_io.dao.IoDAO;
 import kr.or.chop.P10_io.dto.IoDTO;
 import kr.or.chop.P11_item.dto.ItemDTO;
 import kr.or.chop.P17_vendor.dto.VendorDTO;
+import kr.or.chop.P21_manage.dto.AdminDTO;
 import kr.or.chop.common.pagination.PageInfo;
 
 @Service
@@ -48,6 +49,27 @@ public class IoServiceImpl implements IoService {
 		return ioDAO.selectLotListByItem(itemId);
 	}
     
+	@Override
+	public void deleteIo(String ioId) {
+
+		ioDAO.deleteIo(ioId);
+
+	}
+	
+	@Override
+	public void updateIo(IoDTO ioDTO) {
+		ioDAO.updateIo(ioDTO);
+	}
+	
+	@Override
+	public String selectVendorTypeById(String vendorId) {
+		return ioDAO.selectVendorTypeById(vendorId);
+	}
     
+	@Override
+	public List<AdminDTO> selectWorkerList(String keyword) {
+
+		return ioDAO.selectWorkerList(keyword);
+	}
     
 }

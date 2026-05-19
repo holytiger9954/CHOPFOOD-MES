@@ -13,6 +13,7 @@ import kr.or.chop.P10_io.dto.IoDTO;
 import kr.or.chop.P10_io.service.IoService;
 import kr.or.chop.P11_item.dto.ItemDTO;
 import kr.or.chop.P17_vendor.dto.VendorDTO;
+import kr.or.chop.P21_manage.dto.AdminDTO;
 
 @Controller
 @RequestMapping("/io")
@@ -51,6 +52,13 @@ public class IoAddController {
 	public List<LotDTO> lotList(String itemId) {
 
 	    return ioService.selectLotListByItem(itemId);
+	}
+	
+	@ResponseBody
+	@RequestMapping("/workerList")
+	public List<AdminDTO> workerList(String keyword) {
+
+		return ioService.selectWorkerList(keyword);
 	}
 
 }

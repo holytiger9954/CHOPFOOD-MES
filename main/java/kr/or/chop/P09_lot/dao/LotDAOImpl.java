@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import kr.or.chop.P09_lot.dto.LotDTO;
+import kr.or.chop.P09_lot.dto.UseDTO;
 import kr.or.chop.common.pagination.PageInfo;
 
 @Repository
@@ -35,6 +36,24 @@ public class LotDAOImpl implements LotDAO {
 	@Override
 	public LotDTO selectLotDetail(String lotId) {
 	    return sqlSession.selectOne("mapper.P09_lot.selectLotDetail", lotId);
+	}
+	
+	@Override
+	public List<UseDTO> selectLotUseList(String lotId) {
+
+		return sqlSession.selectList(
+			"mapper.P09_lot.selectLotUseList",
+			lotId
+		);
+	}
+
+	@Override
+	public List<UseDTO> selectLotIoList(String lotId) {
+
+		return sqlSession.selectList(
+			"mapper.P09_lot.selectLotIoList",
+			lotId
+		);
 	}
 
 }

@@ -39,7 +39,8 @@
             </a>
 
             <a class="btn btn-red"
-                href="${pageContext.request.contextPath}/io/delete?ioId=${io.ioId}">
+                href="${pageContext.request.contextPath}/io/delete?ioId=${io.ioId}"
+                onclick="return confirm('입출고 이력을 삭제하시겠습니까?');">
                 삭제
             </a>
 
@@ -66,14 +67,14 @@
 
                     <c:choose>
 
-                        <c:when test="${io.ioType == '입고'}">
-                            <span class="status status-safe">
+                        <c:when test="${io.ioType == 'IN'}">
+                            <span class="status-back status-back-safe">
                                 입고
                             </span>
                         </c:when>
 
-                        <c:when test="${io.ioType == '출고'}">
-                            <span class="status status-warning">
+                        <c:when test="${io.ioType == 'OUT'}">
+                            <span class="status-back status-back-warning">
                                 출고
                             </span>
                         </c:when>
@@ -99,15 +100,39 @@
                         <td>${io.ioId}</td>
 
                         <th>담당자</th>
-                        <td>${io.ioWorker}</td>
+                        <td>
+						    <c:choose>
+						
+						        <c:when test="${empty io.workerName}">
+						            ${io.ioWorker}
+						        </c:when>
+						
+						        <c:otherwise>
+						            ${io.workerName} (${io.ioWorker})
+						        </c:otherwise>
+						    </c:choose>
+						</td>
                     </tr>
-
                     <tr>
                         <th>입출고 LOT</th>
                         <td>${io.ioLot}</td>
 
                         <th>입출고 품목</th>
-                        <td>${io.ioVendor}</td>
+                        <td>
+
+						    <c:choose>
+						
+						        <c:when test="${empty io.itemName}">
+						            -
+						        </c:when>
+						
+						        <c:otherwise>
+						            ${io.itemName} (${io.itemId})
+						        </c:otherwise>
+						
+						    </c:choose>
+						
+						</td>
                     </tr>
 
                     <tr>
@@ -115,7 +140,16 @@
                         <td>${io.ioReason}</td>
 
                         <th>거래처</th>
-                        <td>-</td>
+						<td>
+						    <c:choose>
+						        <c:when test="${empty io.vendorName}">
+						            ${io.ioVendor}
+						        </c:when>
+						        <c:otherwise>
+						            ${io.vendorName} (${io.ioVendor})
+						        </c:otherwise>
+						    </c:choose>
+						</td>
                     </tr>
 
                     <tr>

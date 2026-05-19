@@ -1,169 +1,256 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <div class="content">
 
-    <div class="header-row">
+	<div class="header-row">
 
-        <div>
-            <h2 class="page-title">LOT 상세</h2>
-            <p class="page-subtitle">
-                LOT 정보와 사용 이력을 확인할 수 있습니다.
-            </p>
-        </div>
+		<div>
+			<h2 class="page-title">LOT 상세</h2>
+			<p class="page-subtitle">LOT 정보와 사용 이력을 확인할 수 있습니다.</p>
+		</div>
 
-        <div>
-            <p class="page-route">
-                홈 > LOT관리 > 상세
-            </p>
-        </div>
+		<div>
+			<p class="page-route">홈 > LOT관리 > 상세</p>
+		</div>
 
-    </div>
+	</div>
 
-    <div class="btn-row">
+	<div class="btn-row">
 
-        <div>
-            <a class="btn btn-white"
-                href="${pageContext.request.contextPath}/lot/list">
-                목록
-            </a>
-        </div>
+		<div>
+			<a class="btn btn-white"
+				href="${pageContext.request.contextPath}/lot/list"> 목록 </a>
+		</div>
 
-    </div>
+	</div>
 
-    <div class="content-content">
+	<div class="content-content">
 
-        <!-- LOT 상세 -->
-        <div class="content-content-content">
+		<!-- LOT 상세 -->
+		<div class="content-content-content">
 
-            <div style="
-                display:flex;
-                justify-content:space-between;
-                align-items:center;
-                margin-bottom:14px;
-            ">
+			<div
+				style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
 
-                <div class="content-content-content-title">
-                    LOT 상세정보
-                </div>
+				<div class="content-content-content-title"
+					style="display: flex; gap: 30px;">
+					LOT 상세정보 <span class="btn btn-main" style="cursor: cursor;">
+						QR 코드 </span>
+				</div>
 
-                <div>
+				<div>
+					<c:choose>
+						<c:when test="${lot.lotStatus == '10'}">
+							<span class="status-back status-back-success"> • 사용가능 </span>
+						</c:when>
 
-                    <span class="btn btn-main"
-                        style="cursor:default;">
-                        QR 코드
-                    </span>
+						<c:when test="${lot.lotStatus == '20'}">
+							<span class="status-back status-back-safe"> • 사용중 </span>
+						</c:when>
 
-                </div>
+						<c:when test="${lot.lotStatus == '30'}">
+							<span class="status-back status-back-info"> • 사용완료 </span>
+						</c:when>
 
-            </div>
+						<c:when test="${lot.lotStatus == '40'}">
+							<span class="status-back status-back-warning"> • 보류 </span>
+						</c:when>
 
-            <div class="info-table-wrap">
+						<c:when test="${lot.lotStatus == '0'}">
+							<span class="status-back status-back-danger"> • 폐기 </span>
+						</c:when>
 
-                <table class="info-table">
+						<c:otherwise>
+							<span class="status-back"> ${lot.lotStatus} </span>
+						</c:otherwise>
 
-                    <tr>
-                        <th>LOT 번호</th>
-                        <td>${lot.lotId}</td>
+					</c:choose>
 
-                        <th>품목</th>
-                        <td>${lot.lotItem}</td>
-                    </tr>
+				</div>
 
-                    <tr>
-                        <th>입고 번호</th>
-                        <td>${lot.lotVendor}</td>
+			</div>
 
-                        <th>제조일시</th>
-                        <td>${lot.lotMfd}</td>
-                    </tr>
+			<div class="info-table-wrap">
 
-                    <tr>
-                        <th>입고일시</th>
-                        <td>${lot.lotEtw}</td>
+				<table class="info-table">
 
-                        <th>입고수량</th>
-                        <td>${lot.lotIqty} EA</td>
-                    </tr>
+					<tr>
+						<th>LOT 번호</th>
+						<td>${lot.lotId}</td>
 
-                    <tr>
-                        <th>출고일시</th>
-                        <td>-</td>
+						<th>품목</th>
+						<td>${lot.lotItem}</td>
+					</tr>
 
-                        <th>현재 수량</th>
-                        <td>${lot.lotFqty} EA</td>
-                    </tr>
+					<tr>
+						<th>입고 번호</th>
+						<td>${lot.lotVendor}</td>
 
-                    <tr>
-                        <th>유통기한</th>
-                        <td>${lot.lotExp}</td>
+						<th>제조일시</th>
+						<td>${lot.lotMfd}</td>
+					</tr>
 
-                        <th>위치</th>
-                        <td>${lot.lotAwhsec}</td>
-                    </tr>
+					<tr>
+						<th>입고일시</th>
+						<td>${lot.lotEtw}</td>
 
-                </table>
+						<th>입고수량</th>
+						<td>${lot.lotIqty}EA</td>
+					</tr>
 
-            </div>
+					<tr>
+						<th>출고일시</th>
+						<td>-</td>
 
-        </div>
+						<th>현재 수량</th>
+						<td>${lot.lotFqty}EA</td>
+					</tr>
 
-        <!-- 사용이력 -->
-        <div class="content-content-content">
+					<tr>
+						<th>유통기한</th>
+						<td>${lot.lotExp}</td>
 
-            <div class="content-content-content-title">
-                LOT 사용 기록
-            </div>
+						<th>위치</th>
+						<td>${lot.lotAwhsec}</td>
+					</tr>
 
-            <div class="table-wrap">
+				</table>
 
-                <table class="table">
+			</div>
 
-                    <thead>
-                        <tr>
-                            <th style="width: 140px;">작업 코드</th>
-                            <th style="width: 140px;">사용수량</th>
-                            <th style="width: 160px;">사용일</th>
-                            <th style="width: 140px;">사용유형</th>
-                            <th>비고</th>
-                        </tr>
-                    </thead>
+		</div>
 
-                    <tbody>
+		<!-- 사용이력 -->
+		<div class="content-content-content">
 
-                        <tr>
-                            <td>WO1001</td>
-                            <td>100 EA</td>
-                            <td>2026-05-12</td>
-                            <td>테스트</td>
-                            <td>비고내용</td>
-                        </tr>
+			<div class="content-content-content-title">
+				<c:choose>
+					<c:when test="${historyType == 'IO'}">
+						LOT 입출고 기록
+					</c:when>
+					<c:otherwise>
+						LOT 사용 기록
+					</c:otherwise>
+				</c:choose>
+			</div>
 
-                        <tr>
-                            <td>WO1002</td>
-                            <td>300 EA</td>
-                            <td>2026-05-13</td>
-                            <td>생산투입</td>
-                            <td>-</td>
-                        </tr>
+			<div class="table-wrap">
 
-                        <tr>
-                            <td>WO1003</td>
-                            <td>50 EA</td>
-                            <td>2026-05-14</td>
-                            <td>출고</td>
-                            <td>-</td>
-                        </tr>
+				<table class="table">
 
-                    </tbody>
+					<thead>
+						<tr>
+							<th style="width: 140px;">작업 코드</th>
+							<th style="width: 140px;">사용수량</th>
+							<th style="width: 160px;">사용일</th>
+							<th style="width: 140px;">사용유형</th>
+							<th>비고</th>
+						</tr>
+					</thead>
 
-                </table>
+					<tbody>
 
-            </div>
+						<c:choose>
 
-        </div>
+							<c:when test="${historyType == 'IO'}">
 
-    </div>
+								<c:forEach var="io" items="${ioList}">
+
+									<tr>
+										<td>${io.ioId}</td>
+
+										<td>${io.ioQty}EA</td>
+
+										<td><fmt:formatDate value="${io.ioDate}"
+												pattern="yyyy-MM-dd" /></td>
+
+										<td>
+											<c:choose>
+												<c:when test="${io.ioType == 'IN'}">
+													입고
+												</c:when>
+												<c:when test="${io.ioType == 'OUT'}">
+													출고
+												</c:when>
+												<c:otherwise>
+													${io.ioType}
+												</c:otherwise>
+											</c:choose>
+										</td>
+
+										<td>
+											<c:choose>
+												<c:when test="${empty io.ioMsg}">
+													-
+												</c:when>
+												<c:otherwise>
+													${io.ioMsg}
+												</c:otherwise>
+											</c:choose>
+										</td>
+									</tr>
+
+								</c:forEach>
+
+								<c:if test="${empty ioList}">
+									<tr>
+										<td colspan="5" style="text-align: center;">조회된 입출고 이력이
+											없습니다.</td>
+									</tr>
+								</c:if>
+
+							</c:when>
+
+							<c:otherwise>
+
+								<c:forEach var="use" items="${useList}">
+
+									<tr>
+										<td>${use.useWork}</td>
+
+										<td>${use.useQty}EA</td>
+
+										<td><fmt:formatDate value="${use.useDate}"
+												pattern="yyyy-MM-dd" /></td>
+
+										<td>${use.useType}</td>
+
+										<td>
+											<c:choose>
+												<c:when test="${empty use.useMemo}">
+													-
+												</c:when>
+												<c:otherwise>
+													${use.useMemo}
+												</c:otherwise>
+											</c:choose>
+										</td>
+									</tr>
+
+								</c:forEach>
+
+								<c:if test="${empty useList}">
+									<tr>
+										<td colspan="5" style="text-align: center;">조회된 LOT 사용
+											이력이 없습니다.</td>
+									</tr>
+								</c:if>
+
+							</c:otherwise>
+
+						</c:choose>
+
+					</tbody>
+
+				</table>
+
+			</div>
+
+		</div>
+
+	</div>
 
 </div>

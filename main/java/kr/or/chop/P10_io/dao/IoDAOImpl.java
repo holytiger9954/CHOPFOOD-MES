@@ -12,84 +12,90 @@ import kr.or.chop.P09_lot.dto.LotDTO;
 import kr.or.chop.P10_io.dto.IoDTO;
 import kr.or.chop.P11_item.dto.ItemDTO;
 import kr.or.chop.P17_vendor.dto.VendorDTO;
+import kr.or.chop.P21_manage.dto.AdminDTO;
 import kr.or.chop.common.pagination.PageInfo;
 
 @Repository
 public class IoDAOImpl implements IoDAO {
 
 	@Autowired
-    SqlSession sqlSession;
+	SqlSession sqlSession;
 
 	@Override
-    public List<IoDTO> selectIoList(IoDTO ioDTO, PageInfo pageInfo) {
+	public List<IoDTO> selectIoList(IoDTO ioDTO, PageInfo pageInfo) {
 
-        Map<String, Object> paramMap = new HashMap<String, Object>();
+		Map<String, Object> paramMap = new HashMap<String, Object>();
 
-        paramMap.put("ioType", ioDTO.getIoType());
-        paramMap.put("startDate", ioDTO.getStartDate());
-        paramMap.put("endDate", ioDTO.getEndDate());
-        paramMap.put("searchKeyword", ioDTO.getSearchKeyword());
-        paramMap.put("page", pageInfo);
+		paramMap.put("ioType", ioDTO.getIoType());
+		paramMap.put("startDate", ioDTO.getStartDate());
+		paramMap.put("endDate", ioDTO.getEndDate());
+		paramMap.put("searchKeyword", ioDTO.getSearchKeyword());
+		paramMap.put("page", pageInfo);
 
-        return sqlSession.selectList("mapper.P10_io.selectIoList", paramMap);
-    }
-	
+		return sqlSession.selectList("mapper.P10_io.selectIoList", paramMap);
+	}
+
 	@Override
 	public IoDTO selectIoDetail(String ioId) {
-	    return sqlSession.selectOne(
-	        "mapper.P10_io.selectIoDetail",
-	        ioId
-	    );
+		return sqlSession.selectOne("mapper.P10_io.selectIoDetail", ioId);
 	}
-	
+
 	@Override
 	public void insertIo(IoDTO ioDTO) {
 
-	    String ioId = null;
+		String ioId = null;
 
-	    if ("입고".equals(ioDTO.getIoType())) {
+		if ("입고".equals(ioDTO.getIoType())) {
 
-	        ioId = sqlSession.selectOne(
-	            "mapper.P10_io.selectInId"
-	        );
+			ioId = sqlSession.selectOne("mapper.P10_io.selectInId");
 
-	    } else if ("출고".equals(ioDTO.getIoType())) {
+		} else if ("출고".equals(ioDTO.getIoType())) {
 
-	        ioId = sqlSession.selectOne(
-	            "mapper.P10_io.selectOutId"
-	        );
-	    }
+			ioId = sqlSession.selectOne("mapper.P10_io.selectOutId");
+		}
 
-	    ioDTO.setIoId(ioId);
+		ioDTO.setIoId(ioId);
 
-	    sqlSession.insert(
-	        "mapper.P10_io.insertIo",
-	        ioDTO
-	    );
+		sqlSession.insert("mapper.P10_io.insertIo", ioDTO);
 	}
-	
+
 	@Override
 	public List<ItemDTO> selectItemListByType(String itemType) {
-	    return sqlSession.selectList(
-	        "mapper.P10_io.selectItemListByType",
-	        itemType
-	    );
+		return sqlSession.selectList("mapper.P10_io.selectItemListByType", itemType);
 	}
-	
+
 	@Override
 	public List<VendorDTO> selectVendorList() {
 
-	    return sqlSession.selectList(
-	        "mapper.P10_io.selectVendorList"
-	    );
+		return sqlSession.selectList("mapper.P10_io.selectVendorList");
 	}
-	
+
 	@Override
 	public List<LotDTO> selectLotListByItem(String itemId) {
-	    return sqlSession.selectList(
-	        "mapper.P10_io.selectLotListByItem",
-	        itemId
-	    );
+		return sqlSession.selectList("mapper.P10_io.selectLotListByItem", itemId);
 	}
-	
+
+	@Override
+	public void deleteIo(String ioId) {
+
+		sqlSession.update("mapper.P10_io.deleteIo", ioId);
+
+	}
+
+	@Override
+	public void updateIo(IoDTO ioDTO) {
+		sqlSession.update("mapper.P10_io.updateIo", ioDTO);
+	}
+
+	@Override
+	public String selectVendorTypeById(String vendorId) {
+		return sqlSession.selectOne("mapper.P10_io.selectVendorTypeById", vendorId);
+	}
+
+	@Override
+	public List<AdminDTO> selectWorkerList(String keyword) {
+
+		return sqlSession.selectList("mapper.P10_io.selectWorkerList", keyword);
+	}
+
 }

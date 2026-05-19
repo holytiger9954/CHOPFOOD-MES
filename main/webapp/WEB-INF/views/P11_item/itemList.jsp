@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <div class="content">
 	
@@ -59,6 +60,9 @@
 			<button type="submit" class="btn btn-main">
 				검색
 			</button>
+			<a class="btn btn-white" href="${pageContext.request.contextPath}/item/list">
+				초기화
+			</a>
 		</div>
 	</form>
 	
@@ -73,12 +77,12 @@
 						<th style="width: 130px;">안전재고</th>
 						<th style="width: 100px;">단위</th>
 						<th style="width: 100px;">규격</th>
-						<th style="width: 130px;">단가</th>
+						<th style="width: 130px;">단가(원)</th>
 					</tr>
 				</thead>
 				<tbody>
 					<c:forEach var="item" items="${itemList}">
-						<tr>
+						<tr onclick="location.href='${pageContext.request.contextPath}/item/detail?itemId=${item.itemId}'">
 							<td>${item.itemId}</td>
 							<td>${item.itemName}</td>
 							<td>
@@ -100,7 +104,8 @@
 							<td>${item.safetyStock}</td>
 							<td>${item.unit}</td>
 							<td>${item.spec}</td>
-							<td>${item.unitPrice}</td>
+							<td><fmt:formatNumber
+									value="${item.unitPrice}" pattern="#,###" /></td>
 						</tr>	
 					</c:forEach>
 					

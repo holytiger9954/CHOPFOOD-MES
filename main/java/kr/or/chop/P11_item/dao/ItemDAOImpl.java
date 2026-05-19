@@ -18,16 +18,16 @@ public class ItemDAOImpl implements ItemDAO {
 
 	@Autowired
 	SqlSession sqlSession;
-	
+
 	@Override
 	public List<ItemDTO> selectAllItem(ItemDTO itemDTO, PageInfo pageInfo) {
-		
+
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		paramMap.put("searchType", itemDTO.getSearchType());
 		paramMap.put("searchKeyword", itemDTO.getSearchKeyword());
 		paramMap.put("page", pageInfo);
 		System.out.println(paramMap);
-		
+
 		return sqlSession.selectList("mapper.P11_item.selectitemList", paramMap);
 	}
 
@@ -39,19 +39,52 @@ public class ItemDAOImpl implements ItemDAO {
 
 	@Override
 	public int insertItem(ItemDTO itemDTO) {
-		return sqlSession.insert("mapper.P11_item.insertItem",itemDTO);
-	}
-
-	@Override
-	public List<VendorDTO> selectVendors(VendorDTO vendorDTO) {
-		System.out.println("DAO"+sqlSession.selectList("mapper.P11_item.selectVendors"));
-	
-		return sqlSession.selectList("mapper.P11_item.selectVendors",vendorDTO);
+		return sqlSession.insert("mapper.P11_item.insertItem", itemDTO);
 	}
 
 	@Override
 	public int selectLotCount(LotDTO lotDTO) {
 		return sqlSession.selectOne("mapper.P11_item.selectLotCount", lotDTO);
+	}
+
+	@Override
+	public ItemDTO selectItemDetail(ItemDTO itemDTO) {
+
+		return sqlSession.selectOne("mapper.P11_item.selectItemDetail", itemDTO);
+	}
+
+	@Override
+	public List<VendorDTO> selectVendorListByType(String vendorType) {
+
+		return sqlSession.selectList("mapper.P11_item.selectVendorListByType", vendorType);
+	}
+
+	@Override
+	public void deleteItem(String itemId) {
+
+		sqlSession.update("mapper.P11_item.deleteItem", itemId);
+
+	}
+
+	@Override
+	public void updateItem(ItemDTO itemDTO) {
+
+		sqlSession.update("mapper.P11_item.updateItem", itemDTO);
+	}
+
+	@Override
+	public String selectVendorTypeById(String vendorId) {
+		return sqlSession.selectOne("mapper.P11_item.selectVendorTypeById", vendorId);
+	}
+
+	@Override
+	public VendorDTO selectVendorById(String vendorId) {
+		return sqlSession.selectOne("mapper.P11_item.selectVendorById", vendorId);
+	}
+
+	@Override
+	public List<LotDTO> selectLotListByItem(String itemId) {
+		return sqlSession.selectList("mapper.P11_item.selectLotListByItem", itemId);
 	}
 
 }

@@ -13,7 +13,12 @@ public interface ItemDAO {
 	int selectItemCount(ItemDTO itemDTO);
 	int selectLotCount(LotDTO lotDTO);
 	int insertItem(ItemDTO itemDTO);
-	List<VendorDTO> selectVendors(VendorDTO vendorDTO);
-	
+	ItemDTO selectItemDetail(ItemDTO itemDTO);
+	List<VendorDTO> selectVendorListByType(String vendorType);
+	void deleteItem(String itemId);
+	void updateItem(ItemDTO itemDTO);
+	String selectVendorTypeById(String vendorId);
+	VendorDTO selectVendorById(String vendorId);
+	List<LotDTO> selectLotListByItem(String itemId);
 	
 }

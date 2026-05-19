@@ -24,4 +24,12 @@ public class IoDetailController {
 
         return "P10_io/ioDetail.tiles";
     }
+    
+    @RequestMapping("/delete")
+    public String deleteIo(String ioId) {
+
+    	ioService.deleteIo(ioId);
+
+    	return "redirect:/io/list";
+    }
 }
