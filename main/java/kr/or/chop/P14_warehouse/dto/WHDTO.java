@@ -12,6 +12,8 @@ public class WHDTO {
 	private int whTypeNo;
 	private String whTypeName;
 	
+	private String whLoc;
+	
 	private int whQty;
 	private int whPrevQty = 0;
 	

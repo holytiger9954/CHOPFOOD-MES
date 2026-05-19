@@ -8,28 +8,28 @@
 	
 	<div class="header-row">
 		<div>
-			<h2 class="page-title">창고 상세</h2>
-			<p class="page-subtitle">선택한 창고의 상세 정보를 확인하세요.</p>
+			<h2 class="page-title">창고 내 섹션 상세</h2>
+			<p class="page-subtitle">선택한 섹션의 상세 정보를 확인하세요.</p>
 		</div>
 		
 		<div>
-			<p class="page-route">홈 > 창고 관리 > 상세</p>
+			<p class="page-route">홈 > 창고 관리 > 섹션 > 상세</p>
 		</div>
 	</div>
 	<div class="btn-row">
 		<div class="left">
 			<a class="btn btn-white"
-				href="${pageContext.request.contextPath}/warehouse/list">
-				목록으로
+				href="${pageContext.request.contextPath}/warehouse/detail?whId=${secDTO.whSecWhid}">
+				창고 상세
 			</a>
 		</div>
 		<div class="right">
 			<a class="btn btn-main"
-				href="${pageContext.request.contextPath}/warehouse/edit?whId=${whDTO.whId}">
+				href="${pageContext.request.contextPath}/warehouse/sec/edit?secId=${secDTO.whSecId}">
 				수정
 			</a>
 			<a class="btn btn-red"
-				href="${pageContext.request.contextPath}/warehouse/delete?whId=${whDTO.whId}">
+				href="${pageContext.request.contextPath}/warehouse/sec/delete?whId=${secDTO.whSecId}">
 				삭제
 			</a>
 		</div>
@@ -38,39 +38,24 @@
 	<div class="content-content">
 		<div class="content-content-content">
 			<div class="content-content-content-title">
-				창고 상세정보
+				섹션 상세정보
 			</div>
 			<div class="info-table-wrap">
 				<table class="info-table">
 					<tbody>
 						<tr>
-							<th>창고</th>
-							<td>${whDTO.whName} (${whDTO.whId})</td>
-							<th>유형</th>
-							<td>${whDTO.whTypeName}</td>
-						</tr>
-						<tr>
-							<th>창고 위치</th>
-							<td>${whDTO.whLoc}</td>
-							<th>설명</th>
-							<td>${whDTO.whTypeContent}</td>
+							<th>섹션번호</th>
+							<td>${secDTO.whSecId}</td>
+							<th>소속 창고</th>
+							<td>${secDTO.whSecWhid}</td>
 						</tr>
 						<tr>
 							<th>수용량</th>
-							<td>${whDTO.whQty} LOT</td>
-							<th>적재율</th>
-							<td>${whDTO.whUsageRate} %</td>
-						</tr>
-						<tr>
+							<td>${secDTO.whSecQty}</td>
 							<th>적재량</th>
-							<td>${whDTO.whPrevQty} LOT</td>
-							<th>마지막 점검일</th>
-							<c:if test="${not empty whDTO.lastGlogDate}">
-								<td>${whDTO.lastGlogDate}</td>
-							</c:if>
-							<c:if test="${empty whDTO.lastGlogDate}">
-								<td>-</td>
-							</c:if>
+							<td>${secDTO.whSecPrevQty}</td>
+							<th>적재율</th>
+							<td>${secDTO.whSecUsageRate}</td>
 						</tr>
 					</tbody>
 				</table>
@@ -78,100 +63,57 @@
 		</div>
 		
 		<div class="content-content-content">
-			<div class="btn-row">
-				<div class="left content-content-content-title">
-					창고 내 섹션 정보
-				</div>
-				<div class="right">
-					<a class="btn btn-main"
-						href="${pageContext.request.contextPath}/warehouse/section/add?whId=${whDTO.whId}">
-						섹션 추가
-					</a>
-				</div>
+			<div class="left content-content-content-title">
+				섹션 위치 및 현황
 			</div>
 			
 			<div style="display: flex; align-items: flex-start; gap: 15px;">
 				<div class="card" style="width: 600px; padding: 20px;">
-					<div class="content-content-content-title">창고 영역도</div>
-					<c:if test="${empty whDTO.whImg or whDTO.whImg == ''}">
-						<div style="font-size: 14px; color: var(--dark-gray);">창고 영역도가 없습니다</div>
+					<div class="content-content-content-title">섹션 이미지</div>
+					<c:if test="${empty secDTO.whSecImg or secDTO.whSecImg == ''}">
+						<div style="font-size: 14px; color: var(--dark-gray);">섹션 이미지가 없습니다</div>
 					</c:if>
-					<c:if test="${not empty whDTO.whImg and whDTO.whImg != ''}">
+					<c:if test="${not empty secDTO.whSecImg and secDTO.whSecImg != ''}">
 			        	<div class="info-image">
-							<img src="${whDTO.whImg}"
-								title="${whDTO.whId}_img" alt="${whDTO.whId}_img"
+							<img src="${secDTO.whSecImg}"
+								title="${secDTO.whSecId}_img" alt="${secDTO.whSecId}_img"
 								 style="width: 100%;">
 						</div>
 					</c:if>
 				</div>
 				
-				<div class="table-wrap">
-					<table class="table">
-						<thead>
-							<tr>
-								<th>섹션번호</th>
-								<th>수용량(LOT)</th>
-								<th>적재량(LOT)</th>
-								<th>적재율(%)</th>
-							</tr>
-						</thead>
-						<tbody>
-							<c:forEach var="sec" items="${secList}">
-								<tr class="secList">
-									<td class="secId">${sec.whSecId}</td>
-									<td>${sec.whSecQty}</td>
-									<td>${sec.whSecPrevQty}</td>
-									<td id="qtyPer"
-										style="font-weight: 700; 
-										<c:if test="${sec.whSecUsageRate <= 0}">
-											color: var(--info);
-										</c:if>
-										<c:if test="${sec.whSecUsageRate > 0 && sec.whSecUsageRate < 80}">
-											color: var(--safe);
-										</c:if>
-										<c:if test="${sec.whSecUsageRate >= 80 && sec.whSecUsageRate < 100}">
-											color: var(--warning);
-										</c:if>
-										<c:if test="${sec.whSecUsageRate > 100}">
-											color: var(--danger);
-										</c:if>
-									">
-									    <c:choose>
-										    <c:when test="${wh.whQty != 0}">
-										        <fmt:formatNumber value="${sec.whSecUsageRate}" pattern="0.00" />
-										    </c:when>
-										    <c:otherwise>
-										        0.00
-										    </c:otherwise>
-										</c:choose>
-									</td>
-								</tr>	
-							</c:forEach>
-							
-							<c:if test="${empty secList}">
-								<tr>
-									<td colspan="4" style="text-align: center;">
-										조회된 내역이 없습니다.
-									</td>
-								</tr>
-							</c:if>	
-						</tbody>
-					</table>
+				<div class="card" style="padding: 20px;">
+					<div class="content-content-content-title">섹션 적재 현황</div>
+					<div style="display: flex;">
+						<div id="qtyGraph">
+						</div>
+						<div id="qtyInfo search-item">
+							<div>
+								<label>수용량</label>
+								<div>${secDTO.whSecQty}</div>
+							</div>
+							<div>
+								<label>현재 적재량</label>
+								<div>${secDTO.whSecPrevQty}</div>
+							</div>
+							<div>
+								<label>여유 수용량</label>
+								<div>${secDTO.whSecQty - secDTO.whSecPrevQty}</div>
+							</div>
+							<div>
+								<label>현재 적재율</label>
+								<div>${secDTO.whSecUsageRate}</div>
+							</div>
+						</div>
+					</div>
 				</div>
+				
 			</div>
 		</div>
 		
 		<div class="content-content-content">
-			<div class="btn-row">
-				<div class="left content-content-content-title">
-					창고 위생점검 이력
-				</div>
-				<div class="right">
-					<a class="btn btn-main"
-						href="${pageContext.request.contextPath}/warehouse/glog/add?whId=${whDTO.whId}">
-						점검 이력 추가
-					</a>
-				</div>
+			<div class="left content-content-content-title">
+				LOT 현황
 			</div>
 			
 			<div class="table-wrap">
@@ -252,7 +194,7 @@
 				const secId = secLists[i].querySelector(".secId").textContent.trim();
 				console.log ("secId : " + secId);
 				
-				const url = `${pageContext.request.contextPath}/warehouse/section/detail?secId=` + secId;
+				const url = `${pageContext.request.contextPath}/warehouse/sec/detail?secId=` + secId;
 				console.log ("url : " + url);
 				
 				window.location.href = url;

@@ -70,7 +70,7 @@
 			#{glogAdate},
 			null ,
 			#{glogMemo},
-			sysdate,
+			sysdate + (9/24),
 			#{glogWhId},
 			#{glogWpId}
 		)

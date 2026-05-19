@@ -176,7 +176,7 @@
 								        <fmt:formatNumber value="${wh.whUsageRate}" pattern="0.00" />
 								    </c:when>
 								    <c:otherwise>
-								        0.00%
+								        0.00
 								    </c:otherwise>
 								</c:choose>
 							</td>

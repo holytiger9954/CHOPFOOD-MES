@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import kr.or.chop.P14_warehouse.dto.WHDTO;
+import kr.or.chop.P14_warehouse.dto.SecDTO;
+import kr.or.chop.P15_workplace.dto.WPDTO;
 import kr.or.chop.P19_ghp.dto.GlogDTO;
 import kr.or.chop.common.pagination.PageInfo;
 
@@ -66,7 +68,42 @@ public class WHDAOImpl implements WHDAO {
 
 		return sqlSession.selectList("mapper.P14_warehouse.selectGlogList", whDTO);
 	}
+
+	@Override
+	public List<SecDTO> selectSecList(WHDTO whDTO) {
+		System.out.println("/warehouse/detail dao.selectSecList");
+
+		return sqlSession.selectList("mapper.P14_warehouse.selectSecList", whDTO);
+	}
+
+	@Override
+	public int insertWH(WHDTO whDTO) {
+		System.out.println("/warehouse/add dao.insertWH");
+		
+		return sqlSession.insert("mapper.P14_warehouse.insertWH", whDTO);
+	}
+
+	@Override
+	public int updateWhImg(WHDTO whDTO) {
+		System.out.println("/warehouse/add dao.updateWhImg");
+		
+	    return sqlSession.update("mapper.P14_warehouse.updateWhImg", whDTO);
+	}
 	
+
+	@Override
+	public int updateWh(WHDTO whDTO) {
+		System.out.println("/warehouse/edit dao.updateWh");
+
+		return sqlSession.update("mapper.P14_warehouse.updateWh", whDTO);
+	}
+
+	@Override
+	public int deleteWh(WHDTO whDTO) {
+		System.out.println("/warehouse/delete dao.deleteWh");
+
+		return sqlSession.update("mapper.P14_warehouse.deleteWh", whDTO);
+	}
 
 
 }

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import kr.or.chop.P14_warehouse.dto.WHDTO;
+import kr.or.chop.P14_warehouse.dto.SecDTO;
 import kr.or.chop.P14_warehouse.service.WHService;
 import kr.or.chop.P15_workplace.dto.WPDTO;
 import kr.or.chop.P19_ghp.dto.GlogDTO;
@@ -43,11 +44,30 @@ public class WHDetailController {
 		// glog 가져오기
 		List<GlogDTO> glogList = whService.selectGlogList(whDTO);
 		
+		// sec 가져오기
+		List<SecDTO> secList = whService.selectSecList(whDTO);
+		
 		model.addAttribute("whDTO", whDTO);
 		model.addAttribute("page", pageInfo);
 		model.addAttribute("glogList", glogList);
+		model.addAttribute("secList", secList);
 		
 		return "P14_warehouse/whDetail.tiles";
+	}
+	
+
+	@RequestMapping("/delete")
+	public String delete(
+			WHDTO whDTO,
+			@RequestParam(value="whId") String whId
+			) {
+		System.out.println("/warehouse/delete controller.delete");
+		
+		whDTO.setWhId(whId);
+		
+		whService.deleteWh(whDTO);
+		
+		return "redirect:/warehouse/list";
 	}
 
 }

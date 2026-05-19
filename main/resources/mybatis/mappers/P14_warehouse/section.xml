@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.P14_warehouse.section">
+	
+<!-- 	<select id="selectWhSecDTO" parameterType="secDTO" resultType="secDTO"> -->
+<!-- 		SELECT  -->
+<!-- 			ws.WH_SEC_ID -->
+<!-- 		FROM WH_SEC ws -->
+<!-- 		WHERE upper(ws.WH_SEC_ID) = upper(#{whSecId}) -->
+<!-- 	</select> -->
+
+</mapper>
