@@ -213,6 +213,13 @@
 	
 	.card {
 		cursor: pointer;
+    	width: 155px;
+	    	   
+	    display: flex;
+	    flex-direction: column;
+	    justify-content: center;
+	    align-items: center;
+	    gap: 10px;
 	}
 	
 	.card.info:hover, .card.info.active {
