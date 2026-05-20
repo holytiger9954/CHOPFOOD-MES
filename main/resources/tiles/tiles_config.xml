@@ -19,6 +19,15 @@
     	<put-attribute name="content" value="/WEB-INF/views/{1}/{2}.jsp" />
     	<put-attribute name="title" value="{1}-{2}" />
 	</definition>
+	
+	<definition name="emptyLayout" template="/WEB-INF/views/P00_layout/emptyLayout.jsp">
+	    <put-attribute name="title" value="chopchop" />
+	</definition>
+	
+	<definition name="*/*.empty" extends="emptyLayout">
+	    <put-attribute name="content" value="/WEB-INF/views/{1}/{2}.jsp" />
+	    <put-attribute name="title" value="{1}-{2}" />
+	</definition>
 
 </tiles-definitions>
 
