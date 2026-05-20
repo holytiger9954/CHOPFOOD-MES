@@ -90,20 +90,32 @@
 						<td>${lot.lotVendor}</td>
 
 						<th>제조일시</th>
-						<td>${lot.lotMfd}</td>
+						<td>
+						<fmt:formatDate value="${lot.lotMfd}"
+							pattern="yyyy-MM-dd HH:mm"/>
+						</td>
 					</tr>
 
 					<tr>
 						<th>입고일시</th>
-						<td>${lot.lotEtw}</td>
+						<td>
+						<fmt:formatDate value="${lot.lotEtw}"
+							pattern="yyyy-MM-dd HH:mm"/>
+						</td>
 
 						<th>입고수량</th>
-						<td>${lot.lotIqty}EA</td>
+						<td>${lot.lotQty}EA</td>
 					</tr>
 
 					<tr>
 						<th>출고일시</th>
-						<td>-</td>
+						<td>
+							<c:if test="${empty lot.lotExp}">-</c:if>
+							<c:if test="${not empty lot.lotExp}">
+								<fmt:formatDate value="${lot.lotExp}"
+									pattern="yyyy-MM-dd HH:mm"/>
+							</c:if>						
+						</td>
 
 						<th>현재 수량</th>
 						<td>${lot.lotFqty}EA</td>
@@ -160,7 +172,7 @@
 								<c:forEach var="io" items="${ioList}">
 
 									<tr onclick="location.href='${pageContext.request.contextPath}/io/detail?ioId=${io.ioId}'">
-										<td>${io.ioId}</td>
+										<td class="ioId">${io.ioId}</td>
 
 										<td>${io.ioQty}EA</td>
 
@@ -254,3 +266,9 @@
 	</div>
 
 </div>
+<style>
+	.table tbody tr:hover .ioId {
+	    color: var(--main-green);
+	    text-decoration: underline;
+	}
+</style>

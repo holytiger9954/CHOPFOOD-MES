@@ -77,7 +77,7 @@
 				<tbody>
 					<c:forEach var="lot" items="${lotList}">
 						<tr onclick="location.href='${pageContext.request.contextPath}/lot/detail?lotId=${lot.lotId}'">
-							<td>${lot.lotId}</td>
+							<td class="lotId">${lot.lotId}</td>
 							<td>${lot.lotItem}</td>
 							<td>${lot.lotAwhsec}</td>
 							<td>${lot.lotFqty}EA</td>
@@ -127,3 +127,9 @@
 
 	</div>
 </div>
+<style>
+	.table tbody tr:hover .lotId {
+	    color: var(--main-green);
+	    text-decoration: underline;
+	}
+</style>

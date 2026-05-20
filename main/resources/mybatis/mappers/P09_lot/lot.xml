@@ -20,8 +20,8 @@
 		as lotItem,
 		lot_vendor as lotVendor,
 		lot_work as lotWork,
-		lot_iqty as
-		lotIqty,
+		lot_qty as
+		lotQty,
 		lot_fqty as lotFqty,
 		lot_mfd as lotMfd,
 		lot_etw as lotEtw,
@@ -31,7 +31,8 @@
 		lot_memo as
 		lotMemo,
 		lot_bwhsec as lotBwhsec,
-		lot_awhsec as lotAwhsec
+		lot_awhsec as lotAwhsec,
+		lot_cqty as lotCqty
 		from lot
 		<where>
 			<if test="lotStatus != null and lotStatus != ''">
@@ -61,7 +62,7 @@
 			L.LOT_ITEM AS lotItem,
 			L.LOT_VENDOR AS lotVendor,
 			L.LOT_WORK AS lotWork,
-			L.LOT_IQTY AS lotIqty,
+			L.LOT_QTY AS lotQty,
 			L.LOT_FQTY AS lotFqty,
 			L.LOT_MFD AS lotMfd,
 			L.LOT_ETW AS lotEtw,
@@ -71,6 +72,7 @@
 			L.LOT_MEMO AS lotMemo,
 			L.LOT_BWHSEC AS lotBwhsec,
 			L.LOT_AWHSEC AS lotAwhsec,
+			L.lot_cqty as lotCqty,
 			I.ITEM_TYPE AS itemType
 		FROM LOT L
 		LEFT JOIN ITEM I

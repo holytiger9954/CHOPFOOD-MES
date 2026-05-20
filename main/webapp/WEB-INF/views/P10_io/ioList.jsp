@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <div class="content">
 
@@ -95,7 +96,7 @@
                 <c:forEach var="io" items="${ioList}">
                     <tr onclick="location.href='${pageContext.request.contextPath}/io/detail?ioId=${io.ioId}'">
 
-                        <td>${io.ioId}</td>
+                        <td class="ioId">${io.ioId}</td>
 
                         <td>
                             <c:choose>
@@ -113,13 +114,16 @@
                             </c:choose>
                         </td>
 
-                        <td>${io.ioVendor}</td>
+                        <td>${io.itemName} (${io.itemId})</td>
 
                         <td>${io.ioQty} EA</td>
 
                         <td>${io.ioLot}</td>
 
-                        <td>${io.ioDate}</td>
+                        <td>
+                        	<fmt:formatDate value="${io.ioDate}"
+								pattern="yyyy-MM-dd HH:mm"/>
+						</td>
 
                     </tr>
                 </c:forEach>
@@ -141,3 +145,9 @@
     <jsp:include page="/WEB-INF/views/common/paging.jsp" />
 
 </div>
+<style>
+	.table tbody tr:hover .ioId {
+	    color: var(--main-green);
+	    text-decoration: underline;
+	}
+</style>

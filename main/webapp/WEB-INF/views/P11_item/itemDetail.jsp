@@ -92,7 +92,7 @@
 				</tr>
 				<c:forEach var="lot" items="${lotList}">
 					<tr onclick="location.href='${pageContext.request.contextPath}/lot/detail?lotId=${lot.lotId}'">
-						<td>${lot.lotId}</td>
+						<td class="lotId">${lot.lotId}</td>
 						<td>${lot.lotEtw}</td>
 						<td>${lot.lotExp}</td>
 						<c:if test="${empty lot.lotAwhsec}">
@@ -137,3 +137,9 @@
 	</div>
 
 </div>
+<style>
+	.table tbody tr:hover .lotId {
+	    color: var(--main-green);
+	    text-decoration: underline;
+	}
+</style>

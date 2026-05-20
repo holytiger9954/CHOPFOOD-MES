@@ -8,43 +8,55 @@
 	<select id="selectIoList" parameterType="map" resultType="ioDTO">
 
 		SELECT
-		io_id AS ioId,
-		io_type AS ioType,
-		io_reason AS ioReason,
-		io_vendor
-		AS ioVendor,
-		io_lot AS ioLot,
-		io_qty AS ioQty,
-		io_date AS ioDate,
-		io_worker AS ioWorker,
-		io_msg AS ioMsg
-		FROM io
+			IO.io_id AS ioId,
+			IO.io_type AS ioType,
+			IO.io_reason AS ioReason,
+			IO.io_vendor AS ioVendor,
+			IO.io_lot AS ioLot,
+			IO.io_qty AS ioQty,
+			IO.io_date AS ioDate,
+			IO.io_worker AS ioWorker,
+			IO.io_msg AS ioMsg,
+	
+			I.item_id AS itemId,
+			I.item_name AS itemName
+	
+		FROM io IO
+	
+		LEFT JOIN lot L
+			ON IO.io_lot = L.lot_id
+	
+		LEFT JOIN item I
+			ON L.lot_item = I.item_id
+	
 		<where>
 			<if test="ioType != null and ioType != ''">
-				AND io_type = #{ioType}
+				AND IO.io_type = #{ioType}
 			</if>
-
+	
 			<if test="startDate != null and startDate != ''">
-				AND io_date &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+				AND IO.io_date &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
 			</if>
-
+	
 			<if test="endDate != null and endDate != ''">
-				AND io_date &lt; TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+				AND IO.io_date &lt; TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
 			</if>
-
+	
 			<if test="searchKeyword != null and searchKeyword != ''">
 				AND (
-				UPPER(io_id) LIKE UPPER('%' || #{searchKeyword} ||
-				'%')
-				OR UPPER(io_lot) LIKE UPPER('%' || #{searchKeyword} || '%')
-				OR
-				UPPER(io_vendor) LIKE UPPER('%' || #{searchKeyword} || '%')
+					UPPER(IO.io_id) LIKE UPPER('%' || #{searchKeyword} || '%')
+					OR UPPER(IO.io_lot) LIKE UPPER('%' || #{searchKeyword} || '%')
+					OR UPPER(IO.io_vendor) LIKE UPPER('%' || #{searchKeyword} || '%')
+					OR UPPER(I.item_id) LIKE UPPER('%' || #{searchKeyword} || '%')
+					OR UPPER(I.item_name) LIKE UPPER('%' || #{searchKeyword} || '%')
 				)
 			</if>
-			and io_usage = 'Y'
+	
+			AND IO.io_usage = 'Y'
 		</where>
-		ORDER BY io_date DESC
-
+	
+		ORDER BY IO.io_date DESC
+	
 	</select>
 
 	<select id="selectIoDetail"

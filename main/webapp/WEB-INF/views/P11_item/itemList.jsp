@@ -83,7 +83,7 @@
 				<tbody>
 					<c:forEach var="item" items="${itemList}">
 						<tr onclick="location.href='${pageContext.request.contextPath}/item/detail?itemId=${item.itemId}'">
-							<td>${item.itemId}</td>
+							<td class="itemId">${item.itemId}</td>
 							<td>${item.itemName}</td>
 							<td>
 								<c:choose>
@@ -125,3 +125,9 @@
 		
 	</div>
 </div>
+<style>
+	.table tbody tr:hover .itemId {
+	    color: var(--main-green);
+	    text-decoration: underline;
+	}
+</style>
