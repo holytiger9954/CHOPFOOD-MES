@@ -86,7 +86,7 @@
 				<tbody>
 
 					<c:forEach var="vendor" items="${vendorList}">
-						<tr>
+						<tr onclick="location.href='${pageContext.request.contextPath}/vendor/detail?vendorId=${vendor.vendorId}'">
 
 							<td>${vendor.vendorId}</td>
 

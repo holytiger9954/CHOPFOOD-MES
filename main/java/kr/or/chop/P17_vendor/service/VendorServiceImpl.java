@@ -31,4 +31,18 @@ public class VendorServiceImpl implements VendorService {
 		return vendorDAO.insertVendor(vendorDTO);
 	}
 
+	@Override
+	public VendorDTO selectVendorDetail(String vendorId) {
+		return vendorDAO.selectVendorDetail(vendorId);
+	}
+
+	@Override
+	public int updateVendor(VendorDTO vendorDTO) {
+		return vendorDAO.updateVendor(vendorDTO);
+	}
+
+	@Override
+	public int deleteVendor(String vendorId) {
+		return vendorDAO.deleteVendor(vendorId);
+	}
 }

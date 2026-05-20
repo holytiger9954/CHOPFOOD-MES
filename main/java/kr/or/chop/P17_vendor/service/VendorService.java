@@ -12,4 +12,10 @@ public interface VendorService {
 	List<VendorDTO> selectVendorList(VendorDTO vendorDTO, PageInfo pageInfo);
 	
 	int insertVendor(VendorDTO vendorDTO);
+	
+	VendorDTO selectVendorDetail(String vendorId);
+	
+	int updateVendor(VendorDTO vendorDTO);
+
+	int deleteVendor(String vendorId);
 }

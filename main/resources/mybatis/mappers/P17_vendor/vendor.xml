@@ -89,6 +89,54 @@
 	    )
 	
 	</insert>
+	
+	<!-- 거래처 상세 -->
+	<select id="selectVendorDetail"
+	        parameterType="string"
+	        resultType="kr.or.chop.P17_vendor.dto.VendorDTO">
+	
+	    SELECT
+	        vendor_id AS vendorId,
+	        vendor_name AS vendorName,
+	        vendor_type AS vendorType,
+	        vendor_tel AS vendorTel,
+	        vendor_email AS vendorEmail,
+	        vendor_zipcode AS vendorZipcode,
+	        vendor_addr AS vendorAddr,
+	        vendor_addr_detail AS vendorAddrDetail,
+	        vendor_usage AS vendorUsage
+	    FROM vendor
+	    WHERE vendor_id = #{vendorId}
+	      AND vendor_usage = 'Y'
+	
+	</select>
+	
+	<!-- 거래처 수정 -->
+	<update id="updateVendor"
+	        parameterType="kr.or.chop.P17_vendor.dto.VendorDTO">
+	
+	    UPDATE vendor
+	    SET
+	        vendor_name = #{vendorName},
+	        vendor_type = #{vendorType},
+	        vendor_tel = #{vendorTel},
+	        vendor_email = #{vendorEmail},
+	        vendor_zipcode = #{vendorZipcode},
+	        vendor_addr = #{vendorAddr},
+	        vendor_addr_detail = #{vendorAddrDetail}
+	    WHERE vendor_id = #{vendorId}
+	
+	</update>
+	
+	<!-- 거래처 논리 삭제 -->
+	<update id="deleteVendor"
+	        parameterType="string">
+	
+	    UPDATE vendor
+	    SET vendor_usage = 'N'
+	    WHERE vendor_id = #{vendorId}
+	
+	</update>
 
 </mapper>
 

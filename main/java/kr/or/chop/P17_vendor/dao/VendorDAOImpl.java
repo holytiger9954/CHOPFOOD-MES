@@ -36,4 +36,19 @@ public class VendorDAOImpl implements VendorDAO {
 	public int insertVendor(VendorDTO vendorDTO) {
 		return sqlSession.insert("mapper.P17_vendor.insertVendor", vendorDTO);
 	}
+
+	@Override
+	public VendorDTO selectVendorDetail(String vendorId) {
+		return sqlSession.selectOne("mapper.P17_vendor.selectVendorDetail", vendorId);
+	}
+
+	@Override
+	public int updateVendor(VendorDTO vendorDTO) {
+		return sqlSession.update("mapper.P17_vendor.updateVendor", vendorDTO);
+	}
+
+	@Override
+	public int deleteVendor(String vendorId) {
+		return sqlSession.update("mapper.P17_vendor.deleteVendor", vendorId);
+	}
 }
