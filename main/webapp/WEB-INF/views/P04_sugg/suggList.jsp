@@ -27,12 +27,14 @@
 
         <div class="date-row">
             <input type="date"
+            	   id="startDate"
                    name="startDate"
                    value="${suggDTO.startDate}">
 
             <span>~</span>
 
             <input type="date"
+                   id="endDate"
                    name="endDate"
                    value="${suggDTO.endDate}">
         </div>
@@ -130,6 +132,7 @@
 
     function bind() {
         moveDetail();
+        dateCheck();
     }
 
     function moveDetail() {
@@ -170,6 +173,25 @@
         }
 
     });
+    
+    function dateCheck() {
+        const startDate = document.querySelector("#startDate");
+        const endDate = document.querySelector("#endDate");
+
+        // 페이지 처음 열렸을 때 startDate 값이 있으면 endDate 최소값 설정
+        if (startDate.value) {
+            endDate.min = startDate.value;
+        }
+
+        startDate.addEventListener("change", function () {
+            endDate.min = startDate.value;
+
+            // 이미 선택된 종료일이 시작일보다 이전이면 초기화
+            if (endDate.value && endDate.value < startDate.value) {
+                endDate.value = "";
+            }
+        });
+    }
     
 
 </script>

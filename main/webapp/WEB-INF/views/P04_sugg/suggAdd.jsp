@@ -20,7 +20,7 @@
           id="suggAddForm">
 
         <div class="btn-row"
-             style="margin-top:55px; margin-bottom:25px;">
+             style="margin-top:18px; margin-bottom:12px;">
             <div class="left"></div>
 
             <div class="right">
@@ -42,16 +42,16 @@
 
                 <div class="info-table-wrap"
                      style="
-                        border:1px solid #999;
-                        border-radius:8px;
-                        padding:35px 45px;
+                        border:1px solid #bbb;
+                        border-radius:5px;
+                        padding:24px;
                         background:#fff;">
 
                     <div style="
                             display:grid;
-                            grid-template-columns: 1fr 280px;
-                            gap:14px;
-                            margin-bottom:45px;">
+                            grid-template-columns: 1fr 160px;
+                            gap:10px;
+                            margin-bottom:24px;">
 
                         <div>
                             <label style="
@@ -68,10 +68,11 @@
                                    required
                                    style="
                                         width:100%;
-                                        height:46px;
-                                        border:1px solid #999;
+                                        height:36px;
+                                        border:1px solid #aaa;
                                         border-radius:4px;
-                                        padding:0 18px;
+                                        padding:0 12px;
+                                        box-sizing:border-box;
                                         font-size:15px;">
                         </div>
 
@@ -91,8 +92,8 @@
                                    required
                                    style="
                                         width:100%;
-                                        height:46px;
-                                        border:1px solid #999;
+                                        height:36px;
+                                        border:1px solid #aaa;
                                         border-radius:4px;
                                         padding:0 18px;
                                         font-size:15px;">
@@ -115,11 +116,12 @@
                                   required
                                   style="
                                     width:100%;
-                                    height:330px;
-                                    border:1px solid #999;
+                                    height:260px;
+                                    border:1px solid #aaa;
                                     border-radius:4px;
-                                    padding:18px;
+                                    padding:14px;
                                     font-size:15px;
+                                    box-sizing:border-box;
                                     resize:none;"></textarea>
 
                     </div>

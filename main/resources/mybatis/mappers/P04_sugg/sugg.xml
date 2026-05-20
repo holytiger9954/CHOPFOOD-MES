@@ -77,6 +77,7 @@
             FROM suggestion s
             WHERE s.sugg_usage = 'Y'
             
+            
             <if test="search.sugg_answer != null and search.sugg_answer != ''">
                 AND s.sugg_answer = #{search.sugg_answer}
             </if>
@@ -103,7 +104,7 @@
 			    ]]>
 			</if>
             
-            ORDER BY s.sugg_no ASC
+            ORDER BY s.sugg_cdate desc
         ) S
     )
     WHERE RN BETWEEN #{page.startRow}
@@ -168,12 +169,19 @@
         sugg_title = #{sugg_title},
         sugg_content = #{sugg_content},
         sugg_pw = #{sugg_pw},
-        
-        <if test="file_origin_name != null and file_origin_name != ''">
-            file_origin_name = #{file_origin_name},
-            file_save_name = #{file_save_name},
-        </if>
-        
+
+        <choose>
+            <when test='deleteFile != null and deleteFile.equals("Y")'>
+                file_origin_name = NULL,
+                file_save_name = NULL,
+            </when>
+
+            <when test="file_origin_name != null and file_origin_name != ''">
+                file_origin_name = #{file_origin_name},
+                file_save_name = #{file_save_name},
+            </when>
+        </choose>
+
         sugg_mdate = SYSDATE
     WHERE sugg_no = #{sugg_no}
       AND sugg_usage = 'Y'

@@ -18,22 +18,34 @@
           method="post"
           enctype="multipart/form-data">
 
-        <input type="hidden" name="sugg_no" value="${dto.sugg_no}">
+        <input type="hidden"
+               name="sugg_no"
+               value="${dto.sugg_no}">
+
+        <input type="hidden"
+               name="deleteFile"
+               id="deleteFile"
+               value="N">
 
         <div class="btn-row"
-             style="margin-top:25px; margin-bottom:18px;">
+             style="margin-top:18px; margin-bottom:12px;">
+
             <div class="left"></div>
 
             <div class="right">
+
                 <a class="btn btn-white"
                    href="${pageContext.request.contextPath}/sugg/detail?sugg_no=${dto.sugg_no}">
                     취소
                 </a>
 
-                <button type="submit" class="btn btn-main">
+                <button type="submit"
+                        class="btn btn-main">
                     수정
                 </button>
+
             </div>
+
         </div>
 
         <div class="content-content">
@@ -55,8 +67,17 @@
                             margin-bottom:24px;">
 
                         <div>
-                            <label style="display:block; font-weight:bold; margin-bottom:8px;">
-                                제목 <span style="color:#d33;">*</span>
+
+                            <label style="
+                                    display:block;
+                                    font-weight:bold;
+                                    margin-bottom:8px;">
+
+                                제목
+                                <span style="color:#d33;">
+                                    *
+                                </span>
+
                             </label>
 
                             <input type="text"
@@ -70,11 +91,18 @@
                                         border:1px solid #aaa;
                                         padding:0 12px;
                                         box-sizing:border-box;">
+
                         </div>
 
                         <div>
-                            <label style="display:block; font-weight:bold; margin-bottom:8px;">
+
+                            <label style="
+                                    display:block;
+                                    font-weight:bold;
+                                    margin-bottom:8px;">
+
                                 비밀번호
+
                             </label>
 
                             <input type="password"
@@ -88,6 +116,7 @@
                                         border:1px solid #aaa;
                                         padding:0 12px;
                                         box-sizing:border-box;">
+
                         </div>
 
                     </div>
@@ -95,8 +124,16 @@
                     <!-- 내용 -->
                     <div style="margin-bottom:24px;">
 
-                        <label style="display:block; font-weight:bold; margin-bottom:8px;">
-                            내용 <span style="color:#d33;">*</span>
+                        <label style="
+                                display:block;
+                                font-weight:bold;
+                                margin-bottom:8px;">
+
+                            내용
+                            <span style="color:#d33;">
+                                *
+                            </span>
+
                         </label>
 
                         <textarea name="sugg_content"
@@ -113,34 +150,63 @@
                     </div>
 
                     <!-- 첨부파일 -->
-                    <div style="display:flex; align-items:center; gap:18px;">
+                    <div style="
+                            display:flex;
+                            align-items:center;
+                            gap:18px;">
 
-				    <label style="font-weight:bold;">
-				        첨부파일
-				    </label>
-				
-				    <input type="file"
-				           name="uploadFile"
-				           id="uploadFile"
-				           style="display:none;">
-				
-				    <label for="uploadFile"
-				           class="btn btn-white">
-				        첨부파일 추가
-				    </label>
+                        <label style="font-weight:bold;">
+                            첨부파일
+                        </label>
 
-				    <span id="fileName" style="font-size:14px; color:#555;">
-				        <c:choose>
-				            <c:when test="${not empty dto.file_origin_name}">
-				                ${dto.file_origin_name}
-				            </c:when>
-				            <c:otherwise>
-				                선택된 파일 없음
-				            </c:otherwise>
-				        </c:choose>
-				    </span>
+                        <input type="file"
+                               name="uploadFile"
+                               id="uploadFile"
+                               style="display:none;">
 
-				</div>
+                        <label for="uploadFile"
+                               class="btn btn-white">
+                            첨부파일 추가
+                        </label>
+
+                        <div id="oldFileBox"
+                             style="
+                                display:flex;
+                                align-items:center;
+                                gap:8px;">
+
+                            <span id="fileName"
+                                  style="
+                                    font-size:14px;
+                                    color:#555;">
+
+                                <c:choose>
+
+                                    <c:when test="${not empty dto.file_origin_name}">
+                                        ${dto.file_origin_name}
+                                    </c:when>
+
+                                    <c:otherwise>
+                                        선택된 파일 없음
+                                    </c:otherwise>
+
+                                </c:choose>
+
+                            </span>
+
+                            <c:if test="${not empty dto.file_origin_name}">
+
+                                <button type="button"
+                                        id="deleteFileBtn"
+                                        class="btn btn-white">
+                                    삭제
+                                </button>
+
+                            </c:if>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
@@ -153,10 +219,51 @@
 </div>
 
 <script>
-document.querySelector("#uploadFile").addEventListener("change", function() {
-    const fileName =
-        this.files.length > 0 ? this.files[0].name : "선택된 파일 없음";
 
-    document.querySelector("#fileName").innerText = fileName;
+document.querySelector("#uploadFile")
+.addEventListener("change", function() {
+
+    const fileName =
+        this.files.length > 0
+        ? this.files[0].name
+        : "선택된 파일 없음";
+
+    document.querySelector("#fileName")
+        .innerText = fileName;
+
+    document.querySelector("#deleteFile")
+        .value = "N";
+
+    const oldFileBox =
+        document.querySelector("#oldFileBox");
+
+    if(oldFileBox){
+        oldFileBox.style.display = "flex";
+    }
+
 });
+
+
+const deleteFileBtn =
+    document.querySelector("#deleteFileBtn");
+
+if(deleteFileBtn){
+
+    deleteFileBtn
+    .addEventListener("click", function(){
+
+        document.querySelector("#deleteFile")
+            .value = "Y";
+
+        document.querySelector("#oldFileBox")
+            .style.display = "none";
+
+        alert(
+            "첨부파일 삭제 처리되었습니다.\n수정 버튼을 눌러야 적용됩니다."
+        );
+
+    });
+
+}
+
 </script>

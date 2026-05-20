@@ -22,4 +22,5 @@ public class SuggDTO {
     private String endDate; // 검색 종료일
     private String file_origin_name;
     private String file_save_name;
+    private String deleteFile;
 }

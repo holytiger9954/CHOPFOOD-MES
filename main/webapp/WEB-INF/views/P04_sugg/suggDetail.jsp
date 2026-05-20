@@ -14,7 +14,7 @@
         </div>
     </div>
 
-    <div class="btn-row" style="margin-top:30px;">
+    <div class="btn-row" style="margin-top:20px;">
         <div class="left">
             <a class="btn btn-white"
                href="${pageContext.request.contextPath}/sugg/list">
@@ -68,7 +68,7 @@
                             align-items:flex-start;">
 
                         <div style="
-                                font-size:30px;
+                                font-size:22px;
                                 font-weight:700;
                                 color:#222;">
                             ${dto.sugg_title}
@@ -113,7 +113,7 @@
                         조회수 ${dto.sugg_view}
                     </span>
 
-                    <span style="float:right; cursor:pointer;">
+                    <span id="copyurl" style="float:right; cursor:pointer;">
                         URL 복사
                     </span>
 
@@ -123,7 +123,7 @@
                 <div style="
                         min-height:260px;
                         padding:26px 24px;
-                        font-size:13px;
+                        font-size:17px;
                         line-height:1.8;
                         white-space:pre-line;
                         color:#333;">
@@ -328,5 +328,9 @@
 </div>
 
 <script>
+document.querySelector("#copyurl").addEventListener("click", function () {
+    navigator.clipboard.writeText(window.location.href);
+    alert("URL이 복사되었습니다.");
+});
 
 </script>
