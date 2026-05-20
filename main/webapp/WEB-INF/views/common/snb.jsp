@@ -40,8 +40,8 @@
             <div class="snb-submenu">
                 <a href="${ctx}/notice/list"
                    class="snb-submenu-link ${uri.contains('/notice/') ? 'active' : ''}">공지사항</a>
-                <a href="${ctx}/suggest/list"
-                   class="snb-submenu-link ${uri.contains('/suggest/') ? 'active' : ''}">건의사항</a>
+                <a href="${ctx}/sugg/list"
+                   class="snb-submenu-link ${uri.contains('/sugg/') ? 'active' : ''}">건의사항</a>
             </div>
         </div>
 
@@ -110,7 +110,7 @@
                 <a href="${ctx}/bom/list" class="snb-submenu-link ${uri.contains('/bom/') ? 'active' : ''}">BOM 관리</a>
                 <a href="${ctx}/warehouse/list" class="snb-submenu-link ${uri.contains('/warehouse/') ? 'active' : ''}">창고 관리</a>
                 <a href="${ctx}/workplace/list" class="snb-submenu-link ${uri.contains('/workplace/') ? 'active' : ''}">작업장 관리</a>
-                <a href="${ctx}/facility/list" class="snb-submenu-link ${uri.contains('/facility/') ? 'active' : ''}">설비 관리</a>
+                <a href="${ctx}/equip/list" class="snb-submenu-link ${uri.contains('/equip/') ? 'active' : ''}">설비 관리</a>
                 <a href="${ctx}/vendor/list" class="snb-submenu-link ${uri.contains('/vendor/') ? 'active' : ''}">거래처 관리</a>
                 <a href="${ctx}/defect/list" class="snb-submenu-link ${uri.contains('/defect/') ? 'active' : ''}">불량유형 관리</a>
             </div>
