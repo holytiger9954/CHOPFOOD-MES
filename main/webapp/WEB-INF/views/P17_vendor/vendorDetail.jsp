@@ -48,7 +48,6 @@
 
 	<div class="content-content">
 
-		<!-- 거래처 상세 정보 -->
 		<div class="content-content-content">
 
 			<div class="content-content-content-title">
@@ -73,7 +72,6 @@
 
 							<td>
 								<c:choose>
-
 									<c:when test="${vendor.vendorType == 'S'}">
 										공급업체
 									</c:when>
@@ -89,7 +87,6 @@
 									<c:otherwise>
 										-
 									</c:otherwise>
-
 								</c:choose>
 							</td>
 
@@ -102,7 +99,6 @@
 
 							<td>
 								<c:choose>
-
 									<c:when test="${not empty vendor.vendorEmail}">
 										${vendor.vendorEmail}
 									</c:when>
@@ -110,7 +106,6 @@
 									<c:otherwise>
 										-
 									</c:otherwise>
-
 								</c:choose>
 							</td>
 
@@ -118,7 +113,6 @@
 
 							<td>
 								<c:choose>
-
 									<c:when test="${not empty vendor.vendorZipcode}">
 										${vendor.vendorZipcode}
 									</c:when>
@@ -126,7 +120,6 @@
 									<c:otherwise>
 										-
 									</c:otherwise>
-
 								</c:choose>
 							</td>
 						</tr>
@@ -135,29 +128,51 @@
 							<th>주소</th>
 
 							<td colspan="3">
-								<c:choose>
+								<div class="vendor-address-detail-row">
+									<span>
+										<c:choose>
+											<c:when test="${not empty vendor.vendorAddr}">
+												${vendor.vendorAddr}
+												${vendor.vendorAddrDetail}
+											</c:when>
 
-									<c:when test="${not empty vendor.vendorAddr}">
-										${vendor.vendorAddr}
-										${vendor.vendorAddrDetail}
-									</c:when>
+											<c:otherwise>
+												-
+											</c:otherwise>
+										</c:choose>
+									</span>
 
-									<c:otherwise>
-										-
-									</c:otherwise>
-
-								</c:choose>
+									<c:if test="${not empty vendor.vendorAddr}">
+										<button type="button"
+											class="btn btn-main"
+											id="vendorMapToggleBtn"
+											onclick="showVendorMap()">
+											지도보기
+										</button>
+									</c:if>
+								</div>
 							</td>
 						</tr>
 
 					</tbody>
 
 				</table>
+
+				<div id="vendorMap"
+					style="
+						display: none;
+						width: 80%;
+						height: 350px;
+						margin: 20px auto 0;
+						border-radius: 8px;
+						overflow: hidden;
+					">
+				</div>
+
 			</div>
 
 		</div>
 
-		<!-- 거래처별 입출고 이력 -->
 		<div class="content-content-content">
 
 			<div class="content-content-content-title">
@@ -190,18 +205,18 @@
 
 								<td>
 									<c:choose>
-		                                <c:when test="${io.ioType == 'IN'}">
-		                                    <span class="status status-safe">입고</span>
-		                                </c:when>
-		
-		                                <c:when test="${io.ioType == 'OUT'}">
-		                                    <span class="status status-warning">출고</span>
-		                                </c:when>
-		
-		                                <c:otherwise>
-		                                    <span class="status">${io.ioType}</span>
-		                                </c:otherwise>
-		                            </c:choose>
+										<c:when test="${io.ioType == 'IN'}">
+											<span class="status status-safe">입고</span>
+										</c:when>
+
+										<c:when test="${io.ioType == 'OUT'}">
+											<span class="status status-warning">출고</span>
+										</c:when>
+
+										<c:otherwise>
+											<span class="status">${io.ioType}</span>
+										</c:otherwise>
+									</c:choose>
 								</td>
 
 								<td>${io.itemName}(${io.itemId})</td>
@@ -238,3 +253,92 @@
 	</div>
 
 </div>
+
+<style>
+	.vendor-address-detail-row {
+		display: inline-flex;
+		align-items: center;
+		gap: 12px;
+		flex-wrap: wrap;
+	}
+</style>
+
+<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=47bbd47c04e70af1e13f9280c52c609b&libraries=services"></script>
+
+<script>
+	let vendorMapLoaded = false;
+
+	function showVendorMap() {
+
+		const mapBox =
+			document.querySelector("#vendorMap");
+
+		const mapBtn =
+			document.querySelector("#vendorMapToggleBtn");
+
+		if (mapBox.style.display === "block") {
+
+			mapBox.style.display = "none";
+			mapBtn.innerText = "지도보기";
+
+			return;
+		}
+
+		mapBox.style.display = "block";
+		mapBtn.innerText = "지도닫기";
+
+		if (vendorMapLoaded) {
+			return;
+		}
+
+		const address =
+			"${vendor.vendorAddr}";
+
+		if (!address || address.trim() === "") {
+
+			alert("등록된 주소가 없습니다.");
+
+			mapBox.style.display = "none";
+			mapBtn.innerText = "지도보기";
+
+			return;
+		}
+
+		const geocoder =
+			new kakao.maps.services.Geocoder();
+
+		geocoder.addressSearch(address, function(result, status) {
+
+			if (status === kakao.maps.services.Status.OK) {
+
+				const coords =
+					new kakao.maps.LatLng(
+						result[0].y,
+						result[0].x
+					);
+
+				const map =
+					new kakao.maps.Map(mapBox, {
+						center: coords,
+						level: 3
+					});
+
+				new kakao.maps.Marker({
+					map: map,
+					position: coords
+				});
+
+				map.setCenter(coords);
+
+				vendorMapLoaded = true;
+
+			} else {
+
+				alert("주소로 지도를 찾을 수 없습니다.");
+
+				mapBox.style.display = "none";
+				mapBtn.innerText = "지도보기";
+			}
+		});
+	}
+</script>
