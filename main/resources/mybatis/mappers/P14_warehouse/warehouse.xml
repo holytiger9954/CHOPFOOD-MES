@@ -396,9 +396,19 @@
 	        FROM DUAL
 	    </selectKey>
 		
-	INSERT INTO WAREHOUSE (WH_ID, WH_NAME, WH_TYPE, WH_QTY, WH_LOC, WH_USAGE)
+		INSERT INTO WAREHOUSE (WH_ID, WH_NAME, WH_TYPE, WH_QTY, WH_LOC, WH_USAGE)
 		VALUES (#{whId}, #{whName}, #{whTypeNo}, 0, #{whLoc}, 'Y')
 	</insert>
+	
+	<update id="createSecSeq" parameterType="whDTO">
+		CREATE SEQUENCE ${whId}_SEQ
+		START WITH 11
+		INCREMENT BY 1
+		MINVALUE 11
+		MAXVALUE 99
+		NOCYCLE
+		NOCACHE
+	</update>
 	
 	<update id="updateWhImg" parameterType="whDTO">
 	    UPDATE WAREHOUSE

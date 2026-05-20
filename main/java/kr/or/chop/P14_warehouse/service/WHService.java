@@ -23,6 +23,7 @@ public interface WHService {
 	public List<SecDTO> selectSecList(WHDTO whDTO);
 	
 	public void insertWH(WHDTO whDTO, MultipartFile whImgFile, String uploadPath, String contextPath) throws IllegalStateException, IOException;
+	
 	public void updateWH(WHDTO whDTO, MultipartFile whImgFile, String uploadPath, String contextPath) throws IllegalStateException, IOException;
 
 	public int deleteWh(WHDTO whDTO);

@@ -88,6 +88,12 @@ public class WHDAOImpl implements WHDAO {
 	}
 
 	@Override
+	public int createSecSeq(WHDTO whDTO) {
+		System.out.println("/warehouse/add dao.createSecSeq");
+		return sqlSession.update("mapper.P14_warehouse.createSecSeq", whDTO);
+	}
+
+	@Override
 	public int updateWhImg(WHDTO whDTO) {
 		System.out.println("/warehouse/add dao.updateWhImg");
 		

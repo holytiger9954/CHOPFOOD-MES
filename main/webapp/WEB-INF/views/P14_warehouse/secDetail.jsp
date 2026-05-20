@@ -134,22 +134,28 @@
 					<tbody>
 						<c:forEach var="lot" items="${lotList}">
 							<tr class="lotList">
-								<td>${lot.lotId}</td>
+								<td class="lotId">${lot.lotId}</td>
 								<td>(${lot.lotItem})</td>
 								<td>현재수량</td>
 								<td>${lot.lotEtw}</td>
 								<td>${lot.lotExp}</td>
 								<td>
 									<c:if test="${lot.lotStatus == 10}">
-										<span style="color: var(--success)">• 사용 가능</span>
+										<span style="color: var(--success)">• 사용가능</span>
+									</c:if>
+									<c:if test="${lot.lotStatus == 20}">
+										<span style="color: var(--success)">• 사용중</span>
+									</c:if>
+									<c:if test="${lot.lotStatus != 10 && lot.lotStatus != 20}">
+										<span style="color: var(--error)">• 사용불가</span>
 									</c:if>
 								</td>
 							</tr>	
 						</c:forEach>
 						
-						<c:if test="${empty glogList}">
+						<c:if test="${empty lotList}">
 							<tr>
-								<td colspan="5" style="text-align: center;">
+								<td colspan="6" style="text-align: center;">
 									조회된 내역이 없습니다.
 								</td>
 							</tr>
@@ -165,7 +171,7 @@
 </div>
 
 <style>
-	.table tbody tr:hover .secId,  .table tbody tr:hover .glogId {
+	.table tbody tr:hover .lotId {
 	    color: var(--main-green);
 	    text-decoration: underline;
 	}
@@ -201,38 +207,20 @@
 	}
 	
 	function bind() {
-		moveGlog();
-		moveSec();
+		moveLot();
 		drawChart();
 	}
 	
-	function moveSec() {
-		const secLists = document.querySelectorAll(".secList");
+	function moveLot() {
+		const lotLists = document.querySelectorAll(".lotList");
 		
-		for (let i=0; i<secLists.length; i++) {
+		for (let i=0; i<lotLists.length; i++) {
 			
-			secLists[i].addEventListener("click", () => {
-				const secId = secLists[i].querySelector(".secId").textContent.trim();
-				console.log ("secId : " + secId);
+			lotLists[i].addEventListener("click", () => {
+				const lotId = lotLists[i].querySelector(".lotId").textContent.trim();
+				console.log ("lotId : " + lotId);
 				
-				const url = `${pageContext.request.contextPath}/warehouse/sec/detail?secId=` + secId;
-				console.log ("url : " + url);
-				
-				window.location.href = url;
-			})
-		}
-	}
-	
-	function moveGlog() {
-		const glogLists = document.querySelectorAll(".glogList");
-		
-		for (let i=0; i<glogLists.length; i++) {
-			
-			glogLists[i].addEventListener("click", () => {
-				const glogId = glogLists[i].querySelector(".glogId").textContent.trim();
-				console.log ("glogId : " + glogId);
-				
-				const url = `${pageContext.request.contextPath}/warehouse/glog/detail?glogId=` + glogId;
+				const url = `${pageContext.request.contextPath}/lot/detail?lotId=` + lotId;
 				console.log ("url : " + url);
 				
 				window.location.href = url;

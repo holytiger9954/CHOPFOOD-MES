@@ -12,4 +12,11 @@ public interface SecDAO {
 	public int selectLotCount(SecDTO secDTO);
 	public List<LotDTO> selectLotList(SecDTO secDTO, PageInfo pageInfo);
 	
+	public int minusWhQty(SecDTO secDTO);
+	public int deleteSection(SecDTO secDTO);
+	
+	public int insertSection(SecDTO secDTO);
+	public int plusWhQty(SecDTO secDTO);
+	public int updateSecImg(SecDTO secDTO);
+	
 }

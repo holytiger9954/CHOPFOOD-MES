@@ -98,5 +98,39 @@
 			)
 		WHERE RN &gt;= #{page.startRow}
 	</select>
+	
+	<update id="deleteSection" parameterType="secDTO">
+		UPDATE WH_SEC
+		SET WH_SEC_USAGE = 'N'
+		WHERE WH_SEC_ID = #{secId}
+	</update>
+	
+	<update id="minusWhQty" parameterType="secDTO">
+		UPDATE WAREHOUSE
+		SET WH_QTY = WH_QTY - #{secQty}
+		WHERE WH_ID = #{secWhId}
+	</update>
+	
+	<insert id="insertSection" parameterType="secDTO">
+		<selectKey keyProperty="secId" resultType="string" order="BEFORE">
+	        SELECT #{secWhId} || '-' || ${secWhId}_SEQ.NEXTVAL
+	        FROM DUAL
+	    </selectKey>
+	    
+		INSERT INTO WH_SEC (WH_SEC_ID, WH_SEC_WHID, WH_SEC_QTY, WH_SEC_USAGE)
+		VALUES (#{secId}, #{secWhId}, #{secQty}, 'Y')
+	</insert>
+	
+	<update id="plusWhQty" parameterType="secDTO">
+		UPDATE WAREHOUSE
+		SET WH_QTY = WH_QTY + #{secQty}
+		WHERE WH_ID = #{secWhId}
+	</update>
+	
+	<update id="updateSecImg" parameterType="secDTO">
+		UPDATE WH_SEC
+		SET WH_SEC_IMG = #{secImg}
+		WHERE WH_SEC_ID = #{secId}
+	</update>
 
 </mapper>

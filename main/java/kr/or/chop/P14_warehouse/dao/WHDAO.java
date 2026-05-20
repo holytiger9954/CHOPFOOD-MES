@@ -20,6 +20,7 @@ public interface WHDAO {
 	public List<SecDTO> selectSecList(WHDTO whDTO);
 	
 	public int insertWH(WHDTO whDTO);
+	public int createSecSeq(WHDTO whDTO);
 	public int updateWhImg(WHDTO whDTO);
 
 	public int updateWh(WHDTO whDTO);

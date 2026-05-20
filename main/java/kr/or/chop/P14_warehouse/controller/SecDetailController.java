@@ -53,5 +53,23 @@ public class SecDetailController {
 		
 		return "P14_warehouse/secDetail.tiles";
 	}
+	
+	@RequestMapping("/delete")
+	public String delete(
+			SecDTO secDTO,
+			@RequestParam(value="secId") String secId
+		) {
+		System.out.println("/warehouse/sec/delete controller.detail");
+		
+		secDTO.setSecId(secId);
+		
+		// secDTO 가져오기
+		secDTO = secService.selectSecDTO(secDTO);
+		
+		// 창고 개수 마이너스 및 섹션 비활
+		secService.deleteSection(secDTO);
+		
+		return "redirect:/warehouse/detail?whId=" + secDTO.getSecWhId();
+	}
 
 }

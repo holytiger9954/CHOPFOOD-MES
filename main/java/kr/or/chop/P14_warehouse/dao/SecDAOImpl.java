@@ -39,4 +39,29 @@ public class SecDAOImpl implements SecDAO {
 		return sqlSession.selectList("mapper.P14_warehouse.section.selectLotList", paramMap);
 	}
 
+	@Override
+	public int minusWhQty(SecDTO secDTO) {
+		return sqlSession.update("mapper.P14_warehouse.section.minusWhQty", secDTO);
+	}
+
+	@Override
+	public int deleteSection(SecDTO secDTO) {
+		return sqlSession.update("mapper.P14_warehouse.section.deleteSection", secDTO);
+	}
+
+	@Override
+	public int insertSection(SecDTO secDTO) {
+		return sqlSession.insert("mapper.P14_warehouse.section.insertSection", secDTO);		
+	}
+
+	@Override
+	public int plusWhQty(SecDTO secDTO) {
+		return sqlSession.update("mapper.P14_warehouse.section.plusWhQty", secDTO);
+	}
+
+	@Override
+	public int updateSecImg(SecDTO secDTO) {
+		return sqlSession.update("mapper.P14_warehouse.section.updateSecImg", secDTO);
+	}
+
 }

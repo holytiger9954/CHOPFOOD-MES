@@ -88,6 +88,9 @@ public class WHServiceImpl implements WHService {
 	    whDAO.insertWH(whDTO);
 
 	    String whId = whDTO.getWhId();
+	    
+	    // 1-1. 시퀀스 생성
+	    whDAO.createSecSeq(whDTO);
 
 	    // 2. 이미지 없으면 여기서 종료
 	    if (whImgFile == null || whImgFile.isEmpty()) {
