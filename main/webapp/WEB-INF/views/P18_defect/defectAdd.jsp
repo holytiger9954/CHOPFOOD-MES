@@ -6,93 +6,50 @@
     <div class="header-row">
         <div>
             <h2 class="page-title">불량 유형 등록</h2>
-
-            <p class="page-subtitle">
-                새로운 불량 유형 정보를 등록하세요.
-            </p>
+            <p class="page-subtitle">새로운 불량 유형을 등록하세요.</p>
         </div>
 
         <div>
-            <p class="page-route">
-                홈 &gt; 불량 유형 관리 &gt; 등록
-            </p>
+            <p class="page-route">홈 &gt; 불량 유형 관리 &gt; 등록</p>
         </div>
     </div>
 
     <form action="${pageContext.request.contextPath}/defect/insert"
-          method="post">
+          method="post"
+          class="grid-form">
 
         <div class="btn-row">
-
             <div class="left"></div>
 
             <div class="right">
-
-                <a class="btn btn-red"
-                   href="${pageContext.request.contextPath}/defect/list"
-                   onclick="return confirm('등록을 취소하시겠습니까?');">
+                <a class="btn btn-white"
+                   href="${pageContext.request.contextPath}/defect/list">
                     취소
                 </a>
 
-                <button type="submit"
-                        class="btn btn-main">
+                <button type="submit" class="btn btn-main">
                     등록
                 </button>
-
             </div>
-
         </div>
 
-        <div class="content-content">
+        <div class="grid-wrap defect-grid-wrap-add">
 
-            <div class="content-content-content">
+            <div class="grid search-item defect-name-item-add">
+                <label>불량 유형명 <span class="red">*</span></label>
 
-                <div class="content-content-content-title">
-                    불량 유형 등록정보
-                </div>
+                <input type="text"
+                       name="defTypeName"
+                       required
+                       placeholder="불량 유형명을 입력하세요.">
+            </div>
 
-                <div class="info-table-wrap">
+            <div class="grid search-item defect-action-item-add">
+                <label>기준 조치</label>
 
-                    <table class="info-table">
-                        <tbody>
-
-                            <tr>
-                                <th>
-                                    불량 유형명
-                                    <span class="required">*</span>
-                                </th>
-
-                                <td colspan="3">
-                                    <input type="text"
-                                           name="defTypeName"
-                                           class="def-input"
-                                           placeholder="불량 유형명을 입력하세요."
-                                           maxlength="20"
-                                           required>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <th>
-                                    기준 조치
-                                </th>
-
-                                <td colspan="3"
-                                    class="def-top-align">
-
-                                    <textarea name="defStandardAction"
-                                              class="def-textarea"
-                                              placeholder="기준 조치를 입력하세요."
-                                              maxlength="100"></textarea>
-
-                                </td>
-                            </tr>
-
-                        </tbody>
-                    </table>
-
-                </div>
-
+                <textarea name="defStandardAction"
+                          class="defect-action-textarea-add"
+                          placeholder="기준 조치를 입력하세요."></textarea>
             </div>
 
         </div>
@@ -102,62 +59,26 @@
 </div>
 
 <style>
+    .defect-grid-wrap-add {
+        display: grid;
+        grid-template-columns: 400px;
+        justify-content: flex-start;
 
-.required {
-    color: #d9534f;
-    font-weight: 700;
-}
+        row-gap: 18px;
+    }
 
-.def-top-align {
-    vertical-align: top !important;
-}
+    .defect-name-item-add input {
+        width: 400px;
+        box-sizing: border-box;
+    }
 
-.def-input {
-    width: 100%;
-    height: 38px;
+    .defect-action-item-add {
+        width: 644px;
+    }
 
-    padding: 8px 10px;
-
-    border: 1px solid #dcdfe6;
-    border-radius: 6px;
-
-    font-size: 14px;
-    box-sizing: border-box;
-}
-
-.def-textarea {
-    width: 100%;
-    min-height: 100px;
-
-    padding: 10px;
-
-    border: 1px solid #dcdfe6;
-    border-radius: 6px;
-
-    font-size: 14px;
-    line-height: 1.6;
-
-    resize: vertical;
-    box-sizing: border-box;
-}
-
-.def-input:focus,
-.def-textarea:focus {
-    outline: none;
-    border-color: #2f7d5c;
-}
-
-.btn-row .btn,
-.btn-row button.btn {
-    height: 36px;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 0 16px;
-
-    box-sizing: border-box;
-}
-
+    .defect-action-textarea-add {
+        width: 100%;
+        min-height: 120px;
+        box-sizing: border-box;
+    }
 </style>

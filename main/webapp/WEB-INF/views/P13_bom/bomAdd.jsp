@@ -26,18 +26,19 @@
         </div>
 
         <div>
-            <p class="page-route">홈 &gt; bom &gt; 등록</p>
+            <p class="page-route">홈 &gt; BOM 관리 &gt; 등록</p>
         </div>
     </div>
 
     <form action="${pageContext.request.contextPath}/bom/insert"
           method="post"
+          class="grid-form"
           id="bomAddForm">
 
         <div class="btn-row">
-            <div></div>
+            <div class="left"></div>
 
-            <div>
+            <div class="right">
                 <a class="btn btn-white"
                    href="${pageContext.request.contextPath}/bom/list">
                     취소
@@ -49,13 +50,15 @@
             </div>
         </div>
 
-        <div class="bom-form-row">
+        <div class="grid-wrap bom-grid-wrap">
 
-            <div class="search-item bom-form-item">
+            <div class="grid search-item">
                 <label>생산 품목 <span class="red">*</span></label>
 
                 <select name="bomItem" required>
-                    <option value="">품목명 (품목코드) 선택</option>
+                    <option value="" selected disabled>
+                        품목명 (품목코드) 선택
+                    </option>
 
                     <c:forEach var="item" items="${finishItemList}">
                         <option value="${item.itemId}">
@@ -65,7 +68,7 @@
                 </select>
             </div>
 
-            <div class="search-item bom-form-item">
+            <div class="grid search-item">
                 <label>BOM명 <span class="red">*</span></label>
 
                 <input type="text"
@@ -74,13 +77,14 @@
                        placeholder="BOM명 입력">
             </div>
 
-        </div>
+            <div class="grid search-item bom-content-item">
+                <label>BOM 설명</label>
 
-        <div class="search-item bom-content-box">
-            <label>BOM 설명</label>
+                <textarea name="bomContent"
+                          class="bom-content-textarea"
+                          placeholder="BOM 설명을 입력하세요."></textarea>
+            </div>
 
-            <textarea name="bomContent"
-                      placeholder="BOM 설명을 입력하세요."></textarea>
         </div>
 
         <div class="bom-section-title-row">
@@ -100,10 +104,10 @@
                 <thead>
                     <tr>
                         <th>투입 품목</th>
-                        <th style="width: 160px;">투입 수량</th>
-                        <th style="width: 180px;">규격</th>
-                        <th style="width: 180px;">단가 (원)</th>
-                        <th style="width: 90px;">삭제</th>
+                        <th>투입 수량</th>
+                        <th>규격</th>
+                        <th>단가 (원)</th>
+                        <th>삭제</th>
                     </tr>
                 </thead>
 
@@ -139,8 +143,8 @@
 
                         <td>
                             <button type="button"
-                                    class="btn btn-white remove-row-btn">
-                                삭제
+                                    class="remove-row-btn">
+                                ✕
                             </button>
                         </td>
                     </tr>
@@ -153,44 +157,22 @@
 </div>
 
 <style>
-    .bom-form-row {
-        display: flex;
-        justify-content: center;
-        gap: 60px;
+    .bom-grid-wrap {
+        display: grid;
+        grid-template-columns: 200px 400px;
+        justify-content: flex-start;
 
-        margin: 44px 0 24px;
+        column-gap: 24px;
+        row-gap: 18px;
     }
 
-    .bom-form-item {
-        flex-direction: row;
-        align-items: center;
-        gap: 24px;
+    .bom-content-item {
+        grid-column: 1 / 3;
+        width: 100%;
     }
 
-    .bom-form-item label {
-        min-width: 90px;
-
-        font-size: 18px;
-        font-weight: 700;
-        color: #000;
-    }
-
-    .bom-form-item input,
-    .bom-form-item select {
-        width: 360px;
-        height: 42px;
-    }
-
-    .bom-content-box {
-        margin: 0 0 42px;
-    }
-
-    .bom-content-box label {
-        margin-bottom: 6px;
-    }
-
-    .bom-content-box textarea {
-        min-height: 110px;
+    .bom-content-textarea {
+        min-height: 100px;
     }
 
     .bom-section-title-row {
@@ -198,13 +180,14 @@
         justify-content: space-between;
         align-items: center;
 
-        margin: 0 0 24px;
+        margin: 32px 0 16px;
     }
 
     #bomDetailBody select,
     #bomDetailBody input {
         width: 90%;
         height: 34px;
+
         padding: 0 10px;
 
         border: 1px solid var(--dark-gray);
@@ -220,20 +203,30 @@
         border-color: var(--main-green);
     }
 
-    #bomDetailBody .btn {
-        margin: 0 auto;
-    }
-
-    @media (max-width: 1100px) {
-        .bom-form-row {
-            flex-direction: column;
-            gap: 18px;
-        }
-
-        .bom-form-item {
-            justify-content: flex-start;
-        }
-    }
+    .remove-row-btn {
+	    width: 32px;
+	    height: 32px;
+	
+	    border: none;
+	    border-radius: 50%;
+	
+	    background-color: #f1f3f5;
+	    color: #666;
+	
+	    font-size: 18px;
+	    font-weight: 700;
+	
+	    cursor: pointer;
+	
+	    transition: 0.2s;
+	}
+	
+	.remove-row-btn:hover {
+	    background-color: #dee2e6;
+	    color: #333;
+	
+	    transform: scale(1.05);
+	}
 </style>
 
 <script>
@@ -263,64 +256,63 @@
     }
 
     function addBomDetailRow() {
-
-        const bomDetailBody =
-            document.querySelector("#bomDetailBody");
+        const bomDetailBody = document.querySelector("#bomDetailBody");
 
         const tr = document.createElement("tr");
 
         tr.innerHTML =
             '<td>' +
-                '<select name="bomDtlItemList" ' +
-                        'class="bom-detail-select" required>' +
+                '<select name="bomDtlItemList" class="bom-detail-select" required>' +
                     materialOptions +
                 '</select>' +
             '</td>' +
 
             '<td>' +
-                '<input type="number" ' +
-                       'name="bomDtlQtyList" ' +
-                       'min="1" ' +
-                       'required ' +
-                       'placeholder="수량">' +
+                '<input type="number" name="bomDtlQtyList" min="1" required placeholder="수량">' +
             '</td>' +
 
             '<td class="item-spec">-</td>' +
+
             '<td class="item-price">-</td>' +
 
             '<td>' +
-                '<button type="button" ' +
-                        'class="btn btn-white remove-row-btn">' +
-                    '삭제' +
-                '</button>' +
+                '<button type="button" class="remove-row-btn">✕</button>' +
             '</td>';
 
         bomDetailBody.appendChild(tr);
     }
 
     function updateItemInfo(selectEl) {
-        const selectedOption = selectEl.options[selectEl.selectedIndex];
+        const selectedOption =
+            selectEl.options[selectEl.selectedIndex];
 
-        const spec = selectedOption.dataset.spec || "-";
-        const unit = selectedOption.dataset.unit || "";
-        const price = selectedOption.dataset.price || "-";
+        const spec =
+            selectedOption.dataset.spec || "-";
 
-        const row = selectEl.closest("tr");
+        const unit =
+            selectedOption.dataset.unit || "";
+
+        const price =
+            selectedOption.dataset.price || "-";
+
+        const row =
+            selectEl.closest("tr");
 
         row.querySelector(".item-spec").textContent =
             unit ? spec + " / " + unit : spec;
 
-        if (price === "-") {
-            row.querySelector(".item-price").textContent = "-";
-        } else {
-            row.querySelector(".item-price").textContent =
-                Number(price).toLocaleString();
-        }
+        row.querySelector(".item-price").textContent =
+            price === "-"
+                ? "-"
+                : Number(price).toLocaleString();
     }
 
     function removeBomDetailRow(buttonEl) {
-        const bomDetailBody = document.querySelector("#bomDetailBody");
-        const rows = bomDetailBody.querySelectorAll("tr");
+        const bomDetailBody =
+            document.querySelector("#bomDetailBody");
+
+        const rows =
+            bomDetailBody.querySelectorAll("tr");
 
         if (rows.length <= 1) {
             alert("투입 품목은 최소 1개 이상 필요합니다.");
