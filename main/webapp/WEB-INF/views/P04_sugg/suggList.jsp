@@ -11,72 +11,98 @@
 
 		<div>
 			<p class="page-route">홈 > 건의사항</p>
+
 			<a class="btn btn-white"
-				href="${pageContext.request.contextPath}/sugg/add"> 건의사항 등록 </a>
+				href="${pageContext.request.contextPath}/sugg/add">
+				건의사항 등록
+			</a>
 		</div>
 	</div>
-	
 
 	<form class="search-box"
-      	  action="${pageContext.request.contextPath}/sugg/list"
-      	  method="get"
-      	  id="searchForm">
+		action="${pageContext.request.contextPath}/sugg/list"
+		method="get"
+		id="searchForm">
 
-    <div class="search-item date-item">
-        <label>기간</label>
+		<div class="search-item date-item">
 
-        <div class="date-row">
-            <input type="date"
-            	   id="startDate"
-                   name="startDate"
-                   value="${suggDTO.startDate}">
+			<label>기간</label>
 
-            <span>~</span>
+			<div class="date-row">
 
-            <input type="date"
-                   id="endDate"
-                   name="endDate"
-                   value="${suggDTO.endDate}">
-        </div>
-    </div>
+				<input type="date"
+					id="startDate"
+					name="startDate"
+					value="${suggDTO.startDate}">
 
-    <div class="search-item status-item">
-        <label>상태</label>
+				<span>~</span>
 
-        <select name="sugg_answer">
-            <option value="">전체</option>
-            <option value="N" ${suggDTO.sugg_answer == 'N' ? 'selected' : ''}>
-                답변대기
-            </option>
-            <option value="Y" ${suggDTO.sugg_answer == 'Y' ? 'selected' : ''}>
-                답변완료
-            </option>
-        </select>
-    </div>
+				<input type="date"
+					id="endDate"
+					name="endDate"
+					value="${suggDTO.endDate}">
 
-    <div class="search-item keyword">
-        <label>제목/작성자 검색</label>
+			</div>
 
-        <input type="text"
-               name="keyword"
-               value="${suggDTO.keyword}"
-               placeholder="내용을 입력하세요.">
-    </div>
+		</div>
 
-    <div class="search-btn-area">
-        <button type="submit" class="btn btn-main">검색</button>
-         <a class="btn btn-white reset-btn"
-       href="${pageContext.request.contextPath}/sugg/list">
-        초기화
-    	</a>
-    </div>
+		<div class="search-item status-item">
 
-</form>
+			<label>상태</label>
+
+			<select name="sugg_answer">
+
+				<option value="">전체</option>
+
+				<option value="N"
+					${suggDTO.sugg_answer == 'N' ? 'selected' : ''}>
+					답변대기
+				</option>
+
+				<option value="Y"
+					${suggDTO.sugg_answer == 'Y' ? 'selected' : ''}>
+					답변완료
+				</option>
+
+			</select>
+
+		</div>
+
+		<div class="search-item keyword">
+
+			<label>제목/작성자 검색</label>
+
+			<input type="text"
+				name="keyword"
+				value="${suggDTO.keyword}"
+				placeholder="내용을 입력하세요.">
+
+		</div>
+
+		<div class="search-btn-area">
+
+			<button type="submit"
+				class="btn btn-main">
+				검색
+			</button>
+
+			<a class="btn btn-white reset-btn"
+				href="${pageContext.request.contextPath}/sugg/list">
+				초기화
+			</a>
+
+		</div>
+
+	</form>
 
 	<div>
+
 		<div class="table-wrap">
+
 			<table class="table">
+
 				<thead>
+
 					<tr>
 						<th>번호</th>
 						<th>제목</th>
@@ -86,36 +112,78 @@
 						<th>조회수</th>
 						<th>상태</th>
 					</tr>
+
 				</thead>
 
 				<tbody>
+
 					<c:forEach var="dto" items="${list}">
-						<tr class="suggList">
-							<td class="suggNo">${dto.sugg_no}</td>
-							<td class="suggTitle">${dto.sugg_title}</td>
+
+						<tr>
+
+							<td class="suggNo">
+								${dto.sugg_no}
+							</td>
+
+							<td class="suggTitle"
+								onclick="openPwdModal(${dto.sugg_no})">
+
+								${dto.sugg_title}
+
+							</td>
+
 							<td>${dto.sugg_cdate}</td>
 							<td>${dto.sugg_writer}</td>
 							<td>${dto.comment_count}</td>
 							<td>${dto.sugg_view}</td>
-							<td><c:choose>
+
+							<td>
+
+								<c:choose>
+
 									<c:when test="${dto.sugg_answer eq 'N'}">
-										<span style="color:var(--dark-gray);"> • 답변대기 </span>
+
+										<span style="color:var(--dark-gray);">
+											• 답변대기
+										</span>
+
 									</c:when>
+
 									<c:otherwise>
-										<span style="color:var(--success);"> • 답변완료 </span>
+
+										<span style="color:var(--success);">
+											• 답변완료
+										</span>
+
 									</c:otherwise>
-								</c:choose></td>
+
+								</c:choose>
+
+							</td>
+
 						</tr>
+
 					</c:forEach>
 
 					<c:if test="${empty list}">
+
 						<tr>
-							<td colspan="7" style="text-align: center;">조회된 건의사항이 없습니다.
+
+							<td colspan="7"
+								style="text-align:center;">
+
+								조회된 건의사항이 없습니다.
+
 							</td>
+
 						</tr>
+
 					</c:if>
+
 				</tbody>
+
 			</table>
+
 		</div>
 
 		<jsp:include page="/WEB-INF/views/common/paging.jsp" />
@@ -124,162 +192,279 @@
 
 </div>
 
+<!-- 비밀번호 모달 -->
+<div id="pwdModal"
+	style="
+	display:none;
+	position:fixed;
+	inset:0;
+	background:rgba(0,0,0,0.45);
+	z-index:9999;
+	justify-content:center;
+	align-items:center;
+">
+
+	<div style="
+		width:520px;
+		border-radius:16px;
+		overflow:hidden;
+		box-shadow:0 10px 30px rgba(0,0,0,0.3);
+		background:#fff;
+	">
+
+		<!-- 헤더 -->
+		<div style="
+			height:60px;
+			padding:0 24px;
+			display:flex;
+			justify-content:space-between;
+			align-items:center;
+			background:#fff;
+			color:black;
+		">
+
+			<span style="
+				font-size:20px;
+				font-weight:700;
+			">
+				비밀번호
+			</span>
+
+			<button type="button"
+				onclick="closePwdModal()"
+				style="
+				font-size:28px;
+				color:#fff;
+			">
+				×
+			</button>
+
+		</div>
+
+		<form action="${pageContext.request.contextPath}/sugg/detail"
+			method="post">
+
+			<input type="hidden"
+				id="modal_sugg_no"
+				name="sugg_no">
+
+			<!-- 내용 -->
+			<div style="
+				padding:40px;
+				background:#fff;
+			">
+
+				<p style="
+					margin:0 0 20px;
+					font-size:18px;
+					font-weight:600;
+					color:#333;
+				">
+					글을 확인하려면 비밀번호를 입력하세요.
+				</p>
+
+				<div class="search-item">
+
+					<input type="password"
+						name="sugg_pw"
+						maxlength="4"
+						placeholder="암호 입력"
+						required
+						style="
+							width:100%;
+							min-width:auto;
+							color:#333;
+						">
+
+				</div>
+
+			</div>
+
+			<!-- 버튼 -->
+			<div style="
+				padding:24px;
+				display:flex;
+				justify-content:center;
+				align-items:center;
+				gap:12px;
+				background:#fff;
+			">
+
+				<button type="submit"
+					class="btn btn-main"
+					style="
+						width:110px;
+						height:42px;
+					">
+					예
+				</button>
+
+				<button type="button"
+					onclick="closePwdModal()"
+					class="btn btn-white"
+					style="
+						width:110px;
+						height:42px;
+					">
+					취소
+				</button>
+
+			</div>
+
+		</form>
+
+	</div>
+
+</div>
+
 <script>
 
-    window.addEventListener("load", () => {
-        init();
-    });
+window.addEventListener("load", () => {
+	const errorMsg =
+		"${sessionScope.pwdError}";
 
-    function init() {
-        bind();
-    }
+	if(errorMsg &&
+		errorMsg !== "null" &&
+		errorMsg !== "") {
 
-    function bind() {
-        moveDetail();
-        dateCheck();
-    }
+		alert(errorMsg);
+		<% session.removeAttribute("pwdError"); %>
+	}
+});
 
-    function moveDetail() {
-        const suggLists = document.querySelectorAll(".suggList");
+function init() {
+	bind();
+}
 
-        for (let i = 0; i < suggLists.length; i++) {
+function bind() {
+	dateCheck();
+}
 
-            suggLists[i].addEventListener("click", () => {
-                const suggNo = suggLists[i].querySelector(".suggNo").textContent.trim();
-                console.log("sugg_no : " + suggNo);
+function openPwdModal(suggNo) {
 
-                const url = `${pageContext.request.contextPath}/sugg/detail?sugg_no=` + suggNo;
-                console.log("url : " + url);
+	document.querySelector("#modal_sugg_no").value
+		= suggNo;
+	
+	document.querySelector("input[name='sugg_pw']").value
+		= "";
 
-                window.location.href = url;
-            });
-        }
-    }
-    
-    document.querySelector("#searchForm")
-    .addEventListener("submit", function(e){
+	document.querySelector("#pwdModal").style.display
+		= "flex";
+}
 
-        const startDate =
-            document.querySelector("input[name='startDate']").value;
+function closePwdModal() {
 
-        const endDate =
-            document.querySelector("input[name='endDate']").value;
+	document.querySelector("input[name='sugg_pw']").value
+	= "";
+	
+	document.querySelector("#pwdModal").style.display
+		= "none";
+}
 
-        // 둘 다 선택했을 때만 검사
-        if(startDate && endDate){
 
-            if(startDate > endDate){
-                alert("시작일은 종료일보다 늦을 수 없습니다.");
-                e.preventDefault();
-                return;
-            }
+function dateCheck() {
 
-        }
+	const startDate =
+		document.querySelector("#startDate");
 
-    });
-    
-    function dateCheck() {
-        const startDate = document.querySelector("#startDate");
-        const endDate = document.querySelector("#endDate");
+	const endDate =
+		document.querySelector("#endDate");
 
-        // 페이지 처음 열렸을 때 startDate 값이 있으면 endDate 최소값 설정
-        if (startDate.value) {
-            endDate.min = startDate.value;
-        }
+	if (startDate.value) {
+		endDate.min = startDate.value;
+	}
 
-        startDate.addEventListener("change", function () {
-            endDate.min = startDate.value;
+	startDate.addEventListener("change", function () {
 
-            // 이미 선택된 종료일이 시작일보다 이전이면 초기화
-            if (endDate.value && endDate.value < startDate.value) {
-                endDate.value = "";
-            }
-        });
-    }
-    
+		endDate.min = startDate.value;
+
+		if (endDate.value &&
+			endDate.value < startDate.value) {
+
+			endDate.value = "";
+		}
+	});
+}
 
 </script>
 
 <style>
 .search-box {
-    display: flex;
-    align-items: flex-end;
-    gap: 10px;
-    flex-wrap: nowrap;
+	display: flex;
+	align-items: flex-end;
+	gap: 10px;
+	flex-wrap: nowrap;
 }
 
 .date-item {
-    width: auto;
+	width: auto;
 }
 
 .date-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
 }
 
 .date-row input {
-    width: 230px;
-    min-width: 230px;
+	width: 230px;
+	min-width: 230px;
 }
 
 .status-item select {
-    width: 110px;
-    min-width: 110px;
+	width: 110px;
+	min-width: 110px;
 }
 
 .keyword input {
-    width: 240px;
-    min-width: 240px;
+	width: 240px;
+	min-width: 240px;
 }
 
 .search-btn-area {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: nowrap;
-    min-width: 145px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: nowrap;
+	min-width: 145px;
 }
 
 .reset-btn {
-    width: 66px;
-    white-space: nowrap;
+	width: 66px;
+	white-space: nowrap;
+	text-align:center;
 }
 
 .suggTitle {
-    cursor: pointer;
-    transition: 0.2s;
+	cursor: pointer;
+	transition: 0.2s;
 }
 
 .suggTitle:hover {
-    color: #2d7a46;
-    text-decoration: underline;
+	color: #2d7a46;
+	text-decoration: underline;
 }
 
-
-/* PC 화면에서만 한 줄 유지 */
-@media (min-width: 1200px) {
-    .search-box {
-        flex-wrap: nowrap;
-    }
+@media (min-width:1200px) {
+	.search-box {
+		flex-wrap: nowrap;
+	}
 }
 
-/* 작은 화면에서는 자연스럽게 줄바꿈 */
-@media (max-width: 768px) {
-    .date-row {
-        flex-wrap: wrap;
-    }
+@media (max-width:768px) {
+	.date-row {
+		flex-wrap: wrap;
+	}
 
-    .date-row input,
-    .status-item select,
-    .keyword input {
-        width: 100%;
-    }
+	.date-row input,
+	.status-item select,
+	.keyword input {
+		width: 100%;
+	}
 
-    .search-item,
-    .search-btn-area {
-        width: 100%;
-    }
+	.search-item,
+	.search-btn-area {
+		width: 100%;
+	}
 }
 </style>
-

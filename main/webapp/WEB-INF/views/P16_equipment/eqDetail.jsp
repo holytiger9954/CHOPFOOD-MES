@@ -20,19 +20,19 @@
     <div class="btn-row">
         <div>
             <a class="btn btn-white"
-                href="${pageContext.request.contextPath}/eq/list">
+                href="${pageContext.request.contextPath}/equip/list">
                 목록
             </a>
         </div>
 
         <div>
             <a class="btn btn-main"
-                href="${pageContext.request.contextPath}/eq/edit?eqId=${eqp.eqId}">
+                href="${pageContext.request.contextPath}/equip/edit?eqId=${eqp.eqId}">
                 수정
             </a>
 
             <a class="btn btn-red"
-                href="${pageContext.request.contextPath}/eq/delete?eqId=${eqp.eqId}">
+                href="${pageContext.request.contextPath}/equip/delete?eqId=${eqp.eqId}">
                 삭제
             </a>
         </div>
@@ -50,12 +50,12 @@
                     </div>
 
                     <a class="btn btn-sub"
-                        href="${pageContext.request.contextPath}/eq/stop?eqId=${eqp.eqId}">
+                        href="${pageContext.request.contextPath}/equip/stop?eqId=${eqp.eqId}">
                         설비 정지
                     </a>
 
                     <a class="btn btn-main"
-                        href="${pageContext.request.contextPath}/eq/run?eqId=${eqp.eqId}">
+                        href="${pageContext.request.contextPath}/equip/run?eqId=${eqp.eqId}">
                         설비 가동
                     </a>
                 </div>
@@ -125,7 +125,7 @@
 
                     <tr>
                         <th>작업장</th>
-                        <td>${eqp.eqWpid}</td>
+                        <td>${eqp.wpName}</td>
 
                         <th>작업구역</th>
                         <td>${eqp.eqWpid}</td>
@@ -133,10 +133,10 @@
 
                     <tr>
                         <th>설비 책임자</th>
-                        <td>김설비 (EMP1006)</td>
+                        <td>${eqp.eqManagerName} (${eqp.eqManager})</td>
 
                         <th>관리업체</th>
-                        <td>거래처명 (거래처코드)</td>
+                        <td>${eqp.eqVendorName} (${eqp.eqVendor})</td>
                     </tr>
 
                 </table>
@@ -153,7 +153,7 @@
                 </div>
 
                 <a class="btn btn-main"
-                    href="${pageContext.request.contextPath}/eq/log/add?eqId=${eqp.eqId}">
+                    href="${pageContext.request.contextPath}/equip/log/add?eqId=${eqp.eqId}">
                     점검이력 등록
                 </a>
 
