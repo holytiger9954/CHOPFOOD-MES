@@ -60,7 +60,7 @@ public class WPServiceImpl implements WPService {
 	}
 
 	@Override
-	public void insertWP(WPDTO wpDTO, MultipartFile wpImgFile, String uploadPath, String contextPath)
+	public void insertWP(WPDTO wpDTO, MultipartFile wpImgFile, String uploadPath, String uploadUrl)
 			throws IllegalStateException, IOException {
 		
 		System.out.println("/workplace/add service.insertWP");
@@ -68,8 +68,6 @@ public class WPServiceImpl implements WPService {
 		// 1. 이미지 없이 먼저 INSERT
 	    // insert 후 wpDTO 안에 wpId가 들어오게 만들어야 함
 	    wpDAO.insertWP(wpDTO);
-
-	    String wpId = wpDTO.getWpId();
 
 	    // 2. 이미지 없으면 여기서 종료
 	    if (wpImgFile == null || wpImgFile.isEmpty()) {
@@ -87,7 +85,7 @@ public class WPServiceImpl implements WPService {
 	    String ext = originalName.substring(originalName.lastIndexOf("."));
 
 	    // 5. 파일명을 wpId로 생성
-	    String savedName = wpId + ext;
+	    String savedName = wpDTO.getWpId() + "_" + System.currentTimeMillis() + ext;
 
 	    File saveFile = new File(uploadPath, savedName);
 
@@ -95,14 +93,13 @@ public class WPServiceImpl implements WPService {
 	    wpImgFile.transferTo(saveFile);
 
 	    // 7. DB에 이미지 파일명 UPDATE
-	    String imgUrl = contextPath + "/resources/img/P15_workplace/" + savedName;
-	    
+	    String imgUrl = uploadUrl + "/" + savedName;
 	    wpDTO.setWpImg(imgUrl);
 	    wpDAO.updateWpImg(wpDTO);
 	}
 
 	@Override
-	public void updateWP(WPDTO wpDTO, MultipartFile wpImgFile, String uploadPath, String contextPath)
+	public void updateWP(WPDTO wpDTO, MultipartFile wpImgFile, String uploadPath, String uploadUrl)
 			throws IllegalStateException, IOException {
 
 	    System.out.println("/workplace/update service.updateWP");
@@ -128,24 +125,28 @@ public class WPServiceImpl implements WPService {
 	        uploadDir.mkdirs();
 	    }
 
-	    String savedName;
-
-	    // 5. 기존 이미지가 있으면 기존 파일명으로 덮어쓰기
+	    // 5. 기존 파일 삭제 및 새 파일명 생성
 	    if (wpDTO.getWpImg() != null && !wpDTO.getWpImg().trim().equals("")) {
 	        String oldImgUrl = wpDTO.getWpImg();
-	        savedName = oldImgUrl.substring(oldImgUrl.lastIndexOf("/") + 1);
-	    } else {
-	        String originalName = wpImgFile.getOriginalFilename();
-	        String ext = originalName.substring(originalName.lastIndexOf("."));
-	        savedName = wpDTO.getWpId() + ext;
+	        String oldFileName = oldImgUrl.substring(oldImgUrl.lastIndexOf("/") + 1);
+
+	        File oldFile = new File(uploadPath, oldFileName);
+	        if (oldFile.exists()) {
+	            oldFile.delete();
+	        }
 	    }
+	    
+	    String originalName = wpImgFile.getOriginalFilename();
+	    String ext = originalName.substring(originalName.lastIndexOf("."));
+
+	    String savedName = wpDTO.getWpId() + "_" + System.currentTimeMillis() + ext;
 
 	    // 6. 실제 파일 저장
 	    File saveFile = new File(uploadPath, savedName);
 	    wpImgFile.transferTo(saveFile);
 
 	    // 7. DB 이미지 URL 수정
-	    String imgUrl = contextPath + "/resources/img/P15_workplace/" + savedName;
+	    String imgUrl = uploadUrl + "/" + savedName;
 	    wpDTO.setWpImg(imgUrl);
 	    wpDAO.updateWpImg(wpDTO);
 		

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import kr.or.chop.P14_warehouse.dto.WHDTO;
 import kr.or.chop.P15_workplace.dao.GlogDAO;
 import kr.or.chop.P15_workplace.dto.WPDTO;
 import kr.or.chop.P19_ghp.dto.GhpDTO;
@@ -34,14 +35,12 @@ public class GlogServiceImpl implements GlogService {
 	}
 
 	@Override
-	public void insertGlog(GlogDTO glogDTO, MultipartFile ghpImgFile, String uploadPath, String contextPath)
+	public void insertGlog(GlogDTO glogDTO, MultipartFile ghpImgFile, String uploadPath, String uploadUrl)
 			throws IllegalStateException, IOException {
 		System.out.println("/workplace/glog/add service.insertGlog");
 		
 		// 1. 이미지 없이 먼저 INSERT
 		glogDAO.insertGlog(glogDTO);
-		
-		String glogId = glogDTO.getGlogId();
 		
 		// 2. 이미지 없으면 여기서 종료
 		if (ghpImgFile == null || ghpImgFile.isEmpty()) {
@@ -59,14 +58,14 @@ public class GlogServiceImpl implements GlogService {
 		String ext = originalName.substring(originalName.lastIndexOf("."));
 		
 		// 5. 파일명을 glogId로 생성
-		String savedName = glogId + ext;
+		String savedName = glogDTO.getGlogId() + "_" + System.currentTimeMillis() + ext;
 		File saveFile = new File(uploadPath, savedName);
 		
 		// 6. 실제 파일 저장
 		ghpImgFile.transferTo(saveFile);
 		
 		// 7. DB에 이미지 파일명 update
-		String imgUrl = contextPath + "/resources/img/P15_workplace/glog/" + savedName;
+		String imgUrl = uploadUrl + "/" + savedName;
 		
 		glogDTO.setGlogImg(imgUrl);
 		glogDAO.updateGhpImg(glogDTO);
@@ -87,7 +86,7 @@ public class GlogServiceImpl implements GlogService {
 	}
 
 	@Override
-	public void updateGlog(GlogDTO glogDTO, MultipartFile ghpImgFile, String uploadPath, String contextPath)
+	public void updateGlog(GlogDTO glogDTO, MultipartFile ghpImgFile, String uploadPath, String uploadUrl)
 			throws IllegalStateException, IOException {
 		System.out.println("/workplace/glog/detail service.updateGlog");
 
@@ -112,27 +111,36 @@ public class GlogServiceImpl implements GlogService {
 	        uploadDir.mkdirs();
 	    }
 
-	    String savedName;
-
-	    // 5. 기존 이미지가 있으면 기존 파일명으로 덮어쓰기
+	    // 5. 기존 파일 삭제 및 새 파일명 생성
 	    if (glogDTO.getGlogImg() != null && !glogDTO.getGlogImg().trim().equals("")) {
 	        String oldImgUrl = glogDTO.getGlogImg();
-	        savedName = oldImgUrl.substring(oldImgUrl.lastIndexOf("/") + 1);
-	    } else {
-	        String originalName = ghpImgFile.getOriginalFilename();
-	        String ext = originalName.substring(originalName.lastIndexOf("."));
-	        savedName = glogDTO.getGlogId() + ext;
+	        String oldFileName = oldImgUrl.substring(oldImgUrl.lastIndexOf("/") + 1);
+
+	        File oldFile = new File(uploadPath, oldFileName);
+	        if (oldFile.exists()) {
+	            oldFile.delete();
+	        }
 	    }
+	    
+	    String originalName = ghpImgFile.getOriginalFilename();
+	    String ext = originalName.substring(originalName.lastIndexOf("."));
+
+	    String savedName = glogDTO.getGlogId() + "_" + System.currentTimeMillis() + ext;
 
 	    // 6. 실제 파일 저장
 	    File saveFile = new File(uploadPath, savedName);
 	    ghpImgFile.transferTo(saveFile);
 
 	    // 7. DB 이미지 URL 수정
-	    String imgUrl = contextPath + "/resources/img/P15_workplace/glog/" + savedName;
+	    String imgUrl = uploadUrl + "/" + savedName;
 	    glogDTO.setGlogImg(imgUrl);
 	    glogDAO.updateGhpImg(glogDTO);
 		
+	}
+
+	@Override
+	public List<GhpDTO> selectAllGhpWh(WHDTO whDTO) {
+		return glogDAO.selectAllGhpWh(whDTO);
 	}
 
 }

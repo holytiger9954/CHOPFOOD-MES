@@ -25,11 +25,12 @@
 		</div>
 		<div class="right">
 			<a class="btn btn-main"
-				href="${pageContext.request.contextPath}/warehouse/sec/edit?secId=${secDTO.secId}">
+				href="${pageContext.request.contextPath}/warehouse/section/edit?secId=${secDTO.secId}">
 				수정
 			</a>
 			<a class="btn btn-red"
-				href="${pageContext.request.contextPath}/warehouse/sec/delete?whId=${secDTO.secWhId}">
+				href="${pageContext.request.contextPath}/warehouse/section/delete?secId=${secDTO.secId}"
+				onclick="return confirm('섹션(${secDTO.secId})을 삭제하시겠습니까?');">
 				삭제
 			</a>
 		</div>
@@ -75,7 +76,7 @@
 					</c:if>
 					<c:if test="${not empty secDTO.secImg and secDTO.secImg != ''}">
 			        	<div class="info-image">
-							<img src="${secDTO.secImg}"
+							<img src="${pageContext.request.contextPath}${secDTO.secImg}"
 								title="${secDTO.secId}_img" alt="${secDTO.secId}_img"
 								 style="width: 100%;">
 						</div>
@@ -135,8 +136,8 @@
 						<c:forEach var="lot" items="${lotList}">
 							<tr class="lotList">
 								<td class="lotId">${lot.lotId}</td>
-								<td>(${lot.lotItem})</td>
-								<td>현재수량</td>
+								<td>${lot.lotItemName} (${lot.lotItem})</td>
+								<td>${lot.lotFqty}</td>
 								<td>${lot.lotEtw}</td>
 								<td>${lot.lotExp}</td>
 								<td>

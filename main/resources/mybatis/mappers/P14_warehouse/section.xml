@@ -72,9 +72,11 @@
 						SELECT
 							l.LOT_ID       AS lotId,
 							l.LOT_ITEM     AS lotItem,
+							i.ITEM_NAME		AS lotItemName,
 							l.LOT_VENDOR   AS lotVendor,
 							l.LOT_WORK     AS lotWork,
-							l.LOT_IQTY     AS lotIqty,
+							l.LOT_QTY     AS lotQty,
+							l.LOT_CQTY		AS loCqty,
 							l.LOT_FQTY     AS lotFqty,
 							l.LOT_MFD      AS lotMfd,
 							l.LOT_ETW      AS lotEtw,

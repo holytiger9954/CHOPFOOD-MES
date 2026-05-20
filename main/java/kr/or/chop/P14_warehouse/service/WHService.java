@@ -22,9 +22,9 @@ public interface WHService {
 	public List<GlogDTO> selectGlogList(WHDTO whDTO, PageInfo pageInfo);
 	public List<SecDTO> selectSecList(WHDTO whDTO);
 	
-	public void insertWH(WHDTO whDTO, MultipartFile whImgFile, String uploadPath, String contextPath) throws IllegalStateException, IOException;
+	public void insertWH(WHDTO whDTO, MultipartFile whImgFile, String uploadPath, String uploadUrl) throws IllegalStateException, IOException;
 	
-	public void updateWH(WHDTO whDTO, MultipartFile whImgFile, String uploadPath, String contextPath) throws IllegalStateException, IOException;
+	public void updateWH(WHDTO whDTO, MultipartFile whImgFile, String uploadPath, String uploadUrl) throws IllegalStateException, IOException;
 
 	public int deleteWh(WHDTO whDTO);
 }

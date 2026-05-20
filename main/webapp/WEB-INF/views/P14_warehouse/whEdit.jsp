@@ -24,7 +24,8 @@
 			<div class="left"></div>
 			<div class="right">
 				<a class="btn btn-white"
-	               href="${pageContext.request.contextPath}/warehouse/detail?whId=${whDTO.whId}">
+	               href="${pageContext.request.contextPath}/warehouse/detail?whId=${whDTO.whId}"
+	               onclick="return confirm('확인을 누르시면 입력한 내용이 모두 사라집니다.\n정말로 취소하시겠습니까?');">
 	                취소
 	            </a>
 	
@@ -96,7 +97,9 @@
 	   		</label>
 	   		<div style="display: flex; gap: 15px;">
 				<input type="file" name="whImgFile" id="whImgFile" accept="image/*" style="display: none;">
-				<input type="text" id="fileName" value="${whDTO.whImg}" placeholder="선택된 파일 없음" readonly>
+				<input type="text" id="fileName" value="${whDTO.whImg}"
+						title="${not empty whDTO.whImg and whDTO.whImg != '' ? wpDTO.wpImg : '선택된 파일 없음'}"
+						placeholder="선택된 파일 없음" readonly>
 				<div style="display: flex; gap: 10px;">
 					<label type="button" class="btn btn-main" for="whImgFile"
 							style="color: white; font-size: 14px;">이미지 선택</label>
@@ -109,7 +112,7 @@
 			
 			    <img 
 			        id="previewImg"
-			        src="${whDTO.whImg}"
+			        src="${pageContext.request.contextPath}${whDTO.whImg}"
 			        alt="이미지 미리보기"
 			        style="${not empty whDTO.whImg or whDTO.whImg != null ? 'display:block;' : 'display:none;'}"
 			    >
@@ -209,6 +212,7 @@
 		        previewImg.style.display = "block";
 		        noImg.style.display = "none";
 		        fileName.value = e.target.result;
+		        fileName.title = e.target.result;
 		    };
 
 		    reader.readAsDataURL(file);
@@ -229,6 +233,7 @@
 		whImgFile.value = "";
 		noImg.style.display = "block";
 		fileName.value = "";
+		fileName.title = "선택된 파일 없음";
 		delImg.value = "Y";
 	}
 

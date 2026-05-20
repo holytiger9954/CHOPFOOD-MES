@@ -13,5 +13,6 @@ public class SecDTO {
 	private double secUsageRate;
 	private String secUsage;
 	private String secImg;
-
+	
+	private String delImg;
 }

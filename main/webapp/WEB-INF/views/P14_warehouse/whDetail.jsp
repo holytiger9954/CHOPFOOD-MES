@@ -29,7 +29,8 @@
 				수정
 			</a>
 			<a class="btn btn-red"
-				href="${pageContext.request.contextPath}/warehouse/delete?whId=${whDTO.whId}">
+				href="${pageContext.request.contextPath}/warehouse/delete?whId=${whDTO.whId}"
+				onclick="return confirm('창고(${whDTO.whId})를 삭제하시겠습니까?');">
 				삭제
 			</a>
 		</div>
@@ -91,14 +92,14 @@
 			</div>
 			
 			<div style="display: flex; align-items: flex-start; gap: 15px;">
-				<div class="card" style="min-width: 50%; padding: 20px;">
+				<div class="card" style="width: 80%; padding: 20px;">
 					<div class="content-content-content-title">창고 영역도</div>
 					<c:if test="${empty whDTO.whImg or whDTO.whImg == ''}">
 						<div style="font-size: 14px; color: var(--dark-gray);">창고 영역도가 없습니다</div>
 					</c:if>
 					<c:if test="${not empty whDTO.whImg and whDTO.whImg != ''}">
 			        	<div class="info-image">
-							<img src="${whDTO.whImg}"
+							<img src="${pageContext.request.contextPath}${whDTO.whImg}"
 								title="${whDTO.whId}_img" alt="${whDTO.whId}_img"
 								 style="width: 100%;">
 						</div>

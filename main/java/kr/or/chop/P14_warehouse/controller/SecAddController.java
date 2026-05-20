@@ -39,10 +39,12 @@ public class SecAddController {
 	        HttpServletRequest request
 		) throws IllegalStateException, IOException {
 		
-		String uploadPath = request.getSession().getServletContext().getRealPath("/resources/img/P14_warehouse/section");
-		String contextPath = request.getContextPath();
+//		String uploadPath = request.getSession().getServletContext().getRealPath("/resources/img/P14_warehouse/section");
+//		String contextPath = request.getContextPath();
+		String uploadPath = "D:/chop_upload/P14_warehouse/section";
+		String uploadUrl = "/upload/P14_warehouse/section";
 		
-		secService.insertSection(secDTO, secImgFile, uploadPath, contextPath);
+		secService.insertSection(secDTO, secImgFile, uploadPath, uploadUrl);
 		return "redirect:/warehouse/detail?whId=" + secDTO.getSecWhId();
 	}
 	
@@ -59,5 +61,21 @@ public class SecAddController {
 		model.addAttribute("secDTO", secDTO);
 		
 		return "P14_warehouse/secEdit.tiles";
+	}
+	
+	@RequestMapping("/update")
+	public String update (
+			SecDTO secDTO,
+			@RequestParam("secImgFile") MultipartFile secImgFile,
+	        HttpServletRequest request
+		) throws IllegalStateException, IOException {
+
+//		String uploadPath = request.getSession().getServletContext().getRealPath("/resources/img/P14_warehouse/section");
+//		String contextPath = request.getContextPath();
+		String uploadPath = "D:/chop_upload/P14_warehouse/section";
+		String uploadUrl = "/upload/P14_warehouse/section";
+		
+		secService.updateSection(secDTO, secImgFile, uploadPath, uploadUrl);
+		return "redirect:/warehouse/section/detail?secId=" + secDTO.getSecId();
 	}
 }

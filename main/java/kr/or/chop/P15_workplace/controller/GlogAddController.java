@@ -105,10 +105,12 @@ public class GlogAddController {
 		    toTimestamp(glogDTO.getGlogAday(), glogDTO.getGlogAtime())
 		);
 		
-		String uploadPath = request.getSession().getServletContext().getRealPath("/resources/img/P15_workplace/glog");
-		String contextPath = request.getContextPath();
+//		String uploadPath = request.getSession().getServletContext().getRealPath("/resources/img/P15_workplace/glog");
+//		String contextPath = request.getContextPath();
+		String uploadPath = "D:/chop_upload/P15_workplace/glog";
+		String uploadUrl = "/upload/P15_workplace/glog";
 		
-		glogService.insertGlog(glogDTO, ghpImgFile, uploadPath, contextPath);
+		glogService.insertGlog(glogDTO, ghpImgFile, uploadPath, uploadUrl);
 		
 		return "redirect:/workplace/detail?wpId=" + glogDTO.getGlogWpId();
 	}

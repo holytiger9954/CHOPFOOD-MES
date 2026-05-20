@@ -27,7 +27,8 @@
 				수정
 			</a>
 			<a class="btn btn-red"
-				href="${pageContext.request.contextPath}/workplace/delete?wpId=${wpDTO.wpId}">
+				href="${pageContext.request.contextPath}/workplace/delete?wpId=${wpDTO.wpId}"
+				onclick="return confirm('작업장(${wpDTO.wpId})을 삭제하시겠습니까?');">
 				삭제
 			</a>
 		</div>
@@ -72,7 +73,7 @@
 			</c:if>
 			<c:if test="${not empty wpDTO.wpImg and wpDTO.wpImg != null }">
 				<div class="info-image" style="padding: 10px 40px;">
-					<img src="${wpDTO.wpImg}"
+					<img src="${pageContext.request.contextPath}${wpDTO.wpImg}"
 						title="${wpDTO.wpId}_img" alt="${wpDTO.wpId}_img"
 						 style="min-width: 400px; max-width: 800px; min-height: 300px; margin: 0 auto;">
 				</div>

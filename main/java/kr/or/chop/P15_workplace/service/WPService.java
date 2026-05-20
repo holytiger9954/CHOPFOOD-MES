@@ -18,8 +18,8 @@ public interface WPService {
 	public int selectGlogCount(WPDTO wpDTO);
 	public List<GlogDTO> selectGlogList(WPDTO wpDTO, PageInfo pageInfo);
 	
-	public void insertWP(WPDTO wpDTO, MultipartFile wpImgFile, String uploadPath, String contextPath) throws IllegalStateException, IOException;
-	public void updateWP(WPDTO wpDTO, MultipartFile wpImgFile, String uploadPath, String contextPath) throws IllegalStateException, IOException;
+	public void insertWP(WPDTO wpDTO, MultipartFile wpImgFile, String uploadPath, String uploadUrl) throws IllegalStateException, IOException;
+	public void updateWP(WPDTO wpDTO, MultipartFile wpImgFile, String uploadPath, String uploadUrl) throws IllegalStateException, IOException;
 	
 	public int deleteWp(WPDTO wpDTO);
 	

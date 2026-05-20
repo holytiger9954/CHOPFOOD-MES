@@ -6,28 +6,28 @@
 	
 	<div class="header-row">
 		<div>
-			<h2 class="page-title">작업장 점검이력 상세</h2>
+			<h2 class="page-title">창고 점검이력 상세</h2>
 			<p class="page-subtitle">점검이력(${glog.glogId})의 상세 정보를 확인하세요.</p>
 		</div>
 		
 		<div>
-			<p class="page-route">홈 > 작업장 관리 > 위생점검 결과 > 상세</p>
+			<p class="page-route">홈 > 창고 관리 > 위생점검 결과 > 상세</p>
 		</div>
 	</div>
 	<div class="btn-row">
 		<div class="left">
 			<a class="btn btn-white"
-				href="${pageContext.request.contextPath}/workplace/detail?wpId=${glog.glogWpId}">
-				작업장 상세
+				href="${pageContext.request.contextPath}/warehouse/detail?whId=${glog.glogWhId}">
+				창고 상세
 			</a>
 		</div>
 		<div class="right">
 			<a class="btn btn-main"
-				href="${pageContext.request.contextPath}/workplace/glog/edit?glogId=${glog.glogId}">
+				href="${pageContext.request.contextPath}/warehouse/glog/edit?glogId=${glog.glogId}">
 				수정
 			</a>
 			<a class="btn btn-red"
-				href="${pageContext.request.contextPath}/workplace/glog/delete?wpId=${glog.glogWpId}&glogId=${glog.glogId}"
+				href="${pageContext.request.contextPath}/warehouse/glog/delete?whId=${glog.glogWhId}&glogId=${glog.glogId}"
 				onclick="return confirm('점검이력(${glog.glogId})을 삭제하시겠습니까?');">
 				삭제
 			</a>
@@ -56,7 +56,7 @@
 					<tbody>
 						<tr>
 							<th>점검대상</th>
-							<td>${glog.glogWpName} (${glog.glogWpId})</td>
+							<td>${glog.glogWhName} (${glog.glogWhId})</td>
 							<th>GHP 기준</th>
 							<td>${glog.ghpName} (${glog.ghpId})</td>
 						</tr>

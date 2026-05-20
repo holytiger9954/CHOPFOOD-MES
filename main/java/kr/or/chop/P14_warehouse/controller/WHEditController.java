@@ -48,10 +48,12 @@ public class WHEditController {
 		
 		System.out.println("/warehouse/edit controller.update");
 		
-		String uploadPath = request.getSession().getServletContext().getRealPath("/resources/img/P14_warehouse");
-	    String contextPath = request.getContextPath();
+//		String uploadPath = request.getSession().getServletContext().getRealPath("/resources/img/P14_warehouse");
+//	    String contextPath = request.getContextPath();
+		String uploadPath = "D:/chop_upload/P14_warehouse";
+		String uploadUrl = "/upload/P14_warehouse";
 	    
-	    whService.updateWH(whDTO, whImgFile, uploadPath, contextPath);
+	    whService.updateWH(whDTO, whImgFile, uploadPath, uploadUrl);
 		
 		return "redirect:/warehouse/detail?whId=" + whDTO.getWhId();
 	}

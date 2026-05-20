@@ -18,17 +18,20 @@
           method="post"
           enctype="multipart/form-data"
           class="grid-form">
+		<input type="hidden" name="secId" value="${secDTO.secId}">
+		<input type="hidden" name="secWhId" value="${secDTO.secWhId}">
 		
 		<div class="btn-row">
 			<div class="left"></div>
 			<div class="right">
 				<a class="btn btn-white"
-	               href="${pageContext.request.contextPath}/warehouse/section/detail?secId=${secId}">
+	               href="${pageContext.request.contextPath}/warehouse/section/detail?secId=${secId}"
+	               onclick="return confirm('확인을 누르시면 입력한 내용이 모두 사라집니다.\n정말로 취소하시겠습니까?');">
 	                취소
 	            </a>
 	
 	            <button type="submit" class="btn btn-main">
-	                등록
+	                수정
 	            </button>
 			</div>
 		</div>
@@ -36,7 +39,7 @@
 		<div class="grid-wrap">
 			<div class="grid search-item">
 				<label>섹션 수량</label>
-				<input type="text" name="secQty" placeholder="섹션 수량 입력" value="${secQty}" required readonly>
+				<input type="text" name="secQty" placeholder="섹션 수량 입력" value="${secDTO.secQty}" required readonly>
 			</div>
 			
 			<div class="grid search-item">
@@ -51,21 +54,30 @@
 	   		</label>
 	   		<div style="display: flex; gap: 15px;">
 				<input type="file" name="secImgFile" id="secImgFile" accept="image/*" style="display: none;">
-				<input type="text" id="fileName" placeholder="선택된 파일 없음" readonly>
+				<input type="text" id="fileName" placeholder="선택된 파일 없음" value="${secDTO.secImg}"
+						title="${not empty secDTO.secImg and secDTO.secImg != '' ? secDTO.secImg : '선택된 파일 없음'}"
+						readonly>
 				<div style="display: flex; gap: 10px;">
 					<label type="button" class="btn btn-main" for="secImgFile"
 							style="color: white; font-size: 14px;">이미지 선택</label>
-					<button type="button" class="btn btn-red" id="delImgBtn" onclick="delImg()">삭제</button>
+					<button type="button" class="btn btn-red" id="delImgBtn" onclick="delImgFn()">삭제</button>
 				</div>
 	   		</div>
 			
-			<div id="imgPreviewBox" style="display: none;">
-		        <img id="previewImg" src="" alt="이미지 미리보기"
-		        >
+			<div id="imgPreviewBox"
+			     style="${not empty secDTO.secImg and secDTO.secImg != null ? 'display:flex;' : 'display:none;'}">
+			
+			    <img 
+			        id="previewImg"
+			        src="${pageContext.request.contextPath}${secDTO.secImg}"
+			        alt="이미지 미리보기"
+			        style="${not empty secDTO.secImg or secDTO.secImg != null ? 'display:block;' : 'display:none;'}"
+			    >
+			
 			</div>
 			
 			<div id="noImg"
-			     style="font-size:12px; display: block; margin-top: 8px;">
+			     style="font-size:12px; ${not empty secDTO.secImg or secDTO.secImg != null ? 'display:none;' : 'display:block;'}">
 			    등록된 사진 없음
 			</div>
 		</div>
@@ -153,13 +165,14 @@
 		        previewImg.style.display = "block";
 		        noImg.style.display = "none";
 		        fileName.value = e.target.result;
+		        fileName.title = e.target.result;
 		    };
 
 		    reader.readAsDataURL(file);
 		});
 	}
 	
-	function delImg() {
+	function delImgFn() {
 		const secImgFile = document.querySelector("#secImgFile");
 		const previewImg = document.querySelector("#previewImg");
 		const imgPreviewBox = document.querySelector("#imgPreviewBox");
@@ -173,6 +186,7 @@
 		secImgFile.value = "";
 		noImg.style.display = "block";
 		fileName.value = "";
+		fileName.title = "선택된 파일 없음";
 		delImg.value = "Y";
 	}
 

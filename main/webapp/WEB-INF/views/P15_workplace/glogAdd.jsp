@@ -24,7 +24,8 @@
 			<div class="left"></div>
 			<div class="right">
 				<a class="btn btn-white"
-	               href="${pageContext.request.contextPath}/workplace/detail?wpId=${wpDTO.wpId}">
+	               href="${pageContext.request.contextPath}/workplace/detail?wpId=${wpDTO.wpId}"
+	               onclick="return confirm('확인을 누르시면 입력한 내용이 모두 사라집니다.\n정말로 취소하시겠습니까?');">
 	                취소
 	            </a>
 	
@@ -130,7 +131,9 @@
 	   		</label>
 	   		<div style="display: flex; gap: 15px;">
 				<input type="file" name="ghpImgFile" id="ghpImgFile" accept="image/*" style="display: none;">
-				<input type="text" id="fileName" placeholder="선택된 파일 없음" readonly>
+				<input type="text" id="fileName" placeholder="선택된 파일 없음"
+						title = "선택된 파일 없음"
+						readonly>
 				<div style="display: flex; gap: 10px;">
 					<label type="button" class="btn btn-main" for="ghpImgFile"
 							style="color: white; font-size: 14px;">이미지 선택</label>
@@ -255,6 +258,7 @@
 		        previewImg.style.display = "block";
 		        noImg.style.display = "none";
 		        fileName.value = e.target.result;
+		        fileName.title = e.target.result;
 		    };
 
 		    reader.readAsDataURL(file);
@@ -274,6 +278,7 @@
 		ghpImgFile.value = "";
 		noImg.style.display = "block";
 		fileName.value = "";
+		fileName.title = "선택된 파일 없음";
 	}
 	
 	function fillGhp() {

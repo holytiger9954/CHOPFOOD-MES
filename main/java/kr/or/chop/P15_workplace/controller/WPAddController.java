@@ -40,10 +40,12 @@ public class WPAddController {
 		System.out.println("/workplace/add controller.add");
 		System.out.println("이름 : " + wpDTO.getWpName() + ", 유형 : " + wpDTO.getWpType());
 		
-		String uploadPath = request.getSession().getServletContext().getRealPath("/resources/img/P15_workplace");
-		String contextPath = request.getContextPath();
+//		String uploadPath = request.getSession().getServletContext().getRealPath("/resources/img/P15_workplace");
+//		String contextPath = request.getContextPath();
+		String uploadPath = "D:/chop_upload/P15_workplace";
+		String uploadUrl = "/upload/P15_workplace";
 
-	    wpService.insertWP(wpDTO, wpImgFile, uploadPath, contextPath);
+	    wpService.insertWP(wpDTO, wpImgFile, uploadPath, uploadUrl);
 
 	    return "redirect:/workplace/list";
 	}

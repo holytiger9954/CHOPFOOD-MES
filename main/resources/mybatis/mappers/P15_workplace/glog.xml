@@ -21,6 +21,24 @@
 		WHERE GHP_USAGE = 'Y' AND GHP_WP_TYPE = #{wpTypeNo}
 		ORDER BY GHP_ID
 	</select>
+
+	<select id="selectAllGhpWh" parameterType="whDTO" resultType="GhpDTO">
+		SELECT
+			GHP_ID ghpId,
+			GHP_NAME ghpName,
+			GHP_CATEGORY ghpCategory,
+			GHP_STANDARD ghpStandard,
+			GHP_CHECK_METHOD ghpCheckMethod,
+			GHP_CYCLE ghpCycle,
+			GHP_WH_TYPE ghpWhType,
+			GHP_WP_TYPE ghpWpType,
+			GHP_MIN_VALUE ghpMinValue,
+			GHP_MAX_VALUE ghpMaxValue,
+			GHP_UNIT ghpUnit
+		FROM GHP
+		WHERE GHP_USAGE = 'Y' AND GHP_WP_TYPE = #{whTypeNo}
+		ORDER BY GHP_ID
+	</select>
 	
 	<select id="selectGhp" parameterType="ghpDTO" resultType="GhpDTO">
 		SELECT

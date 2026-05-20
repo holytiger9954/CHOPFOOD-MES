@@ -6,16 +6,16 @@
 
     <div class="header-row">
         <div>
-            <h2 class="page-title">작업장 점검이력 수정</h2>
+            <h2 class="page-title">창고 점검이력 수정</h2>
             <p class="page-subtitle">선택한 점검이력(${glog.glogId})의 내용을 수정하세요.</p>
         </div>
 
         <div>
-            <p class="page-route">홈 > 작업장 관리 > 위생점검 결과 > 수정</p>
+            <p class="page-route">홈 > 창고 관리 > 위생점검 결과 > 수정</p>
         </div>
     </div>
 
-    <form action="${pageContext.request.contextPath}/workplace/glog/update"
+    <form action="${pageContext.request.contextPath}/warehouse/glog/update"
           method="post"
           enctype="multipart/form-data"
           class="grid-form">
@@ -26,7 +26,7 @@
 			<div class="left"></div>
 			<div class="right">
 				<a class="btn btn-white"
-	               href="${pageContext.request.contextPath}/workplace/glog/detail?glogId=${glog.glogId}"
+	               href="${pageContext.request.contextPath}/warehouse/glog/detail?glogId=${glog.glogId}"
 	               onclick="return confirm('확인을 누르시면 입력한 내용이 모두 사라집니다.\n정말로 취소하시겠습니까?');">
 	                취소
 	            </a>
@@ -54,8 +54,8 @@
 		<div class="grid-wrap">
 			<div class="grid search-item">
 				<label>검사 대상</label>
-				<input type="hidden" name="glogWpId" value="${glog.glogWpId}">
-				<input type="text" id="ghpWp" value="${glog.glogWpName} (${glog.glogWpId})" placeholder="검사 대상" required readonly>
+				<input type="hidden" name="glogWhId" value="${glog.glogWhId}">
+				<input type="text" id="ghpWh" value="${glog.glogWhName} (${glog.glogWhId})" placeholder="검사 대상" required readonly>
 			</div>
 
 			<div class="grid search-item">
@@ -304,7 +304,7 @@
 			}
 
 			const contextPath = "${pageContext.request.contextPath}";
-			const url = contextPath + "/workplace/glog/selectGhp?ghpId=" + encodeURIComponent(ghpId.value);
+			const url = contextPath + "/warehouse/glog/selectGhp?ghpId=" + encodeURIComponent(ghpId.value);
 			
 
 			fetch(url, {

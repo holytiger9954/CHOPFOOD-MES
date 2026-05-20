@@ -40,10 +40,12 @@ public class WHAddController {
 		System.out.println("/workplace/add controller.add");
 		System.out.println("이름 : " + whDTO.getWhName() + ", 유형 : " + whDTO.getWhTypeNo());
 		
-		String uploadPath = request.getSession().getServletContext().getRealPath("/resources/img/P14_warehouse");
-		String contextPath = request.getContextPath();
+//		String uploadPath = request.getSession().getServletContext().getRealPath("/resources/img/P14_warehouse");
+		String uploadPath = "D:/chop_upload/P14_warehouse";
+		String uploadUrl = "/upload/P14_warehouse";
+//		String contextPath = request.getContextPath();
 
-	    whService.insertWH(whDTO, whImgFile, uploadPath, contextPath);
+	    whService.insertWH(whDTO, whImgFile, uploadPath, uploadUrl);
 
 	    return "redirect:/warehouse/list";
 	}

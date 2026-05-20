@@ -6,6 +6,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import kr.or.chop.P14_warehouse.dto.WHDTO;
 import kr.or.chop.P15_workplace.dto.WPDTO;
 import kr.or.chop.P19_ghp.dto.GhpDTO;
 import kr.or.chop.P19_ghp.dto.GlogDTO;
@@ -62,6 +63,11 @@ public class GlogDAOImpl implements GlogDAO {
 	public int updateGlog(GlogDTO glogDTO) {
 		System.out.println("/workplace/glog/edit dao.updateGlog");
 		return sqlSession.update("mapper.P15_workplace.glog.updateGlog", glogDTO);
+	}
+
+	@Override
+	public List<GhpDTO> selectAllGhpWh(WHDTO whDTO) {
+		return sqlSession.selectList("mapper.P15_workplace.glog.selectAllGhpWh", whDTO);
 	}
 
 }

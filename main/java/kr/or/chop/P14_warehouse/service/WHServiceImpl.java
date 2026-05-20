@@ -78,7 +78,7 @@ public class WHServiceImpl implements WHService {
 	}
 
 	@Override
-	public void insertWH(WHDTO whDTO, MultipartFile whImgFile, String uploadPath, String contextPath)
+	public void insertWH(WHDTO whDTO, MultipartFile whImgFile, String uploadPath, String uploadUrl)
 			throws IllegalStateException, IOException {
 
 		System.out.println("/warehouse/add service.insertWH");
@@ -87,8 +87,6 @@ public class WHServiceImpl implements WHService {
 	    // insert 후 whDTO 안에 whId가 들어오게 만들어야 함
 	    whDAO.insertWH(whDTO);
 
-	    String whId = whDTO.getWhId();
-	    
 	    // 1-1. 시퀀스 생성
 	    whDAO.createSecSeq(whDTO);
 
@@ -108,7 +106,7 @@ public class WHServiceImpl implements WHService {
 	    String ext = originalName.substring(originalName.lastIndexOf("."));
 
 	    // 5. 파일명을 wpId로 생성
-	    String savedName = whId + ext;
+	    String savedName = whDTO.getWhId() + "_" + System.currentTimeMillis() + ext;
 
 	    File saveFile = new File(uploadPath, savedName);
 
@@ -116,14 +114,14 @@ public class WHServiceImpl implements WHService {
 	    whImgFile.transferTo(saveFile);
 
 	    // 7. DB에 이미지 파일명 UPDATE
-	    String imgUrl = contextPath + "/resources/img/P14_warehouse/" + savedName;
+	    String imgUrl = uploadUrl + "/" + savedName;
 	    
 	    whDTO.setWhImg(imgUrl);
 	    whDAO.updateWhImg(whDTO);
 	}
 
 	@Override
-	public void updateWH(WHDTO whDTO, MultipartFile whImgFile, String uploadPath, String contextPath)
+	public void updateWH(WHDTO whDTO, MultipartFile whImgFile, String uploadPath, String uploadUrl)
 			throws IllegalStateException, IOException {
 
 	    System.out.println("/warehouse/update service.updateWH");
@@ -149,24 +147,28 @@ public class WHServiceImpl implements WHService {
 	        uploadDir.mkdirs();
 	    }
 
-	    String savedName;
-
-	    // 5. 기존 이미지가 있으면 기존 파일명으로 덮어쓰기
+	    // 5. 기존 파일 삭제 및 새 파일명 생성
 	    if (whDTO.getWhImg() != null && !whDTO.getWhImg().trim().equals("")) {
 	        String oldImgUrl = whDTO.getWhImg();
-	        savedName = oldImgUrl.substring(oldImgUrl.lastIndexOf("/") + 1);
-	    } else {
-	        String originalName = whImgFile.getOriginalFilename();
-	        String ext = originalName.substring(originalName.lastIndexOf("."));
-	        savedName = whDTO.getWhId() + ext;
+	        String oldFileName = oldImgUrl.substring(oldImgUrl.lastIndexOf("/") + 1);
+
+	        File oldFile = new File(uploadPath, oldFileName);
+	        if (oldFile.exists()) {
+	            oldFile.delete();
+	        }
 	    }
+	    
+	    String originalName = whImgFile.getOriginalFilename();
+	    String ext = originalName.substring(originalName.lastIndexOf("."));
+
+	    String savedName = whDTO.getWhId() + "_" + System.currentTimeMillis() + ext;
 
 	    // 6. 실제 파일 저장
 	    File saveFile = new File(uploadPath, savedName);
 	    whImgFile.transferTo(saveFile);
 
 	    // 7. DB 이미지 URL 수정
-	    String imgUrl = contextPath + "/resources/img/P14_warehouse/" + savedName;
+	    String imgUrl = uploadUrl + "/" + savedName;
 	    whDTO.setWhImg(imgUrl);
 	    whDAO.updateWhImg(whDTO);
 		
