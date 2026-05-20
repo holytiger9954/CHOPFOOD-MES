@@ -88,7 +88,7 @@
 					<c:forEach var="dto" items="${list}">
 						<tr class="suggList">
 							<td class="suggNo">${dto.sugg_no}</td>
-							<td>${dto.sugg_title}</td>
+							<td class="suggTitle">${dto.sugg_title}</td>
 							<td>${dto.sugg_cdate}</td>
 							<td>${dto.sugg_writer}</td>
 							<td>${dto.comment_count}</td>
@@ -230,6 +230,16 @@
 .search-btn-area {
     display: flex;
     align-items: flex-end;
+}
+
+.suggTitle {
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.suggTitle:hover {
+    color: #2d7a46;   /* 초록색 */
+    text-decoration: underline;
 }
 </style>
 
