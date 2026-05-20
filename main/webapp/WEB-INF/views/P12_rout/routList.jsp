@@ -1,0 +1,109 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
+<div class="content">
+
+    <div class="header-row">
+        <div>
+            <h2 class="page-title">라우팅 관리</h2>
+            <p class="page-subtitle">생산 품목별 공정 흐름을 조회하고 관리합니다.</p>
+        </div>
+
+        <div>
+            <p class="page-route">홈 &gt; 라우팅 관리</p>
+
+            <a class="btn btn-white"
+               href="${pageContext.request.contextPath}/routing/add">
+                라우팅 등록
+            </a>
+        </div>
+    </div>
+
+    <form class="search-box"
+          action="${pageContext.request.contextPath}/routing/list"
+          method="get">
+
+        <div class="search-item keyword">
+            <label>검색어</label>
+
+            <input type="text"
+                   name="searchKeyword"
+                   value="${search.searchKeyword}"
+                   placeholder="라우팅코드, 라우팅명, 품목코드, 품목명을 입력하세요.">
+        </div>
+
+        <div class="search-btn-area">
+            <button type="submit"
+                    class="btn btn-main">
+                검색
+            </button>
+        </div>
+
+    </form>
+
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="width: 140px;">라우팅 코드</th>
+                    <th style="width: 180px;">라우팅명</th>
+                    <th style="width: 160px;">품목 코드</th>
+                    <th style="width: 220px;">품목명</th>
+                    <th>설명</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <c:forEach var="rout" items="${routList}">
+                    <tr class="rout-row">
+                        <td class="rout-id">${rout.routId}</td>
+                        <td>${rout.routName}</td>
+                        <td>${rout.routItem}</td>
+                        <td>${rout.itemName}</td>
+                        <td>${rout.routContent}</td>
+                    </tr>
+                </c:forEach>
+
+                <c:if test="${empty routList}">
+                    <tr>
+                        <td colspan="5"
+                            style="text-align: center;">
+                            조회된 라우팅 정보가 없습니다.
+                        </td>
+                    </tr>
+                </c:if>
+            </tbody>
+        </table>
+    </div>
+
+    <jsp:include page="/WEB-INF/views/common/paging.jsp" />
+
+</div>
+
+<style>
+    .rout-row {
+        cursor: pointer;
+    }
+
+    .rout-row:hover .rout-id {
+        color: var(--main-green);
+        text-decoration: underline;
+    }
+</style>
+
+<script>
+    window.addEventListener("load", function() {
+        const rows = document.querySelectorAll(".rout-row");
+
+        rows.forEach(function(row) {
+            row.addEventListener("click", function() {
+                const routId = row.querySelector(".rout-id").textContent.trim();
+
+                location.href =
+                    "${pageContext.request.contextPath}/routing/detail?routId="
+                    + encodeURIComponent(routId);
+            });
+        });
+    });
+</script>
