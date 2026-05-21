@@ -193,7 +193,9 @@
 </div>
 
 <!-- 비밀번호 모달 -->
-<div id="pwdModal"
+<div id="pwdModal" class="overlay"
+>
+<!--
 	style="
 	display:none;
 	position:fixed;
@@ -201,114 +203,50 @@
 	background:rgba(0,0,0,0.45);
 	z-index:9999;
 	justify-content:center;
-	align-items:center;
-">
+	align-items:center;"
+-->
 
-	<div style="
-		width:520px;
-		border-radius:16px;
-		overflow:hidden;
-		box-shadow:0 10px 30px rgba(0,0,0,0.3);
-		background:#fff;
-	">
+	<div class="modal search-item">
 
 		<!-- 헤더 -->
-		<div style="
-			height:60px;
-			padding:0 24px;
-			display:flex;
-			justify-content:space-between;
-			align-items:center;
-			background:#fff;
-			color:black;
-		">
-
-			<span style="
-				font-size:20px;
-				font-weight:700;
-			">
-				비밀번호
-			</span>
-
-			<button type="button"
-				onclick="closePwdModal()"
-				style="
-				font-size:28px;
-				color:#fff;
-			">
-				×
-			</button>
-
-		</div>
+		<h2 class="modal-title">
+			건의사항 비밀번호
+		</h2>
+		<p class="modal-subTitle">
+			게시글 확인을 위해 비밀번호를 입력해주세요
+		</p>
 
 		<form action="${pageContext.request.contextPath}/sugg/detail"
 			method="post">
 
-			<input type="hidden"
-				id="modal_sugg_no"
-				name="sugg_no">
+			<input type="hidden" id="modal_sugg_no" name="sugg_no">
+				<input type="password"
+					style="width: 335px;"
+					name="sugg_pw"
+					maxlength="4"
+					placeholder="숫자 4자리 비밀번호 입력"
+					required>
 
-			<!-- 내용 -->
-			<div style="
-				padding:40px;
-				background:#fff;
-			">
-
-				<p style="
-					margin:0 0 20px;
-					font-size:18px;
-					font-weight:600;
-					color:#333;
+				<!-- 버튼 -->
+				<div style="
+					margin-top: 15px;
+					display:flex;
+					justify-content:center;
+					align-items:center;
+					gap:12px;
+					background:#fff;
 				">
-					글을 확인하려면 비밀번호를 입력하세요.
-				</p>
-
-				<div class="search-item">
-
-					<input type="password"
-						name="sugg_pw"
-						maxlength="4"
-						placeholder="암호 입력"
-						required
-						style="
-							width:100%;
-							min-width:auto;
-							color:#333;
-						">
-
-				</div>
+	
+					<button type="submit" class="btn btn-main">
+						확인
+					</button>
+	
+					<button type="button" class="btn btn-white"
+						onclick="closePwdModal()">
+						취소
+					</button>
 
 			</div>
-
-			<!-- 버튼 -->
-			<div style="
-				padding:24px;
-				display:flex;
-				justify-content:center;
-				align-items:center;
-				gap:12px;
-				background:#fff;
-			">
-
-				<button type="submit"
-					class="btn btn-main"
-					style="
-						width:110px;
-						height:42px;
-					">
-					예
-				</button>
-
-				<button type="button"
-					onclick="closePwdModal()"
-					class="btn btn-white"
-					style="
-						width:110px;
-						height:42px;
-					">
-					취소
-				</button>
-
 			</div>
 
 		</form>
