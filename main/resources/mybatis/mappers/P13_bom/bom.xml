@@ -180,7 +180,7 @@
 	    FROM item
 	
 	    WHERE item_usage = 'Y'
-	    AND item_type IN (10, 20)
+	    AND item_type IN (10, 20, 40)
 	
 	    ORDER BY item_id
 	
@@ -232,7 +232,7 @@
 	    )
 	    VALUES
 	    (
-	        'BD' || BDTL_SEQ.NEXTVAL,
+	        'BDTL' || BDTL_SEQ.NEXTVAL,
 	        #{bomDtlBom},
 	        #{bomDtlItem},
 	        #{bomDtlQty},

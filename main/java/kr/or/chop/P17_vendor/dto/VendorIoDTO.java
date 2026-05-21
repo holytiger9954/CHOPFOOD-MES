@@ -1,6 +1,6 @@
 package kr.or.chop.P17_vendor.dto;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 import lombok.Data;
 
@@ -12,7 +12,7 @@ public class VendorIoDTO {
     private String itemId;
     private String itemName;
     private String ioReason;
-    private Date ioDate;
+    private Timestamp ioDate;
     private int ioQty;
     private String ioLot;
 }

@@ -54,17 +54,17 @@
 
         <div class="grid-wrap bom-grid-wrap">
 
-            <div class="grid search-item">
-                <label>BOM 코드</label>
-                <input type="text"
-                       value="${bom.bomId}"
-                       readonly>
-            </div>
-
-            <div class="grid search-item">
-                <label>생산 품목 <span class="red">*</span></label>
-
-                <select name="bomItem" required>
+            <div class="search-item bom-code-item">
+			    <label>BOM 코드</label>
+			    <input type="text"
+			           value="${bom.bomId}"
+			           readonly>
+			</div>
+			
+			<div class="search-item bom-product-item">
+			    <label>생산 품목 <span class="red">*</span></label>
+			
+			    <select name="bomItem" required>
                     <option value="" disabled>
                         품목명 (품목코드) 선택
                     </option>
@@ -78,7 +78,7 @@
                 </select>
             </div>
 
-            <div class="grid search-item">
+            <div class="search-item bom-name-item">
                 <label>BOM명 <span class="red">*</span></label>
 
                 <input type="text"
@@ -88,7 +88,7 @@
                        placeholder="BOM명 입력">
             </div>
 
-            <div class="grid search-item bom-content-item">
+            <div class="search-item bom-content-item">
                 <label>BOM 설명</label>
 
                 <textarea name="bomContent"
@@ -165,22 +165,47 @@
 
 <style>
     .bom-grid-wrap {
-        display: grid;
-        grid-template-columns: 200px 400px;
-        justify-content: flex-start;
-
-        column-gap: 24px;
-        row-gap: 18px;
-    }
-
-    .bom-content-item {
-        grid-column: 1 / 3;
-        width: 100%;
-    }
-
-    .bom-content-textarea {
-        min-height: 100px;
-    }
+	    display: grid;
+	    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	    width: 624px;
+	
+	    column-gap: 24px;
+	    row-gap: 18px;
+	}
+	
+	.bom-name-item,
+	.bom-product-item,
+	.bom-code-item,
+	.bom-content-item {
+	    min-width: 0;
+	}
+	
+	.bom-code-item {
+	    grid-column: 1 / 2;
+	}
+	
+	.bom-product-item {
+	    grid-column: 1 / 2;
+	}
+	
+	.bom-name-item {
+	    grid-column: 2 / 3;
+	}
+	
+	.bom-content-item {
+	    grid-column: 1 / 3;
+	}
+	
+	.bom-grid-wrap input,
+	.bom-grid-wrap select,
+	.bom-grid-wrap textarea {
+	    width: 100%;
+	    box-sizing: border-box;
+	}
+	
+	.bom-content-textarea {
+	    min-height: 100px;
+	}
 
     .bom-section-title-row {
         display: flex;

@@ -24,12 +24,12 @@
         </div>
 
         <div class="right">
-            <a class="btn btn-white"
+            <a class="btn btn-main"
                href="${pageContext.request.contextPath}/bom/edit?bomId=${bom.bomId}">
                 수정
             </a>
 
-            <a class="btn btn-main"
+            <a class="btn btn-red"
                href="${pageContext.request.contextPath}/bom/delete?bomId=${bom.bomId}"
                onclick="return confirm('해당 BOM을 삭제하시겠습니까?');">
                 삭제
@@ -64,9 +64,6 @@
                         <th>품목 유형</th>
                         <td>
                             <c:choose>
-                                <c:when test="${bom.itemType == 10}">
-                                    원자재
-                                </c:when>
                                 <c:when test="${bom.itemType == 20}">
                                     반제품
                                 </c:when>
@@ -134,6 +131,9 @@
                                         </c:when>
                                         <c:when test="${detail.itemType == 30}">
                                             완제품
+                                        </c:when>
+                                        <c:when test="${detail.itemType == 40}">
+                                            기타 자재
                                         </c:when>
                                         <c:otherwise>
                                             ${detail.itemType}
