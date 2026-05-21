@@ -328,82 +328,71 @@ function dateCheck() {
 </script>
 
 <style>
-.search-box {
-	display: flex;
-	align-items: flex-end;
-	gap: 10px;
-	flex-wrap: nowrap;
-}
-
-.date-item {
-	width: auto;
-}
-
-.date-row {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-}
-
-/* .date-row input { */
-/* 	width: 230px; */
-/* 	min-width: 230px; */
+/* .search-box { */
+/* 	display: flex; */
+/* 	align-items: flex-end; */
+/* 	gap: 10px; */
+/* 	flex-wrap: nowrap; */
 /* } */
 
-/* .status-item select { */
-/* 	width: 110px; */
-/* 	min-width: 110px; */
+/* .date-item { */
+/* 	width: auto; */
 /* } */
 
-/* .keyword input { */
-/* 	width: 240px; */
-/* 	min-width: 240px; */
+/* .date-row { */
+/* 	display: flex; */
+/* 	align-items: center; */
+/* 	gap: 8px; */
 /* } */
 
-.search-btn-area {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	flex-wrap: nowrap;
-	min-width: 145px;
-}
+/* /* .date-row input { */ */
+/* /* 	width: 230px; */ */
+/* /* 	min-width: 230px; */ */
+/* /* } */ */
 
-.reset-btn {
-	width: 66px;
-	white-space: nowrap;
-	text-align:center;
-}
+/* /* .status-item select { */ */
+/* /* 	width: 110px; */ */
+/* /* 	min-width: 110px; */ */
+/* /* } */ */
 
-.suggTitle {
-	cursor: pointer;
-	transition: 0.2s;
-}
+/* /* .keyword input { */ */
+/* /* 	width: 240px; */ */
+/* /* 	min-width: 240px; */ */
+/* /* } */ */
 
-.suggTitle:hover {
-	color: #2d7a46;
-	text-decoration: underline;
-}
-
-/* @media (min-width:1200px) { */
-/* 	.search-box { */
-/* 		flex-wrap: nowrap; */
-/* 	} */
+/* .search-btn-area { */
+/* 	display: flex; */
+/* 	align-items: center; */
+/* 	gap: 8px; */
+/* 	flex-wrap: nowrap; */
+/* 	min-width: 145px; */
 /* } */
 
-/* @media (max-width:768px) { */
-/* 	.date-row { */
-/* 		flex-wrap: wrap; */
+/* .reset-btn { */
+/* 	width: 66px; */
+/* 	white-space: nowrap; */
+/* 	text-align:center; */
+/* } */
+
+/* .suggTitle { */
+/* 	cursor: pointer; */
+/* 	transition: 0.2s; */
+/* } */
+
+/* .suggTitle:hover { */
+/* 	color: #2d7a46; */
+/* 	text-decoration: underline; */
+/* } */
+
+/* 	.date-row input, */
+/* 	.status-item select, */
+/* 	.keyword input { */
+/* 		width: 100%; */
 /* 	} */
 
-	.date-row input,
-	.status-item select,
-	.keyword input {
-		width: 100%;
-	}
 
-
-	.search-btn-area {
-		width: 100%;
-	}
-}
+/* 	.search-btn-area { */
+/* 		width: 100%; */
+/* 	} */
+/* } */
 </style>
