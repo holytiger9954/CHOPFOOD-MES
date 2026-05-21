@@ -32,7 +32,7 @@ public class LoginServiceImpl implements LoginService {
 
         MimeMessageHelper helper = new MimeMessageHelper(message, false, "UTF-8");
 
-        helper.setFrom("agasae02@gmail.com");
+        helper.setFrom("chopfood03@gmail.com");
         helper.setTo(empDTO.getEmpEmail());
         helper.setSubject("[CHOP FOOD] 임시 비밀번호 안내");
 
@@ -79,7 +79,7 @@ public class LoginServiceImpl implements LoginService {
             sendTempPw(empDTO, tempPw);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("임시 비밀번호 이메일 발송 실패");
+            throw new RuntimeException("임시 비밀번호 이메일 발송 실패", e);
         }
 
         return true;
