@@ -31,6 +31,8 @@ public class LoginServiceImpl implements LoginService {
 		MimeMessage message = mailSender.createMimeMessage();
 
         MimeMessageHelper helper = new MimeMessageHelper(message, false, "UTF-8");
+        
+        System.out.println(empDTO.getEmpEmail());
 
         helper.setFrom("chopfood03@gmail.com");
         helper.setTo(empDTO.getEmpEmail());
@@ -58,6 +60,7 @@ public class LoginServiceImpl implements LoginService {
 		
         // 1. 사원번호 + 이메일 일치 확인
         int count = loginDAO.checkEmpEmail(empDTO);
+        System.out.println("count: " + count);
 
         if (count == 0) {
             return false;

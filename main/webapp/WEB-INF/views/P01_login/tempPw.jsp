@@ -41,6 +41,17 @@
 
 </div>
 
+<div class="overlay">
+	<div class="loading-box modal">
+		<div class="circles">
+			<i></i>
+			<i></i>
+			<i></i>
+		</div>
+		<p>이메일 전송 중...</p>
+	</div>
+</div>
+
 <style>
 
 	input:-webkit-autofill,
@@ -60,6 +71,8 @@
 		font-size: 14px;
 		margin: 20px auto 0;
 	    text-align: center;
+	    
+	    color: var(--danger);
 	}
 	
 	#submitBtn {
@@ -78,6 +91,43 @@
 		color: var(--main-green);
 	}
 	
+	.loading-box {
+		position:fixed;
+		left:50%; top:50%;
+		z-index:100;
+		transform:translate(-50%, -50%);
+		padding: 30px 70px;
+		text-align:center;
+		background:#fff;
+		box-shadow:0 3px 0 rgba(0,0,0,.2);
+	}
+	
+	.loading-box .circles {
+		padding-top:30px;
+	}
+	
+	.loading-box .circles i {
+		display:inline-block;
+		margin:0 3px;
+		width:10px;
+		height:10px;
+		background:var(--main-green);
+		border-radius:50em;
+		
+		animation: scaleBounce .6s infinite alternate;
+	}
+	
+	.loading-box p {
+		margin-top:10px;
+		font-size:16px;
+	}
+	@keyframes scaleBounce {
+		from {transform:scale(.7)}
+		to {transform:scale(1.3)}
+	}
+	.loading-box .circles i:nth-child(2) {animation-delay:.1s;}
+	.loading-box .circles i:nth-child(3) {animation-delay:.2s;}
+		
 </style>
 
 <script>
@@ -89,6 +139,8 @@
 		const empEmail = document.querySelector("#empEmail").value.trim();
 		
 		const message = document.querySelector("#message");
+		
+		const overlay = document.querySelector(".overlay");
 		
 		if (empId == null || empId == "") {
 			message.innerText = "ⓘ 사원번호를 입력해주세요";
@@ -102,6 +154,8 @@
 			document.querySelector("#empEmail").focus();
 			return;
 		}
+		
+		overlay.style.display = "flex";
 		
 		const contextPath = '${pageContext.request.contextPath}';
 		let url = contextPath + "/login/tempPw.do?empId=" + encodeURIComponent(empId) + "&empEmail=" + encodeURIComponent(empEmail);
@@ -124,10 +178,10 @@
 			if (data.result == "success") {
 				message.innerText = "ⓘ 이메일 주소로 임시 비밀번호가 전송되었습니다";
 			} else {
-				if (data.reason == "noId") {
+				if (data.message == "noId") {
 					message.innerText = "ⓘ 존재하지 않거나 사용 불가한 사용자입니다";
 					document.querySelector("#empId").focus();
-				} else if (data.reason == "wrongEmail") {
+				} else if (data.message == "wrongEmail") {
 					message.innerText = "ⓘ 이메일 주소가 일치하지 않습니다";
 					document.querySelector("#empEmail").focus();
 				} else {
@@ -139,7 +193,10 @@
 		.catch(error => {
 			console.error(error);
 			alert("사용자 정보를 불러오지 못했습니다.");
-		});
+		})
+		.finally(() => {
+	        overlay.style.display = "none";
+	    });
 		
 	}
 	

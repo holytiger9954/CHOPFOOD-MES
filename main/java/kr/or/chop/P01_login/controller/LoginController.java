@@ -58,6 +58,13 @@ public class LoginController {
 			
 			// 세션 저장
 			session.setAttribute("loginUser", resultEmpDTO);
+			
+			// 최초 로그인 여부 및 이동할 url
+			if ("Y".equals(resultEmpDTO.getEmpFirst())) {
+				result.put("redirectUrl", "/login/changePw");
+			} else {
+				result.put("redirectUrl", "/dashboard");
+			}
 		}
 		
 		return result;
@@ -120,6 +127,7 @@ public class LoginController {
 	public Map<String, Object> sendTempPw(
 			EmpDTO empDTO
 		) {
+		System.out.println(empDTO);
 		Map<String, Object> result = new HashMap<String, Object>();
 		
 		try {
@@ -141,4 +149,17 @@ public class LoginController {
         return result;
 	}
 
+
+
+
+/* ==================================== */
+
+
+
+	@RequestMapping("/login/changPw")
+	public String changPw() {
+		return "P01_login/changePw.empty";
+	}
+	
+	
 }

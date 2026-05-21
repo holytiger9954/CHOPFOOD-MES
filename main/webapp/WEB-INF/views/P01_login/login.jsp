@@ -61,6 +61,8 @@
 		font-size: 14px;
 		margin: 20px auto 0;
 	    text-align: center;
+	    
+	    color: var(--danger);
 	}
 	
 	#submitBtn {
@@ -126,7 +128,7 @@
 			console.log(data);
 			
 			if (data.result == "success") {
-				window.location.href = "${pageContext.request.contextPath}/item/list";
+				window.location.href = contextPath + data.redirectUrl;
 			} else {
 				if (data.reason == "noId") {
 					message.innerText = "ⓘ 존재하지 않거나 사용 불가한 사용자입니다";
