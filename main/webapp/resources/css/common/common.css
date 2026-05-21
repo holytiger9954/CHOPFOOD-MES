@@ -687,3 +687,37 @@ textarea[readonly]:focus {
 }
 
 
+
+
+/* ==============================
+   overlay, modal
+============================== */
+
+.overlay {
+	display:none;
+	position:fixed;
+	inset:0;
+	background:rgba(0,0,0,0.45);
+	z-index:9999;
+	justify-content:center;
+	align-items:center;	
+}
+
+.modal {
+	background:white;
+	border-radius:10px;
+	padding:30px 40px;
+	box-sizing:border-box;
+}
+
+.modal-title {
+	margin: 0 0 10px;
+	font-size:20px;
+	font-weight:700;
+}
+
+.modal-subTitle {
+	color: var(--dark-gray);
+	font-size: 14px;
+	margin: 0 0 25px;
+}

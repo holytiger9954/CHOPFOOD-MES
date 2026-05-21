@@ -243,7 +243,9 @@
 </div>
 
 <!-- 작업자 조회 모달 -->
-<div id="workerModal"
+<div id="workerModal" class="overlay"
+	>
+<!-- 
 	style="
 		display:none;
 		position:fixed;
@@ -255,28 +257,35 @@
 		z-index:9999;
 		justify-content:center;
 		align-items:center;
-	">
+	"
+-->
 
-	<div style="
-		width:620px;
-		background:white;
-		border-radius:10px;
-		padding:30px;
-		box-sizing:border-box;
-	">
-
-		<h2 style="
+	<div class="modal"
+	style="
+			width:620px;
+/* 			background:white; */
+/* 			border-radius:10px; */
+/* 			padding:30px; */
+/* 			box-sizing:border-box; */
+		">
+		<h2 class="modal-title">
+<!--		
+		style="
 			margin-bottom:10px;
 			font-size:28px;
 			font-weight:700;
-		">
+		"
+-->
 			작업자 조회
 		</h2>
 
-		<p style="
+		<p class="modal-subTitle">
+<!-- 
+		style="
 			color:#888;
 			margin-bottom:25px;
-		">
+		"
+-->
 			작업자를 조회 후 선택해주세요.
 		</p>
 
