@@ -269,6 +269,7 @@ window.addEventListener("load", () => {
 		alert(errorMsg);
 		<% session.removeAttribute("pwdError"); %>
 	}
+	 dateCheck();
 });
 
 function init() {

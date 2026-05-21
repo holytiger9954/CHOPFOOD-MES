@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <div class="content">
 
     <div class="header-row">
@@ -50,10 +50,11 @@
                         설비 상세정보
                     </div>
 
-                    <a class="btn btn-sub"
-                        href="${pageContext.request.contextPath}/equip/stop?eqId=${eqp.eqId}">
-                        설비 정지
-                    </a>
+                    <button type="button"
+					        class="btn btn-sub"
+					        id="openStopModal">
+				    	설비 정지
+					</button>
 
                     <a class="btn btn-main"
                         href="${pageContext.request.contextPath}/equip/run?eqId=${eqp.eqId}">
@@ -110,7 +111,11 @@
 
                     <tr>
                         <th>가동 시작일</th>
-                        <td>${eqp.eqSdate}</td>
+                         <td>
+					        <fmt:formatDate
+					            value="${eqp.eqSdate}"
+					            pattern="yyyy-MM-dd HH:mm"/>
+					     </td>
 
                         <th>가동률</th>
                         <td>${eqp.runRate}</td>
@@ -231,16 +236,22 @@
                     <tbody>
                         <c:forEach var="run" items="${eqRunList}">
                             <tr>
-                                <td>${run.eqRunStime}</td>
+                                <td>
+								    <fmt:formatDate
+								        value="${run.eqRunStime}"
+								        pattern="yyyy-MM-dd HH:mm"/>
+								</td>
 
                                 <td>
                                     <c:choose>
                                         <c:when test="${empty run.eqRunEtime}">
                                             -
                                         </c:when>
-                                        <c:otherwise>
-                                            ${run.eqRunEtime}
-                                        </c:otherwise>
+                                      <c:otherwise>
+								        <fmt:formatDate
+								            value="${run.eqRunEtime}"
+								            pattern="yyyy-MM-dd HH:mm"/>
+								      </c:otherwise>
                                     </c:choose>
                                 </td>
 
@@ -276,3 +287,70 @@
     </div>
 
 </div>
+
+<!-- 설비 정지 모달 -->
+<div id="stopOverlay" class="overlay">
+
+    <div class="modal" style="width: 620px;">
+
+        <h2 class="modal-title">설비 정지</h2>
+
+        <p class="modal-subTitle">
+            설비 가동 종료사유를 입력해주세요.
+        </p>
+
+        <form action="${pageContext.request.contextPath}/equip/stop"
+              method="post">
+
+            <input type="hidden"
+                   name="eqId"
+                   value="${eqp.eqId}">
+
+            <div class="search-item">
+
+                <label>종료사유</label>
+
+                <textarea name="eqStopReason"
+                          rows="5"
+                          placeholder="종료사유를 입력하세요"
+                          required></textarea>
+
+            </div>
+
+            <div style="display:flex;
+                        justify-content:center;
+                        gap:10px;
+                        margin-top:25px;">
+
+                <button type="button"
+                        class="btn btn-white"
+                        id="closeStopModal">
+
+                    취소
+
+                </button>
+
+                <button type="submit"
+                        class="btn btn-main">
+
+                    확인
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+document.querySelector("#openStopModal").addEventListener("click", function () {
+    document.querySelector("#stopOverlay").style.display = "flex";
+});
+
+document.querySelector("#closeStopModal").addEventListener("click", function () {
+    document.querySelector("#stopOverlay").style.display = "none";
+});
+</script>

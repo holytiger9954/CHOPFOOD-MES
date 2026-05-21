@@ -39,21 +39,28 @@ public class EqDetailController {
         eqDTO.setEqId(eqId);
         eqDTO.setEqStatus(10); // 가동중
 
+        // 설비 상태 변경
         eqService.updateEqStatus(eqDTO);
+
+        // 가동이력 시작 등록
+        eqService.insertEqRunLog(eqId);
 
         return "redirect:/equip/detail?eqId=" + eqId;
     }
 
     @RequestMapping("/stop")
-    public String stopEq(String eqId) {
+    public String stopEq(EqDTO eqDTO) {
 
-        EqDTO eqDTO = new EqDTO();
-        eqDTO.setEqId(eqId);
+        
         eqDTO.setEqStatus(20); // 정지
 
+        // 설비 상태 변경
         eqService.updateEqStatus(eqDTO);
 
-        return "redirect:/equip/detail?eqId=" + eqId;
+        // 가동이력 종료 처리
+        eqService.updateEqRunLogStop(eqDTO);
+
+        return "redirect:/equip/detail?eqId=" + eqDTO.getEqId();
     }
     
     @RequestMapping("/delete")

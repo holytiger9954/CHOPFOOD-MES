@@ -298,6 +298,39 @@ ORDER BY ELOG_SDATE DESC
 	)
 
 </insert>
+
+<!-- 설비 가동이력 시작 등록 -->
+<insert id="insertEqRunLog" parameterType="string">
+
+    INSERT INTO EQ_RUN_LOG (
+        EQ_RUN_NO,
+        EQ_RUN_EQID,
+        EQ_RUN_STIME,
+        EQ_RUN_ETIME,
+        EQ_STOP_REASON
+    ) VALUES (
+        EQ_RUN_SEQ.NEXTVAL,
+        #{eqId},
+        SYSDATE + (9/24),
+        NULL,
+        NULL
+    )
+
+</insert>
+
+<!-- 설비 가동이력 종료 처리 -->
+<update id="updateEqRunLogStop" parameterType="eqDTO">
+
+    UPDATE EQ_RUN_LOG
+    SET
+        EQ_RUN_ETIME = SYSDATE + (9/24),
+        EQ_STOP_REASON = #{eqStopReason}
+    WHERE EQ_RUN_EQID = #{eqId}
+    AND EQ_RUN_ETIME IS NULL
+
+</update>
+
+
 	
 <!-- 설비 수정 -->
 <!-- 수정 가능 항목만 변경 -->

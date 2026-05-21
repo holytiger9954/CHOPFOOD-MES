@@ -91,5 +91,15 @@ public class EqServiceImpl implements EqService {
 	public void deleteEq(String eqId) {
 		eqDAO.deleteEq(eqId);
 	}
+	
+	@Override
+	public void insertEqRunLog(String eqId) {
+	    eqDAO.insertEqRunLog(eqId);
+	}
+
+	@Override
+	public void updateEqRunLogStop(EqDTO eqDTO) {
+	    eqDAO.updateEqRunLogStop(eqDTO);
+	}
 
 }
