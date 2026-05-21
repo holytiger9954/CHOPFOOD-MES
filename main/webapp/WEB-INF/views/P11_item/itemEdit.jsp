@@ -7,8 +7,8 @@
 	<div class="header-row">
 
 		<div>
-			<h2 class="page-title">품목 수정</h2>
-			<p class="page-subtitle">${itemDTO.itemId}</p>
+			<h2 class="page-title">품목 수정 (${itemDTO.itemId})</h2>
+			<p class="page-subtitle">품목을 수정하세요.</p>
 		</div>
 
 		<div>
@@ -46,15 +46,20 @@
 				<input type="text"
 					name="itemName"
 					value="${itemDTO.itemName}"
-					placeholder="품목명 입력">
+					placeholder="품목명 입력"
+					style="width: 48%;">
 			</div>
 
+
+		</div>
+
+		<div style="display:flex; gap:40px; margin-bottom:26px;">
 			<div class="search-item"
 				style="display:flex; flex-direction:column; flex:1;">
 
 				<label>품목유형</label>
 
-				<select name="itemType">
+				<select name="itemType" id="itemType">
 
 					<option value="10"
 						<c:if test="${itemDTO.itemType == '10'}">selected</c:if>>
@@ -70,17 +75,30 @@
 						<c:if test="${itemDTO.itemType == '30'}">selected</c:if>>
 						완제품
 					</option>
+					
+					<option value="40"
+						<c:if test="${itemDTO.itemType == '40'}">selected</c:if>>
+						기타 자재
+					</option>
 
 				</select>
 
-				<input type="hidden"
-					name="itemType"
-					value="${itemDTO.itemType}">
+			</div>
+
+			<div style="
+				display:flex;
+				flex-direction:column;
+				flex:1;
+			" class="search-item">
+			<label>창고 유형</label>
+			<select name="itemWhType" id="itemWhType">
+				<option>창고 유형 선택</option>
+			</select>
 			</div>
 
 		</div>
 
-		<div style="display:flex; gap:40px; margin-bottom:26px;">
+		<div style="display:flex; gap:36px; margin-bottom:26px;">
 
 			<div class="search-item"
 				style="display:flex; flex-direction:column; flex:1;">
@@ -92,7 +110,6 @@
 					value="${itemDTO.safetyStock}"
 					placeholder="안전재고 입력">
 			</div>
-
 			<div class="search-item"
 				style="display:flex; flex-direction:column; flex:1;">
 
@@ -103,9 +120,9 @@
 					value="${itemDTO.useDate}"
 					placeholder="사용가능 기간 입력">
 			</div>
-
+			
 		</div>
-
+			
 		<div style="display:flex; gap:36px; margin-bottom:26px;">
 
 			<div class="search-item"
@@ -143,63 +160,7 @@
 
 		</div>
 
-		<div style="display:flex; gap:40px; margin-bottom:26px;">
 
-			<div class="search-item"
-				style="display:flex; flex-direction:column; flex:1;">
-
-				<label>거래처 타입</label>
-
-				<select id="vendorType"
-					name="vendorType">
-
-					<option value="">거래처 타입 선택</option>
-
-					<option value="S"
-						<c:if test="${vendorType == 'S'}">selected</c:if>>
-						공급처
-					</option>
-
-					<option value="C"
-						<c:if test="${vendorType == 'C'}">selected</c:if>>
-						납품처
-					</option>
-
-					<option value="E"
-						<c:if test="${vendorType == 'E'}">selected</c:if>>
-						기타
-					</option>
-
-				</select>
-
-			</div>
-
-			<div class="search-item"
-				style="display:flex; flex-direction:column; flex:1;">
-
-				<label>거래처</label>
-
-				<select id="itemVendor"
-					name="itemVendor">
-
-					<option value="">거래처명(거래처코드) 선택</option>
-
-				</select>
-
-			</div>
-
-		</div>
-
-		<div class="search-item"
-			style="display:flex; flex-direction:column;">
-
-			<label>보관방법 <span class="red">*</span></label>
-
-			<textarea name="itemStorage"
-				placeholder="보관방법을 입력하세요."
-				style="height:220px;">${itemDTO.itemStorage}</textarea>
-
-		</div>
 
 	</form>
 
@@ -208,58 +169,72 @@
 <script>
 window.addEventListener("load", function() {
 
-	const vendorTypeSelect = document.querySelector("#vendorType");
-	const vendorSelect = document.querySelector("#itemVendor");
-
-	const currentVendorType = "${vendorType}";
-	const currentVendorId = "${itemDTO.itemVendor}";
-
-	function loadVendorList(vendorType, selectedVendorId) {
-
-		vendorSelect.innerHTML =
-			'<option value="">거래처명(거래처코드) 선택</option>';
-
-		if (vendorType === "") {
-			return;
+	
+	/* =========================
+	품목 유형별 창고 유형
+	========================= */
+	
+	const itemTypeSelect =
+		document.querySelector("#itemType");
+	
+	const whTypeSelect =
+		document.querySelector("#itemWhType");
+	
+	const currentItemType =
+		"${itemDTO.itemType}";
+	
+	const currentWhType =
+		"${itemDTO.itemWhType}";
+	
+	function loadWhTypeList(itemType, selectedWhType) {
+	
+		let html =
+			'<option value="">창고 유형 선택</option>';
+	
+		// 원자재
+		if (itemType == "10") {
+	
+			html += '<option value="10">원자재 냉동창고</option>';
+			html += '<option value="20">원자재 냉장창고</option>';
+			html += '<option value="30">원자재 실온창고</option>';
+	
 		}
-
-		fetch("${pageContext.request.contextPath}/item/vendorList?vendorType="
-			+ encodeURIComponent(vendorType))
-			.then(function(response) {
-				return response.json();
-			})
-			.then(function(result) {
-
-				let html =
-					'<option value="">거래처명(거래처코드) 선택</option>';
-
-				for (let i = 0; i < result.length; i++) {
-
-					let selected = "";
-
-					if (selectedVendorId === result[i].vendorId) {
-						selected = "selected";
-					}
-
-					html += '<option value="' + result[i].vendorId + '" ' + selected + '>';
-					html += result[i].vendorName + ' (' + result[i].vendorId + ')';
-					html += '</option>';
-				}
-
-				vendorSelect.innerHTML = html;
-			})
-			.catch(function() {
-				alert("거래처 목록 조회 실패");
-			});
+	
+		// 반제품
+		else if (itemType == "20") {
+	
+			html += '<option value="40">반제품 냉동창고</option>';
+			html += '<option value="50">반제품 냉장창고</option>';
+	
+		}
+	
+		// 완제품
+		else if (itemType == "30") {
+	
+			html += '<option value="60">완제품 냉동창고</option>';
+	
+		}
+	
+		// 기타자재
+		else if (itemType == "40") {
+	
+			html += '<option value="70">기타 자재 실온창고</option>';
+	
+		}
+	
+		whTypeSelect.innerHTML = html;
+	
+		if (selectedWhType !== "") {
+			whTypeSelect.value = selectedWhType;
+		}
 	}
-
-	if (currentVendorType !== "") {
-		vendorTypeSelect.value = currentVendorType;
-		loadVendorList(currentVendorType, currentVendorId);
-	}
-
-	vendorTypeSelect.addEventListener("change", function() {
-		loadVendorList(this.value, "");
+	
+	loadWhTypeList(currentItemType, currentWhType);
+	
+	itemTypeSelect.addEventListener("change", function() {
+	
+		loadWhTypeList(this.value, "");
+	
 	});
 
 	const unitPriceInput = document.querySelector("input[name='unitPrice']");

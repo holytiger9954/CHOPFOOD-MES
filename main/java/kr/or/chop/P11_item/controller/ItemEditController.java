@@ -23,15 +23,9 @@ public class ItemEditController {
 
 		ItemDTO item = itemService.selectItemDetail(itemDTO);
 
-		VendorDTO vendorDTO = itemService.selectVendorById(item.getItemVendor());
 
 		model.addAttribute("itemDTO", item);
 
-		if (vendorDTO != null) {
-			model.addAttribute("vendorType", vendorDTO.getVendorType());
-		} else {
-			model.addAttribute("vendorType", "");
-		}
 
 		return "P11_item/itemEdit.tiles";
 	}

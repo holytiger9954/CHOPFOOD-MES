@@ -229,73 +229,6 @@
 
 		</div>
 
-		<!-- 거래처 -->
-		<div style="
-			display:flex;
-			gap:40px;
-			margin-bottom:26px;
-		">
-		
-			<!-- 거래처 타입 -->
-			<div style="
-				display:flex;
-				flex-direction:column;
-				flex:1;
-			" class="search-item">
-		
-				<label>
-					거래처 타입
-				</label>
-		
-				<select id="vendorType"
-					name="vendorType">
-		
-					<option value="">
-						거래처 타입 선택
-					</option>
-		
-					<option value="S">
-						공급처
-					</option>
-		
-					<option value="C">
-						납품처
-					</option>
-		
-					<option value="E">
-						기타
-					</option>
-		
-				</select>
-		
-			</div>
-		
-			<!-- 거래처 이름 -->
-			<div style="
-				display:flex;
-				flex-direction:column;
-				flex:1;
-			" class="search-item">
-		
-				<label>
-					거래처
-				</label>
-		
-				<select id="itemVendor"
-					name="itemVendor">
-		
-					<option value="">
-						거래처명(거래처코드) 선택
-					</option>
-		
-				</select>
-		
-			</div>
-		
-			
-		</div>
-			
-
 		
 
 	</form>
@@ -304,61 +237,6 @@
 <script>
 window.addEventListener("load", function() {
 
-	const vendorTypeSelect =
-		document.querySelector("#vendorType");
-
-	const vendorSelect =
-		document.querySelector("#itemVendor");
-
-	vendorTypeSelect.addEventListener("change", function() {
-
-		const vendorType = this.value;
-
-		vendorSelect.innerHTML =
-			'<option value="">거래처명(거래처코드) 선택</option>';
-
-		if (vendorType === "") {
-			return;
-		}
-
-		fetch(
-			"${pageContext.request.contextPath}/item/vendorList?vendorType="
-			+ encodeURIComponent(vendorType)
-		)
-
-		.then(function(response) {
-			return response.json();
-		})
-
-		.then(function(result) {
-
-			let html =
-				'<option value="">거래처명(거래처코드) 선택</option>';
-
-			for (let i = 0; i < result.length; i++) {
-
-				html +=
-					'<option value="' + result[i].vendorId + '">';
-
-				html +=
-					result[i].vendorName +
-					' (' + result[i].vendorId + ')';
-
-				html += '</option>';
-
-			}
-
-			vendorSelect.innerHTML = html;
-
-		})
-
-		.catch(function() {
-
-			alert("거래처 목록 조회 실패");
-
-		});
-
-	});
 	
 	const unitPriceInput =
 		document.querySelector("input[name='unitPrice']");

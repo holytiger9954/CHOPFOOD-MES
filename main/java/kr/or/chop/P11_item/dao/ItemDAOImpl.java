@@ -53,11 +53,6 @@ public class ItemDAOImpl implements ItemDAO {
 		return sqlSession.selectOne("mapper.P11_item.selectItemDetail", itemDTO);
 	}
 
-	@Override
-	public List<VendorDTO> selectVendorListByType(String vendorType) {
-
-		return sqlSession.selectList("mapper.P11_item.selectVendorListByType", vendorType);
-	}
 
 	@Override
 	public void deleteItem(String itemId) {
@@ -72,15 +67,7 @@ public class ItemDAOImpl implements ItemDAO {
 		sqlSession.update("mapper.P11_item.updateItem", itemDTO);
 	}
 
-	@Override
-	public String selectVendorTypeById(String vendorId) {
-		return sqlSession.selectOne("mapper.P11_item.selectVendorTypeById", vendorId);
-	}
 
-	@Override
-	public VendorDTO selectVendorById(String vendorId) {
-		return sqlSession.selectOne("mapper.P11_item.selectVendorById", vendorId);
-	}
 
 	@Override
 	public List<LotDTO> selectLotListByItem(String itemId) {

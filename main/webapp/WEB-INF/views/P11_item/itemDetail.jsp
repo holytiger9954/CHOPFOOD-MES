@@ -54,6 +54,9 @@
 									<c:when test="${itemDTO.itemType == '30'}">
 										완제품
 									</c:when>
+									<c:when test="${itemDTO.itemType == '40'}">
+										기타 자재
+									</c:when>
 									<c:otherwise>
 										-
 									</c:otherwise>
@@ -62,10 +65,35 @@
 							<td colspan="2">${itemDTO.safetyStock}</td>
 						</tr>
 						<tr>
-							<th>공급처/납품처</th>
-							<td colspan="2">${itemDTO.vendorName}(${itemDTO.itemVendor})</td>
-							<th>보관방법</th>
-							<td colspan="2">${itemDTO.itemStorage}</td>
+							<th>창고 유형</th>
+							<td colspan="2">
+								<c:choose>
+									<c:when test="${itemDTO.itemWhType == '10'}">
+										원자재 냉동창고
+									</c:when>
+									<c:when test="${itemDTO.itemWhType == '20'}">
+										원자재 냉장창고
+									</c:when>
+									<c:when test="${itemDTO.itemWhType == '30'}">
+										원자재 상온창고
+									</c:when>
+									<c:when test="${itemDTO.itemWhType == '40'}">
+										반제품 냉장창고
+									</c:when>
+									<c:when test="${itemDTO.itemWhType == '50'}">
+										반제품 냉동창고
+									</c:when>
+									<c:when test="${itemDTO.itemWhType == '60'}">
+										완제품 냉동창고
+									</c:when>
+									<c:when test="${itemDTO.itemWhType == '70'}">
+										기타 자재 상온 창고
+									</c:when>
+									<c:otherwise>
+										-
+									</c:otherwise>
+								</c:choose>
+							</td>
 						</tr>
 						<tr>
 							<th>단위</th>

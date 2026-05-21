@@ -16,7 +16,7 @@ public class ItemDTO {
 	private int safetyStock;
 	private String itemUsage;
 	private String vendorName;
-	private String itemWhType;
+	private int itemWhType;
 	
 	private String searchType;
 	private String searchKeyword;

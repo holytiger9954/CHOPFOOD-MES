@@ -14,11 +14,8 @@ public interface ItemService {
 	public int selectLotCount(LotDTO lotDTO);
 	public int insertItem(ItemDTO itemDTO);
 	ItemDTO selectItemDetail(ItemDTO itemDTO);
-	List<VendorDTO> selectVendorListByType(String vendorType);
 	void deleteItem(String itemId);
 	void updateItem(ItemDTO itemDTO);
-	String selectVendorTypeById(String vendorId);
-	VendorDTO selectVendorById(String vendorId);
 	List<LotDTO> selectLotListByItem(String itemId);
 	
 }

@@ -36,11 +36,5 @@ public class ItemAddController {
 		return "redirect:/item/list";
 	}
 
-	@RequestMapping("/vendorList")
-	@ResponseBody
-	public List<VendorDTO> vendorList(String vendorType) {
-
-		return itemService.selectVendorListByType(vendorType);
-	}
 
 }

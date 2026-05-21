@@ -49,7 +49,6 @@
 		item_unit_price AS unitPrice,
 		item_whtype AS
 		itemWhType,
-		item_vendor AS itemVendor,
 		item_usedate AS useDate,
 		item_safety_stock AS safetyStock,
 		item_usage AS itemUsage
@@ -100,7 +99,6 @@
 		item_spec,
 		item_unit_price,
 		item_whtype,
-		item_vendor,
 		item_usedate,
 		item_safety_stock,
 		item_usage
@@ -131,12 +129,6 @@
 		#{spec},
 		#{unitPrice},
 		#{itemWhType},
-		<if test="itemVendor == null or itemVendor == ''">
-			null,
-		</if>
-		<if test="itemVendor != null and itemVendor != ''">
-			#{itemVendor},
-		</if>
 		#{useDate},
 		#{safetyStock},
 		'Y'
@@ -155,33 +147,13 @@
 		I.item_unit AS unit,
 		I.item_spec AS spec,
 		I.item_unit_price AS unitPrice,
-		I.item_vendor AS itemVendor,
-		V.vendor_name AS vendorName,
 		I.item_usedate AS useDate,
 		I.item_safety_stock AS safetyStock,
 		I.item_usage AS itemUsage,
 		I.item_whtype AS itemWhType
 		FROM item I
-		LEFT JOIN vendor V
-		ON I.item_vendor
-		= V.vendor_id
 		WHERE I.item_id = #{itemId}
 		AND I.item_usage = 'Y'
-
-	</select>
-
-	<select id="selectVendorListByType" parameterType="string"
-		resultType="vendorDTO">
-
-		SELECT
-		VENDOR_ID AS vendorId,
-		VENDOR_NAME AS vendorName,
-		VENDOR_TYPE AS vendorType
-		FROM VENDOR
-		WHERE VENDOR_USAGE = 'Y'
-		AND
-		VENDOR_TYPE = #{vendorType}
-		ORDER BY VENDOR_NAME ASC
 
 	</select>
 
@@ -192,16 +164,6 @@
 		where item_id = #{itemId}
 
 	</update>
-	
-	<select id="selectVendorTypeById"
-	parameterType="string"
-	resultType="string">
-
-		SELECT vendor_type
-		FROM vendor
-		WHERE vendor_id = #{vendorId}
-	
-	</select>
 	
 	<update id="updateItem"
 	parameterType="itemDTO">
@@ -214,25 +176,12 @@
 			item_spec = #{spec},
 			item_unit_price = #{unitPrice},
 			item_whtype = #{itemWhType},
-			item_vendor = #{itemVendor},
 			item_usedate = #{useDate},
 			item_safety_stock = #{safetyStock}
 		WHERE item_id = #{itemId}
 	
 	</update>
 	
-	<select id="selectVendorById"
-		parameterType="string"
-		resultType="kr.or.chop.P17_vendor.dto.VendorDTO">
-
-		SELECT
-			vendor_id AS vendorId,
-			vendor_name AS vendorName,
-			vendor_type AS vendorType
-		FROM vendor
-		WHERE vendor_id = #{vendorId}
-	
-	</select>
 	
 	<select id="selectLotListByItem"
 	parameterType="string"
@@ -243,8 +192,9 @@
 			LOT_ITEM AS lotItem,
 			LOT_VENDOR AS lotVendor,
 			LOT_WORK AS lotWork,
-			LOT_IQTY AS lotIqty,
+			LOT_QTY AS lotQty,
 			LOT_FQTY AS lotFqty,
+			LOT_CQTY AS lotCqty,
 			LOT_MFD AS lotMfd,
 			LOT_ETW AS lotEtw,
 			LOT_EXP AS lotExp,
