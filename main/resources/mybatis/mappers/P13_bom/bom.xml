@@ -16,8 +16,16 @@
         WHERE b.bom_usage = 'Y'
 
         <if test="searchType != null and searchType != ''">
-            AND i.item_type = #{searchType}
-        </if>
+		    <choose>
+		        <when test="searchType == 'FIN'">
+		            AND i.item_type = 30
+		        </when>
+		
+		        <when test="searchType == 'SEMI'">
+				    AND i.item_type = 20
+				</when>
+		    </choose>
+		</if>
 
         <if test="searchKeyword != null and searchKeyword != ''">
             AND (
@@ -59,8 +67,16 @@
                 WHERE b.bom_usage = 'Y'
 
                 <if test="bomDTO.searchType != null and bomDTO.searchType != ''">
-                    AND i.item_type = #{bomDTO.searchType}
-                </if>
+				    <choose>
+				        <when test="bomDTO.searchType == 'FIN'">
+				            AND i.item_type = 30
+				        </when>
+				
+				        <when test="bomDTO.searchType == 'SEMI'">
+						    AND i.item_type = 20
+						</when>
+				    </choose>
+				</if>
 
                 <if test="bomDTO.searchKeyword != null and bomDTO.searchKeyword != ''">
                     AND (
@@ -143,7 +159,7 @@
 	    FROM item
 	
 	    WHERE item_usage = 'Y'
-	    AND item_type = 30
+	    AND item_type IN (20, 30)
 	
 	    ORDER BY item_id
 	
@@ -224,5 +240,38 @@
 	    )
 	
 	</insert>
+	
+		<update id="updateBom"
+	        parameterType="bomDTO">
+	
+	    UPDATE bom
+	    SET
+	        bom_item = #{bomItem},
+	        bom_name = #{bomName},
+	        bom_content = #{bomContent}
+	    WHERE bom_id = #{bomId}
+	    AND bom_usage = 'Y'
+	
+	</update>
+	
+	<update id="deleteBom"
+	        parameterType="string">
+	
+	    UPDATE bom
+	    SET bom_usage = 'N'
+	    WHERE bom_id = #{bomId}
+	
+	</update>
+	
+	
+	<update id="deleteBomDetailByBomId"
+	        parameterType="string">
+	
+	    UPDATE bom_detail
+	    SET bom_dtl_usage = 'N'
+	    WHERE bom_dtl_bom = #{bomId}
+	    AND bom_dtl_usage = 'Y'
+	
+	</update>
 
 </mapper>

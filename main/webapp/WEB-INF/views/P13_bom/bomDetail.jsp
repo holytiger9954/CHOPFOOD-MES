@@ -16,17 +16,23 @@
     </div>
 
     <div class="btn-row">
-        <div>
+        <div class="left">
             <a class="btn btn-white"
                href="${pageContext.request.contextPath}/bom/list">
                 목록
             </a>
         </div>
 
-        <div>
-            <a class="btn btn-main"
+        <div class="right">
+            <a class="btn btn-white"
                href="${pageContext.request.contextPath}/bom/edit?bomId=${bom.bomId}">
                 수정
+            </a>
+
+            <a class="btn btn-main"
+               href="${pageContext.request.contextPath}/bom/delete?bomId=${bom.bomId}"
+               onclick="return confirm('해당 BOM을 삭제하시겠습니까?');">
+                삭제
             </a>
         </div>
     </div>
@@ -58,19 +64,19 @@
                         <th>품목 유형</th>
                         <td>
                             <c:choose>
-							    <c:when test="${bom.itemType == 10}">
-							        원자재
-							    </c:when>
-							    <c:when test="${bom.itemType == 20}">
-							        반제품
-							    </c:when>
-							    <c:when test="${bom.itemType == 30}">
-							        완제품
-							    </c:when>
-							    <c:otherwise>
-							        ${bom.itemType}
-							    </c:otherwise>
-							</c:choose>
+                                <c:when test="${bom.itemType == 10}">
+                                    원자재
+                                </c:when>
+                                <c:when test="${bom.itemType == 20}">
+                                    반제품
+                                </c:when>
+                                <c:when test="${bom.itemType == 30}">
+                                    완제품
+                                </c:when>
+                                <c:otherwise>
+                                    ${bom.itemType}
+                                </c:otherwise>
+                            </c:choose>
                         </td>
 
                         <th>사용 여부</th>
@@ -120,11 +126,14 @@
 
                                 <td>
                                     <c:choose>
-                                        <c:when test="${detail.itemType == 'FIN'}">
-                                            완제품
-                                        </c:when>
-                                        <c:when test="${detail.itemType == 'MAT'}">
+                                        <c:when test="${detail.itemType == 10}">
                                             원자재
+                                        </c:when>
+                                        <c:when test="${detail.itemType == 20}">
+                                            반제품
+                                        </c:when>
+                                        <c:when test="${detail.itemType == 30}">
+                                            완제품
                                         </c:when>
                                         <c:otherwise>
                                             ${detail.itemType}
@@ -138,8 +147,7 @@
 
                         <c:if test="${empty detailList}">
                             <tr>
-                                <td colspan="5"
-                                    style="text-align:center;">
+                                <td colspan="5" style="text-align:center;">
                                     등록된 BOM 구성 품목이 없습니다.
                                 </td>
                             </tr>

@@ -12,7 +12,7 @@ public class BOMDetailDTO {
     private String bomDtlUsage;
 
     private String itemName;
-    private String itemType;
+    private int itemType;
     
     private String[] bomDtlItemList;
     private int[] bomDtlQtyList;

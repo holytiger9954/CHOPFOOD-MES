@@ -35,10 +35,10 @@
                     완제품
                 </option>
 
-                <option value="MAT"
-                    ${search.searchType == 'MAT' ? 'selected' : ''}>
-                    원자재
-                </option>
+                <option value="SEMI"
+				    ${search.searchType == 'SEMI' ? 'selected' : ''}>
+				    반제품
+				</option>
             </select>
         </div>
 

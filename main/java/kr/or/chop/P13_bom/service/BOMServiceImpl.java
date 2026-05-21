@@ -25,22 +25,22 @@ public class BOMServiceImpl implements BOMService {
 	public List<BOMDTO> selectBomList(BOMDTO bomDTO, PageInfo page) {
 		return bomDAO.selectBomList(bomDTO, page);
 	}
-	
+
 	@Override
 	public BOMDTO selectBomDetail(String bomId) {
-	    return bomDAO.selectBomDetail(bomId);
+		return bomDAO.selectBomDetail(bomId);
 	}
 
 	@Override
 	public List<BOMDetailDTO> selectBomDetailList(String bomId) {
-	    return bomDAO.selectBomDetailList(bomId);
+		return bomDAO.selectBomDetailList(bomId);
 	}
-	
+
 	@Override
 	public int insertBom(BOMDTO bomDTO) {
-	    return bomDAO.insertBom(bomDTO);
+		return bomDAO.insertBom(bomDTO);
 	}
-	
+
 	@Override
 	public List<BOMDTO> selectFinishItemList() {
 		return bomDAO.selectFinishItemList();
@@ -50,9 +50,24 @@ public class BOMServiceImpl implements BOMService {
 	public List<BOMDTO> selectMaterialItemList() {
 		return bomDAO.selectMaterialItemList();
 	}
-	
+
 	@Override
 	public int insertBomDetail(BOMDetailDTO detailDTO) {
-	    return bomDAO.insertBomDetail(detailDTO);
+		return bomDAO.insertBomDetail(detailDTO);
+	}
+
+	@Override
+	public int updateBom(BOMDTO bomDTO) {
+		return bomDAO.updateBom(bomDTO);
+	}
+
+	@Override
+	public int deleteBom(String bomId) {
+		return bomDAO.deleteBom(bomId);
+	}
+
+	@Override
+	public int deleteBomDetailByBomId(String bomId) {
+		return bomDAO.deleteBomDetailByBomId(bomId);
 	}
 }

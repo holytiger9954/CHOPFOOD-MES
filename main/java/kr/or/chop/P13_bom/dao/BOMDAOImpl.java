@@ -20,7 +20,6 @@ public class BOMDAOImpl implements BOMDAO {
 
 	@Override
 	public int selectBomCount(BOMDTO bomDTO) {
-
 		return sqlSession.selectOne("mapper.P13_bom.selectBomCount", bomDTO);
 	}
 
@@ -37,13 +36,11 @@ public class BOMDAOImpl implements BOMDAO {
 
 	@Override
 	public BOMDTO selectBomDetail(String bomId) {
-
 		return sqlSession.selectOne("mapper.P13_bom.selectBomDetail", bomId);
 	}
 
 	@Override
 	public List<BOMDetailDTO> selectBomDetailList(String bomId) {
-
 		return sqlSession.selectList("mapper.P13_bom.selectBomDetailList", bomId);
 	}
 
@@ -65,5 +62,20 @@ public class BOMDAOImpl implements BOMDAO {
 	@Override
 	public int insertBomDetail(BOMDetailDTO detailDTO) {
 		return sqlSession.insert("mapper.P13_bom.insertBomDetail", detailDTO);
+	}
+
+	@Override
+	public int updateBom(BOMDTO bomDTO) {
+		return sqlSession.update("mapper.P13_bom.updateBom", bomDTO);
+	}
+
+	@Override
+	public int deleteBom(String bomId) {
+		return sqlSession.update("mapper.P13_bom.deleteBom", bomId);
+	}
+
+	@Override
+	public int deleteBomDetailByBomId(String bomId) {
+		return sqlSession.update("mapper.P13_bom.deleteBomDetailByBomId", bomId);
 	}
 }
