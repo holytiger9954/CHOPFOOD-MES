@@ -153,7 +153,7 @@
 							</td>
 
 							<td>${dto.sugg_cdate}</td>
-							<td>${dto.sugg_writer}</td>
+							<td>${dto.empName} (${dto.sugg_writer})</td>
 							<td>${dto.comment_count}</td>
 							<td>${dto.sugg_view}</td>
 

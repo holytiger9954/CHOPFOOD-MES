@@ -23,4 +23,5 @@ public class SuggDTO {
     private String sugg_file_origin_name;
     private String sugg_file_save_name;
     private String deleteFile;
+    private String empName;
 }

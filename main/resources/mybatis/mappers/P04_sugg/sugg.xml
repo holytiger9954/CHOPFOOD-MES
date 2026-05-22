@@ -61,6 +61,7 @@
                 s.sugg_title,
                 s.sugg_content,
                 s.sugg_writer,
+                e.emp_name AS empName,
                 s.sugg_pw,
                 s.sugg_answer,
                 s.sugg_cdate,
@@ -75,9 +76,10 @@
                       AND c.comm_usage = 'Y'
                 ), 0) AS comment_count
             FROM suggestion s
+            LEFT JOIN emp e
+                ON UPPER(s.sugg_writer) = UPPER(e.emp_id)
             WHERE s.sugg_usage = 'Y'
-            
-            
+
             <if test="search.sugg_answer != null and search.sugg_answer != ''">
                 AND s.sugg_answer = #{search.sugg_answer}
             </if>
@@ -89,22 +91,25 @@
                     OR
                     UPPER(s.sugg_writer)
                         LIKE '%' || UPPER(#{search.keyword}) || '%'
+                    OR
+                    UPPER(e.emp_name)
+                        LIKE '%' || UPPER(#{search.keyword}) || '%'
                 )
             </if>
-            
-			<if test="search.startDate != null and search.startDate != ''">
-			    <![CDATA[
-			    AND s.sugg_cdate >= TO_DATE(#{search.startDate}, 'YYYY-MM-DD')
-			    ]]>
-			</if>
-			
-			<if test="search.endDate != null and search.endDate != ''">
-			    <![CDATA[
-			    AND s.sugg_cdate < TO_DATE(#{search.endDate}, 'YYYY-MM-DD') + 1
-			    ]]>
-			</if>
-            
-            ORDER BY s.sugg_cdate desc
+
+            <if test="search.startDate != null and search.startDate != ''">
+                <![CDATA[
+                AND s.sugg_cdate >= TO_DATE(#{search.startDate}, 'YYYY-MM-DD')
+                ]]>
+            </if>
+
+            <if test="search.endDate != null and search.endDate != ''">
+                <![CDATA[
+                AND s.sugg_cdate < TO_DATE(#{search.endDate}, 'YYYY-MM-DD') + 1
+                ]]>
+            </if>
+
+            ORDER BY s.sugg_cdate DESC
         ) S
     )
     WHERE RN BETWEEN #{page.startRow}
