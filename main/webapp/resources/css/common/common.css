@@ -759,3 +759,14 @@ textarea[readonly]:focus {
 	font-size: 14px;
 	margin: 0 0 25px;
 }
+
+
+
+/* ==============================
+   toDetail
+============================== */
+
+.toDetail:hover {
+	text-decoration: underline;
+	color: var(--main-green);
+}
