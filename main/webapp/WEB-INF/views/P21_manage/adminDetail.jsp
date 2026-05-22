@@ -16,34 +16,34 @@
     </div>
 
     <div class="btn-row admin-detail-btn-row">
-	    <div>
-	        <a class="btn btn-white"
-	           href="${pageContext.request.contextPath}/admin/list">
-	            목록
-	        </a>
-	    </div>
-	
-	    <div style="display: flex; gap: 8px;">
-		    <a class="btn btn-main"
-		       href="${pageContext.request.contextPath}/admin/edit?empId=${admin.empId}">
-		        수정
-		    </a>
-		
-		    <form action="${pageContext.request.contextPath}/admin/delete"
-		          method="post"
-		          onsubmit="return confirm('해당 사원을 삭제 처리하시겠습니까?');">
-		
-		        <input type="hidden"
-		               name="empId"
-		               value="${admin.empId}">
-		
-		        <button type="submit"
-		                class="btn btn-red">
-		            삭제
-		        </button>
-		    </form>
-		</div>
-	</div>
+        <div>
+            <a class="btn btn-white"
+               href="${pageContext.request.contextPath}/admin/list">
+                목록
+            </a>
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+            <a class="btn btn-main"
+               href="${pageContext.request.contextPath}/admin/edit?empId=${admin.empId}">
+                수정
+            </a>
+
+            <form action="${pageContext.request.contextPath}/admin/delete"
+                  method="post"
+                  onsubmit="return confirm('해당 사원을 삭제 처리하시겠습니까?');">
+
+                <input type="hidden"
+                       name="empId"
+                       value="${admin.empId}">
+
+                <button type="submit"
+                        class="btn btn-red">
+                    삭제
+                </button>
+            </form>
+        </div>
+    </div>
 
     <div class="emp-profile-card">
 
@@ -56,24 +56,24 @@
             </div>
         </div>
 
-        <div>
+        <div class="emp-profile-status">
             <c:choose>
-			    <c:when test="${admin.empInOffice == 0}">
-			        <span class="status status-success">● 재직</span>
-			    </c:when>
-			
-			    <c:when test="${admin.empInOffice == 10}">
-			        <span class="status status-warning">● 휴직</span>
-			    </c:when>
-			
-			    <c:when test="${admin.empInOffice == 50}">
-			        <span class="status status-info">● 퇴사</span>
-			    </c:when>
-			
-			    <c:otherwise>
-			        <span class="status status-info">● 미지정</span>
-			    </c:otherwise>
-			</c:choose>
+                <c:when test="${admin.empInOffice == 0}">
+                    <span class="status-back status-back-success">• 재직</span>
+                </c:when>
+
+                <c:when test="${admin.empInOffice == 10}">
+                    <span class="status-back status-back-warning">• 휴직</span>
+                </c:when>
+
+                <c:when test="${admin.empInOffice == 50}">
+                    <span class="status-back status-back-info">• 퇴사</span>
+                </c:when>
+
+                <c:otherwise>
+                    <span class="status-back status-back-info">• 미지정</span>
+                </c:otherwise>
+            </c:choose>
         </div>
 
     </div>
@@ -111,7 +111,7 @@
                         <td>${admin.empEmail}</td>
                     </tr>
                     <tr>
-                        <th>전화번호</th>
+                        <th>연락처</th>
                         <td>${admin.empTel}</td>
                     </tr>
                     <tr>
@@ -182,46 +182,55 @@
     }
 
     .emp-profile-card {
-        min-height: 150px;
-        padding: 26px;
+        position: relative;
+
+        min-height: 140px;
+        padding: 24px 26px;
 
         display: flex;
         align-items: center;
         justify-content: space-between;
 
-        border: 1px solid #999;
+        border: 1px solid var(--gray);
         border-radius: 8px;
         background-color: #fff;
 
         margin-bottom: 16px;
     }
 
+    .emp-profile-status {
+        position: absolute;
+        top: 22px;
+        right: 26px;
+    }
+
     .emp-profile-left {
         display: flex;
         align-items: center;
-        gap: 42px;
+        gap: 34px;
     }
 
     .emp-profile-img {
-        width: 110px;
-        height: 110px;
+        width: 96px;
+        height: 96px;
 
         border-radius: 50%;
         background-color: #d9d9d9;
     }
 
     .emp-profile-name {
-        margin: 0 0 12px;
+        margin: 0 0 10px;
 
-        font-size: 28px;
-        font-weight: 800;
-        color: #000;
+        font-size: 24px;
+        font-weight: 700;
+        color: #222;
     }
 
     .emp-profile-id {
         margin: 0;
 
-        font-size: 20px;
+        font-size: 15px;
+        font-weight: 500;
         color: #777;
     }
 
@@ -230,28 +239,28 @@
         grid-template-columns: 1fr 1fr;
         gap: 18px;
 
-        margin-bottom: 40px;
+        margin-bottom: 36px;
     }
 
     .emp-info-card {
-        min-height: 250px;
-        padding: 28px 26px;
+        min-height: 235px;
+        padding: 26px 24px;
 
-        border: 1px solid #999;
+        border: 1px solid var(--gray);
         border-radius: 8px;
         background-color: #fff;
     }
 
     .emp-section-title {
-        margin: 0 0 34px;
+        margin: 0 0 28px;
 
-        font-size: 22px;
-        font-weight: 800;
-        color: #000;
+        font-size: 18px;
+        font-weight: 700;
+        color: #222;
     }
 
     .emp-table-wrap {
-        padding: 0 26px;
+        padding: 0 18px;
     }
 
     .emp-info-table {
@@ -259,11 +268,11 @@
         border-collapse: collapse;
         table-layout: fixed;
 
-        border-top: 2px solid #999;
+        border-top: 1px solid var(--gray);
     }
 
     .emp-info-table tr {
-        border-bottom: 2px solid #999;
+        border-bottom: 1px solid var(--gray);
     }
 
     .emp-info-table th,
@@ -271,7 +280,7 @@
         height: 38px;
         padding: 0 10px;
 
-        font-size: 15px;
+        font-size: 14px;
         text-align: left;
         vertical-align: middle;
 
@@ -280,14 +289,14 @@
 
     .emp-info-table th {
         width: 32%;
-        font-weight: 500;
-        color: #000;
+        font-weight: 700;
+        color: #333;
     }
 
     .emp-info-table td {
         width: 68%;
-        font-weight: 400;
-        color: #000;
+        font-weight: 500;
+        color: #222;
     }
 
     .emp-activity-section {
@@ -295,21 +304,21 @@
     }
 
     .emp-activity-section .emp-section-title {
-        margin-bottom: 22px;
+        margin-bottom: 20px;
     }
 
     .emp-activity-wrap {
         display: flex;
         justify-content: center;
-        gap: 28px;
+        gap: 24px;
     }
 
     .emp-activity-card {
         width: 165px;
-        min-height: 135px;
+        min-height: 130px;
         padding: 20px 16px;
 
-        border: 1px solid #333;
+        border: 1px solid var(--gray);
         border-radius: 8px;
         background-color: #fff;
 
@@ -319,32 +328,32 @@
     .activity-title {
         margin: 0 0 14px;
 
-        font-size: 18px;
-        font-weight: 800;
-        color: #000;
+        font-size: 16px;
+        font-weight: 700;
+        color: #222;
     }
 
     .activity-count {
         margin: 0 0 12px;
 
-        font-size: 36px;
-        font-weight: 900;
+        font-size: 32px;
+        font-weight: 800;
         line-height: 1;
     }
 
     .activity-count span {
-        margin-left: 8px;
+        margin-left: 6px;
 
-        font-size: 18px;
-        font-weight: 800;
-        color: #000;
+        font-size: 16px;
+        font-weight: 700;
+        color: #222;
     }
 
     .activity-sub {
         margin: 0;
 
-        font-size: 13px;
-        color: #000;
+        font-size: 12px;
+        color: #777;
     }
 
     .activity-wait {
@@ -376,6 +385,10 @@
             align-items: flex-start;
             flex-direction: column;
             gap: 20px;
+        }
+
+        .emp-profile-status {
+            position: static;
         }
     }
 </style>

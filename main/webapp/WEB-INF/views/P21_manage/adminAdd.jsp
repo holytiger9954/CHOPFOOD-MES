@@ -21,9 +21,10 @@
 
         <div class="search-btn-area form-btn-area">
             <a class="btn btn-white"
-               href="${pageContext.request.contextPath}/admin/list">
-                취소
-            </a>
+			   href="${pageContext.request.contextPath}/admin/list"
+			   onclick="return confirm('취소하시겠습니까? 작성 중인 내용은 저장되지 않습니다.');">
+			    취소
+			</a>
 
             <button type="submit" class="btn btn-main">
                 등록
@@ -100,7 +101,6 @@
             <div class="content-content-content">
                 <p class="card-subtitle">
                     최초 비밀번호는 <strong>1234</strong>로 등록됩니다.
-                    최초 로그인 여부는 <strong>Y</strong>로 저장됩니다.
                 </p>
             </div>
 

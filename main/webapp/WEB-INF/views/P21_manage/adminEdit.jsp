@@ -24,9 +24,10 @@
 
         <div class="search-btn-area form-btn-area">
             <a class="btn btn-white"
-               href="${pageContext.request.contextPath}/admin/detail?empId=${admin.empId}">
-                취소
-            </a>
+			   href="${pageContext.request.contextPath}/admin/detail?empId=${admin.empId}"
+			   onclick="return confirm('취소하시겠습니까? 작성 중인 내용은 저장되지 않습니다.');">
+			    취소
+			</a>
 
             <button type="submit" class="btn btn-main">
                 수정완료
