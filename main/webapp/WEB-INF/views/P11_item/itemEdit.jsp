@@ -130,10 +130,39 @@
 
 				<label>단위 <span class="red">*</span></label>
 
-				<input type="text"
-					name="unit"
-					value="${itemDTO.unit}"
-					placeholder="단위 입력">
+<!-- 				<input type="text" -->
+<!-- 					name="unit" -->
+<%-- 					value="${itemDTO.unit}" --%>
+<!-- 					placeholder="단위 입력"> -->
+				<div class="unit-wrap" style="position:relative; width:100%;">
+
+					<input type="text"
+						name="unit"
+						id="unit"
+						value="${itemDTO.unit}"
+						autocomplete="off"
+						placeholder="단위 입력"
+						style="width:100%;">
+				
+					<div id="unitAutoBox"
+						style="
+							display:none;
+							position:absolute;
+							top:44px;
+							left:0;
+							right:0;
+							width:100%;
+							background:white;
+							border:1px solid #ddd;
+							border-radius:6px;
+							z-index:1000;
+							max-height:160px;
+							overflow-y:auto;
+							box-sizing:border-box;
+						">
+					</div>
+				
+				</div>
 			</div>
 
 			<div class="search-item"
@@ -141,10 +170,40 @@
 
 				<label>규격 <span class="red">*</span></label>
 
-				<input type="text"
-					name="spec"
-					value="${itemDTO.spec}"
-					placeholder="규격 입력">
+<!-- 				<input type="text" -->
+<!-- 					name="spec" -->
+<%-- 					value="${itemDTO.spec}" --%>
+<!-- 					placeholder="규격 입력"> -->
+					<div class="spec-wrap" style="position:relative; width:100%;">
+
+					<input type="text"
+						name="spec"
+						id="spec"
+						value="${itemDTO.spec}"
+						autocomplete="off"
+						placeholder="규격 입력"
+						style="width:100%;">
+				
+					<div id="specAutoBox"
+						style="
+							display:none;
+							position:absolute;
+							top:44px;
+							left:0;
+							right:0;
+							width:100%;
+							background:white;
+							border:1px solid #ddd;
+							border-radius:6px;
+							z-index:1000;
+							max-height:160px;
+							overflow-y:auto;
+							box-sizing:border-box;
+						">
+					</div>
+				
+				</div>
+
 			</div>
 
 			<div class="search-item"
@@ -169,97 +228,298 @@
 <script>
 window.addEventListener("load", function() {
 
-	
 	/* =========================
-	품목 유형별 창고 유형
+		단위 자동완성
 	========================= */
-	
+
+	const unitInput = document.querySelector("#unit");
+	const unitAutoBox = document.querySelector("#unitAutoBox");
+
+	let unitArray = [];
+
+	fetch("${pageContext.request.contextPath}/item/unitList")
+		.then(function(response) {
+			return response.json();
+		})
+		.then(function(result) {
+
+			unitArray = result.map(function(row) {
+
+				if (typeof row === "string") {
+					return row;
+				}
+
+				return row.unit || row.UNIT;
+			});
+
+			console.log("단위 목록:", unitArray);
+		})
+		.catch(function(error) {
+			console.log("단위 목록 조회 실패", error);
+		});
+
+	function showUnitList() {
+
+		const keyword = unitInput.value.trim().toUpperCase();
+
+		unitAutoBox.innerHTML = "";
+
+		let filtered = unitArray.filter(function(unit) {
+
+			if (!unit) {
+				return false;
+			}
+
+			if (keyword === "") {
+				return true;
+			}
+
+			return unit.toUpperCase().indexOf(keyword) !== -1;
+		});
+
+		if (filtered.length === 0) {
+			unitAutoBox.style.display = "none";
+			return;
+		}
+
+		let html = "";
+
+		for (let i = 0; i < filtered.length; i++) {
+
+			html += '<div class="unit-option" ';
+			html += 'style="padding:10px 12px; cursor:pointer; font-size:13px;">';
+			html += filtered[i];
+			html += '</div>';
+		}
+
+		unitAutoBox.innerHTML = html;
+		unitAutoBox.style.display = "block";
+	}
+
+	unitInput.addEventListener("focus", showUnitList);
+	unitInput.addEventListener("input", showUnitList);
+
+	unitAutoBox.addEventListener("click", function(e) {
+
+		const option = e.target.closest(".unit-option");
+
+		if (!option) {
+			return;
+		}
+
+		unitInput.value = option.innerText;
+		unitAutoBox.style.display = "none";
+	});
+
+
+	/* =========================
+		규격 자동완성
+	========================= */
+
+	const specInput = document.querySelector("#spec");
+	const specAutoBox = document.querySelector("#specAutoBox");
+
+	let specArray = [];
+
+	fetch("${pageContext.request.contextPath}/item/specList")
+		.then(function(response) {
+			return response.json();
+		})
+		.then(function(result) {
+
+			specArray = result;
+
+			console.log("규격 목록:", specArray);
+		})
+		.catch(function(error) {
+			console.log("규격 목록 조회 실패", error);
+		});
+
+	function showSpecList() {
+
+		const keyword = specInput.value.trim().toUpperCase();
+
+		specAutoBox.innerHTML = "";
+
+		let filtered = specArray.filter(function(specObj) {
+
+			const spec =
+				specObj.spec || specObj.SPEC;
+
+			if (!spec) {
+				return false;
+			}
+
+			if (keyword === "") {
+				return true;
+			}
+
+			return spec.toUpperCase().indexOf(keyword) !== -1;
+		});
+
+		if (filtered.length === 0) {
+			specAutoBox.style.display = "none";
+			return;
+		}
+
+		let html = "";
+
+		for (let i = 0; i < filtered.length; i++) {
+
+			const spec =
+				filtered[i].spec || filtered[i].SPEC;
+
+			const itemName =
+				filtered[i].itemName || filtered[i].ITEMNAME;
+
+			html += '<div class="spec-option" ';
+			html += 'data-spec="' + spec + '" ';
+			html += 'style="padding:10px 12px; cursor:pointer; font-size:13px;">';
+
+			html += '<span style="font-weight:600;">';
+			html += spec;
+			html += '</span>';
+
+			html += '<span style="color:#888; margin-left:8px;">';
+			html += itemName;
+			html += '</span>';
+
+			html += '</div>';
+		}
+
+		specAutoBox.innerHTML = html;
+		specAutoBox.style.display = "block";
+	}
+
+	specInput.addEventListener("focus", showSpecList);
+	specInput.addEventListener("input", showSpecList);
+
+	specAutoBox.addEventListener("click", function(e) {
+
+		const option = e.target.closest(".spec-option");
+
+		if (!option) {
+			return;
+		}
+
+		specInput.value = option.dataset.spec;
+		specAutoBox.style.display = "none";
+	});
+
+
+	/* =========================
+		바깥 클릭 시 닫기
+	========================= */
+
+	document.addEventListener("click", function(e) {
+
+		if (!unitInput.contains(e.target)
+			&& !unitAutoBox.contains(e.target)) {
+
+			unitAutoBox.style.display = "none";
+		}
+
+		if (!specInput.contains(e.target)
+			&& !specAutoBox.contains(e.target)) {
+
+			specAutoBox.style.display = "none";
+		}
+	});
+
+
+	/* =========================
+		품목 유형별 창고 유형
+	========================= */
+
 	const itemTypeSelect =
 		document.querySelector("#itemType");
-	
+
 	const whTypeSelect =
 		document.querySelector("#itemWhType");
-	
+
 	const currentItemType =
 		"${itemDTO.itemType}";
-	
+
 	const currentWhType =
 		"${itemDTO.itemWhType}";
-	
+
 	function loadWhTypeList(itemType, selectedWhType) {
-	
+
 		let html =
 			'<option value="">창고 유형 선택</option>';
-	
-		// 원자재
+
 		if (itemType == "10") {
-	
+
 			html += '<option value="10">원자재 냉동창고</option>';
 			html += '<option value="20">원자재 냉장창고</option>';
 			html += '<option value="30">원자재 실온창고</option>';
-	
-		}
-	
-		// 반제품
-		else if (itemType == "20") {
-	
+
+		} else if (itemType == "20") {
+
 			html += '<option value="40">반제품 냉동창고</option>';
 			html += '<option value="50">반제품 냉장창고</option>';
-	
-		}
-	
-		// 완제품
-		else if (itemType == "30") {
-	
+
+		} else if (itemType == "30") {
+
 			html += '<option value="60">완제품 냉동창고</option>';
-	
-		}
-	
-		// 기타자재
-		else if (itemType == "40") {
-	
+
+		} else if (itemType == "40") {
+
 			html += '<option value="70">기타 자재 실온창고</option>';
-	
 		}
-	
+
 		whTypeSelect.innerHTML = html;
-	
+
 		if (selectedWhType !== "") {
 			whTypeSelect.value = selectedWhType;
 		}
 	}
-	
+
 	loadWhTypeList(currentItemType, currentWhType);
-	
+
 	itemTypeSelect.addEventListener("change", function() {
-	
 		loadWhTypeList(this.value, "");
-	
 	});
 
-	const unitPriceInput = document.querySelector("input[name='unitPrice']");
-	const safetyStockInput = document.querySelector("input[name='safetyStock']");
-	const useDateInput = document.querySelector("input[name='useDate']");
-	const form = document.querySelector("form");
+
+	/* =========================
+		콤마 / 음수 방지
+	========================= */
+
+	const unitPriceInput =
+		document.querySelector("input[name='unitPrice']");
+
+	const safetyStockInput =
+		document.querySelector("input[name='safetyStock']");
+
+	const useDateInput =
+		document.querySelector("input[name='useDate']");
+
+	const form =
+		document.querySelector("form");
 
 	function formatComma(inputTag) {
 
-		let firstValue = inputTag.value.replace(/[^0-9]/g, "");
+		let firstValue =
+			inputTag.value.replace(/[^0-9]/g, "");
 
 		if (firstValue !== "") {
-			inputTag.value = Number(firstValue).toLocaleString("ko-KR");
+			inputTag.value =
+				Number(firstValue).toLocaleString("ko-KR");
 		}
 
 		inputTag.addEventListener("input", function() {
 
-			let value = this.value.replace(/[^0-9]/g, "");
+			let value =
+				this.value.replace(/[^0-9]/g, "");
 
 			if (value === "") {
 				this.value = "";
 				return;
 			}
 
-			this.value = Number(value).toLocaleString("ko-KR");
+			this.value =
+				Number(value).toLocaleString("ko-KR");
 		});
 	}
 
@@ -270,7 +530,6 @@ window.addEventListener("load", function() {
 			if (e.key === "-" || e.key === "e") {
 				e.preventDefault();
 			}
-
 		});
 
 		inputTag.addEventListener("input", function() {
@@ -278,7 +537,6 @@ window.addEventListener("load", function() {
 			if (Number(this.value) < 0) {
 				this.value = "";
 			}
-
 		});
 	}
 
@@ -295,7 +553,6 @@ window.addEventListener("load", function() {
 
 		safetyStockInput.value =
 			safetyStockInput.value.replace(/,/g, "");
-
 	});
 
 });

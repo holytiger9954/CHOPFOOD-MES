@@ -1,6 +1,7 @@
 package kr.or.chop.P11_item.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import kr.or.chop.P11_item.dto.ItemDTO;
 import kr.or.chop.P11_item.service.ItemService;
-import kr.or.chop.P17_vendor.dto.VendorDTO;
 
 @Controller
 @RequestMapping("/item")
@@ -40,6 +40,12 @@ public class ItemAddController {
 	@ResponseBody
 	public List<String> unitList() {
 		return itemService.selectUnitList();
+	}
+	
+	@RequestMapping("/specList")
+	@ResponseBody
+	public List<Map<String, Object>> specList() {
+		return itemService.selectSpecList();
 	}
 
 

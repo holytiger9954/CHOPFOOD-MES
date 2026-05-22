@@ -42,23 +42,23 @@
 					<div>
 							<c:choose>
 									<c:when test="${itemDTO.itemType == '10'}">
-										<span class="status-back">
-											원자재
+										<span class="status-back status-back-success">
+											• 원자재
 										</span>
 									</c:when>
 									<c:when test="${itemDTO.itemType == '20'}">
-										<span class="status-back">
-										반제품
+										<span class="status-back status-back-warning">
+										• 반제품
 										</span>
 									</c:when>
 									<c:when test="${itemDTO.itemType == '30'}">
-										<span class="status-back">
-										완제품
+										<span class="status-back status-back-safe">
+										• 완제품
 										</span>
 									</c:when>
 									<c:when test="${itemDTO.itemType == '40'}">
-										<span class="status-back">
-										기타 자재
+										<span class="status-back status-back-info">
+										• 기타 자재
 										</span>
 									</c:when>
 									<c:otherwise>
@@ -144,11 +144,11 @@
 							<td class="lotId">${lot.lotId}</td>
 							<td>
 							<fmt:formatDate value="${lot.lotEtw}"
-								pattern="yyyy-MM-dd hh:mm" />
+								pattern="yyyy-MM-dd HH:mm" />
 							</td>
 							<td>
 							<fmt:formatDate value="${lot.lotExp}"
-								pattern="yyyy-MM-dd hh:mm" />
+								pattern="yyyy-MM-dd HH:mm" />
 							</td>
 							<c:if test="${empty lot.lotAwhsec}">
 								<td>${lot.lotBwhsec}</td>

@@ -79,20 +79,17 @@
 
 				<label>담당자 <span class="red">*</span></label>
 
-				<div style="display:flex; gap:10px;">
 					<input type="text"
 						id="ioWorker"
+						value="${sessionScope.loginUser.empName} (${sessionScope.loginUser.empId})"
+						readonly>
+						
+					<input type="hidden"
+						id="ioWorker"
 						name="ioWorker"
-						value="${io.workerName} (${io.ioWorker})"
-						placeholder="담당자 선택"
+						value="${sessionScope.loginUser.empId}"
 						readonly>
 
-					<button type="button"
-						class="btn btn-main"
-						id="workerSearchBtn">
-						작업자 조회
-					</button>
-				</div>
 			</div>
 		</div>
 
@@ -366,11 +363,11 @@ window.addEventListener("load", function() {
 	const currentWhId = "${io.whId}";
 	const currentWhSec = "${io.whSec}";
 
-	const workerModal = document.querySelector("#workerModal");
-	const workerSearchBtn = document.querySelector("#workerSearchBtn");
-	const workerModalClose = document.querySelector("#workerModalClose");
-	const workerSelectBtn = document.querySelector("#workerSelectBtn");
-	const ioWorkerInput = document.querySelector("#ioWorker");
+// 	const workerModal = document.querySelector("#workerModal");
+// 	const workerSearchBtn = document.querySelector("#workerSearchBtn");
+// 	const workerModalClose = document.querySelector("#workerModalClose");
+// 	const workerSelectBtn = document.querySelector("#workerSelectBtn");
+// 	const ioWorkerInput = document.querySelector("#ioWorker");
 
 	function getIoType() {
 		return document.querySelector("input[name='ioType']").value;
@@ -532,33 +529,33 @@ window.addEventListener("load", function() {
 		loadWhSecList(this.value, "");
 	});
 
-	workerSearchBtn.addEventListener("click", function() {
-		workerModal.style.display = "flex";
-		loadWorkerList("");
-	});
+// 	workerSearchBtn.addEventListener("click", function() {
+// 		workerModal.style.display = "flex";
+// 		loadWorkerList("");
+// 	});
 
-	workerModalClose.addEventListener("click", function() {
-		workerModal.style.display = "none";
-	});
+// 	workerModalClose.addEventListener("click", function() {
+// 		workerModal.style.display = "none";
+// 	});
 
-	workerSelectBtn.addEventListener("click", function() {
+// 	workerSelectBtn.addEventListener("click", function() {
 
-		const checked =
-			document.querySelector("input[name='workerRadio']:checked");
+// 		const checked =
+// 			document.querySelector("input[name='workerRadio']:checked");
 
-		if (!checked) {
-			alert("작업자를 선택하세요.");
-			return;
-		}
+// 		if (!checked) {
+// 			alert("작업자를 선택하세요.");
+// 			return;
+// 		}
 
-		const empId = checked.value;
-		const empName = checked.getAttribute("data-name");
+// 		const empId = checked.value;
+// 		const empName = checked.getAttribute("data-name");
 
-		ioWorkerInput.value =
-			empName + " (" + empId + ")";
+// 		ioWorkerInput.value =
+// 			empName + " (" + empId + ")";
 
-		workerModal.style.display = "none";
-	});
+// 		workerModal.style.display = "none";
+// 	});
 
 	function formatComma(inputTag) {
 
@@ -650,43 +647,43 @@ function searchRT() {
 	loadWorkerList(keyword);
 }
 
-function loadWorkerList(keyword) {
+// function loadWorkerList(keyword) {
 
-	fetch(
-		"${pageContext.request.contextPath}/io/workerList?keyword="
-		+ encodeURIComponent(keyword)
-	)
-	.then(function(response) {
-		return response.json();
-	})
-	.then(function(result) {
+// 	fetch(
+// 		"${pageContext.request.contextPath}/io/workerList?keyword="
+// 		+ encodeURIComponent(keyword)
+// 	)
+// 	.then(function(response) {
+// 		return response.json();
+// 	})
+// 	.then(function(result) {
 
-		let html = "";
+// 		let html = "";
 
-		for (let i = 0; i < result.length; i++) {
+// 		for (let i = 0; i < result.length; i++) {
 
-			html += "<tr>";
-			html += "<td>" + result[i].empId + "</td>";
-			html += "<td>" + result[i].empName + "</td>";
+// 			html += "<tr>";
+// 			html += "<td>" + result[i].empId + "</td>";
+// 			html += "<td>" + result[i].empName + "</td>";
 
-			html += "<td>";
-			html += "<input type='radio' ";
-			html += "name='workerRadio' ";
-			html += "value='" + result[i].empId + "' ";
-			html += "data-name='" + result[i].empName + "'>";
-			html += "</td>";
+// 			html += "<td>";
+// 			html += "<input type='radio' ";
+// 			html += "name='workerRadio' ";
+// 			html += "value='" + result[i].empId + "' ";
+// 			html += "data-name='" + result[i].empName + "'>";
+// 			html += "</td>";
 
-			html += "</tr>";
-		}
+// 			html += "</tr>";
+// 		}
 
-		if (result.length == 0) {
-			html =
-				'<tr>' +
-					'<td colspan="3">검색 결과가 없습니다.</td>' +
-				'</tr>';
-		}
+// 		if (result.length == 0) {
+// 			html =
+// 				'<tr>' +
+// 					'<td colspan="3">검색 결과가 없습니다.</td>' +
+// 				'</tr>';
+// 		}
 
-		document.querySelector("#workerTbody").innerHTML = html;
-	});
+// 		document.querySelector("#workerTbody").innerHTML = html;
+// 	});
 }
 </script>

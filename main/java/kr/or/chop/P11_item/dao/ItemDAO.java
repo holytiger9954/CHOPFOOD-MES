@@ -1,10 +1,10 @@
 package kr.or.chop.P11_item.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import kr.or.chop.P09_lot.dto.LotDTO;
 import kr.or.chop.P11_item.dto.ItemDTO;
-import kr.or.chop.P17_vendor.dto.VendorDTO;
 import kr.or.chop.common.pagination.PageInfo;
 
 public interface ItemDAO {
@@ -18,5 +18,6 @@ public interface ItemDAO {
 	void updateItem(ItemDTO itemDTO);
 	List<LotDTO> selectLotListByItem(String itemId, PageInfo pageInfo);
 	List<String> selectUnitList();
+	List<Map<String, Object>> selectSpecList();
 	
 }

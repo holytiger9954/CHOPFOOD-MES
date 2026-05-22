@@ -1,6 +1,7 @@
 package kr.or.chop.P11_item.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,7 +9,6 @@ import org.springframework.stereotype.Service;
 import kr.or.chop.P09_lot.dto.LotDTO;
 import kr.or.chop.P11_item.dao.ItemDAO;
 import kr.or.chop.P11_item.dto.ItemDTO;
-import kr.or.chop.P17_vendor.dto.VendorDTO;
 import kr.or.chop.common.pagination.PageInfo;
 
 @Service
@@ -67,6 +67,11 @@ public class ItemServiceImpl implements ItemService {
 	@Override
 	public List<String> selectUnitList() {
 		return itemDAO.selectUnitList();
+	}
+	
+	@Override
+	public List<Map<String, Object>> selectSpecList() {
+		return itemDAO.selectSpecList();
 	}
 
 }

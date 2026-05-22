@@ -237,5 +237,21 @@
 		AND ITEM_USAGE = 'Y'
 		ORDER BY ITEM_UNIT
 	</select>
+	
+	<select id="selectSpecList" resultType="map">
+<!-- 		SELECT DISTINCT ITEM_SPEC -->
+<!-- 		FROM ITEM -->
+<!-- 		WHERE ITEM_SPEC IS NOT NULL -->
+<!-- 		AND ITEM_USAGE = 'Y' -->
+<!-- 		ORDER BY ITEM_SPEC -->
+		SELECT DISTINCT
+			ITEM_SPEC AS spec,
+			ITEM_NAME AS itemName
+		FROM ITEM
+		WHERE ITEM_SPEC IS NOT NULL
+		AND ITEM_USAGE = 'Y'
+		ORDER BY ITEM_SPEC
+
+	</select>
 
 </mapper>

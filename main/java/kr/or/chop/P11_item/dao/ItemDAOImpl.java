@@ -81,5 +81,10 @@ public class ItemDAOImpl implements ItemDAO {
 	public List<String> selectUnitList() {
 		return sqlSession.selectList("mapper.P11_item.selectUnitList");
 	}
+	
+	@Override
+	public List<Map<String, Object>> selectSpecList() {
+		return sqlSession.selectList("mapper.P11_item.selectSpecList");
+	}
 
 }

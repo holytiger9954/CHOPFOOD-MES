@@ -162,7 +162,7 @@
 			" class="search-item">
 
 				<label>
-					사용가능기간 <span class="red">*</span>
+					사용가능기간(일) <span class="red">*</span>
 				</label>
 
 				<input type="number"
@@ -190,12 +190,6 @@
 					단위 <span class="red">*</span>
 				</label>
 
-<!-- 				<input type="text" -->
-<!-- 					name="unit" -->
-<!-- 					id="unit" -->
-<!-- 					list="unitList" -->
-<!-- 					placeholder="단위 입력"> -->
-<!-- 				<datalist id="unitList"></datalist> -->
 				<div class="unit-wrap"
 				style="position:relative; width:100%;">
 			
@@ -238,9 +232,36 @@
 					규격 <span class="red">*</span>
 				</label>
 
-				<input type="text"
-					name="spec"
-					placeholder="규격 입력">
+
+					<div class="spec-wrap"
+						style="position:relative; width:100%;">
+					
+						<input type="text"
+							name="spec"
+							id="spec"
+							autocomplete="off"
+							placeholder="규격 입력"
+							style="width:100%;">
+					
+						<div id="specAutoBox"
+							style="
+								display:none;
+								position:absolute;
+								top:44px;
+								left:0;
+								right:0;
+								width:100%;
+								background:white;
+								border:1px solid #ddd;
+								border-radius:6px;
+								z-index:1000;
+								max-height:160px;
+								overflow-y:auto;
+								box-sizing:border-box;
+							">
+						</div>
+					
+					</div>
 			</div>
 
 			<!-- 단가 -->
@@ -269,6 +290,10 @@
 <script>
 window.addEventListener("load", function() {
 
+	/* =========================
+		단위 자동완성
+	========================= */
+
 	const unitInput = document.querySelector("#unit");
 	const unitAutoBox = document.querySelector("#unitAutoBox");
 
@@ -282,12 +307,10 @@ window.addEventListener("load", function() {
 
 			unitArray = result.map(function(row) {
 
-				// result가 ["EA", "KG"] 형태일 때
 				if (typeof row === "string") {
 					return row;
 				}
 
-				// result가 [{unit:"EA"}] 형태일 때
 				return row.unit;
 			});
 
@@ -324,6 +347,7 @@ window.addEventListener("load", function() {
 		let html = "";
 
 		for (let i = 0; i < filtered.length; i++) {
+
 			html += '<div class="unit-option" ';
 			html += 'style="padding:10px 12px; cursor:pointer; font-size:13px;">';
 			html += filtered[i];
@@ -339,23 +363,118 @@ window.addEventListener("load", function() {
 
 	unitAutoBox.addEventListener("click", function(e) {
 
-		if (!e.target.classList.contains("unit-option")) {
+		const option = e.target.closest(".unit-option");
+
+		if (!option) {
 			return;
 		}
 
-		unitInput.value = e.target.innerText;
+		unitInput.value = option.innerText;
 		unitAutoBox.style.display = "none";
 	});
 
-	unitAutoBox.addEventListener("click", function(e) {
 
-		if (!e.target.classList.contains("unit-option")) {
+	/* =========================
+		규격 자동완성
+	========================= */
+
+	const specInput = document.querySelector("#spec");
+	const specAutoBox = document.querySelector("#specAutoBox");
+
+	let specArray = [];
+
+	fetch("${pageContext.request.contextPath}/item/specList")
+		.then(function(response) {
+			return response.json();
+		})
+		.then(function(result) {
+
+			// result 예시:
+			// [{spec:"50EA, 5kg", itemName:"새우만두"}, ...]
+			specArray = result;
+
+			console.log("규격 목록:", specArray);
+		})
+		.catch(function(error) {
+			console.log("규격 목록 조회 실패", error);
+		});
+
+	function showSpecList() {
+
+		const keyword = specInput.value.trim().toUpperCase();
+
+		specAutoBox.innerHTML = "";
+
+		let filtered = specArray.filter(function(specObj) {
+
+			const spec =
+				specObj.spec || specObj.SPEC;
+
+			if (!spec) {
+				return false;
+			}
+
+			if (keyword === "") {
+				return true;
+			}
+
+			return spec.toUpperCase().indexOf(keyword) !== -1;
+		});
+
+		if (filtered.length === 0) {
+			specAutoBox.style.display = "none";
 			return;
 		}
 
-		unitInput.value = e.target.innerText;
-		unitAutoBox.style.display = "none";
+		let html = "";
+
+		for (let i = 0; i < filtered.length; i++) {
+
+			const spec =
+				filtered[i].spec || filtered[i].SPEC;
+
+			const itemName =
+				filtered[i].itemName || filtered[i].ITEMNAME;
+
+			html += '<div class="spec-option" ';
+			html += 'data-spec="' + spec + '" ';
+			html += 'style="padding:10px 12px; cursor:pointer; font-size:13px;">';
+
+			html += '<span style="font-weight:600;">';
+			html += spec;
+			html += '</span>';
+
+			html += '<span style="color:#888; margin-left:8px;">';
+			html += itemName;
+			html += '</span>';
+
+			html += '</div>';
+		}
+
+		specAutoBox.innerHTML = html;
+		specAutoBox.style.display = "block";
+	}
+
+	specInput.addEventListener("focus", showSpecList);
+	specInput.addEventListener("input", showSpecList);
+
+	specAutoBox.addEventListener("click", function(e) {
+
+		const option = e.target.closest(".spec-option");
+
+		if (!option) {
+			return;
+		}
+
+		// 화면에는 대표 품목을 보여주지만 input에는 규격만 넣음
+		specInput.value = option.dataset.spec;
+		specAutoBox.style.display = "none";
 	});
+
+
+	/* =========================
+		바깥 클릭 시 자동완성 닫기
+	========================= */
 
 	document.addEventListener("click", function(e) {
 
@@ -364,9 +483,19 @@ window.addEventListener("load", function() {
 
 			unitAutoBox.style.display = "none";
 		}
+
+		if (!specInput.contains(e.target)
+			&& !specAutoBox.contains(e.target)) {
+
+			specAutoBox.style.display = "none";
+		}
 	});
-	
-	
+
+
+	/* =========================
+		단가 콤마
+	========================= */
+
 	const unitPriceInput =
 		document.querySelector("input[name='unitPrice']");
 
@@ -374,21 +503,22 @@ window.addEventListener("load", function() {
 
 		let value = this.value;
 
-		/* 숫자만 남김 */
 		value = value.replace(/[^0-9]/g, "");
 
-		/* 세자리 콤마 */
 		value = Number(value).toLocaleString("ko-KR");
 
-		/* 값 적용 */
 		if (value === "0") {
 			this.value = "";
 		} else {
 			this.value = value;
 		}
-
 	});
-	
+
+
+	/* =========================
+		안전재고 콤마
+	========================= */
+
 	const safetyStockInput =
 		document.querySelector("input[name='safetyStock']");
 
@@ -405,41 +535,35 @@ window.addEventListener("load", function() {
 		} else {
 			this.value = value;
 		}
-
 	});
-	
+
+
 	/* =========================
-	음수 입력 방지
-========================= */
+		음수 입력 방지
+	========================= */
 
+	const useDateInput =
+		document.querySelector("input[name='useDate']");
 
+	function preventNegative(inputTag) {
 
-const useDateInput =
-	document.querySelector("input[name='useDate']");
+		inputTag.addEventListener("input", function() {
 
-function preventNegative(inputTag) {
+			if (this.value < 0) {
+				this.value = 0;
+			}
+		});
 
-	inputTag.addEventListener("input", function() {
+		inputTag.addEventListener("keydown", function(e) {
 
-		if (this.value < 0) {
-			this.value = 0;
-		}
+			if (e.key === "-") {
+				e.preventDefault();
+			}
+		});
+	}
 
-	});
-
-	inputTag.addEventListener("keydown", function(e) {
-
-		if (e.key === "-") {
-			e.preventDefault();
-		}
-
-	});
-
-}
-
-preventNegative(safetyStockInput);
-
-preventNegative(useDateInput);
+	preventNegative(safetyStockInput);
+	preventNegative(useDateInput);
 
 
 	/* =========================
@@ -452,60 +576,51 @@ preventNegative(useDateInput);
 
 		unitPriceInput.value =
 			unitPriceInput.value.replace(/,/g, "");
-		
+
 		safetyStockInput.value =
 			safetyStockInput.value.replace(/,/g, "");
-
 	});
-	
+
+
 	/* =========================
-	품목 유형별 창고 유형
-========================= */
+		품목 유형별 창고 유형
+	========================= */
 
-const itemTypeSelect =
-	document.querySelector("#itemType");
+	const itemTypeSelect =
+		document.querySelector("#itemType");
 
-const whTypeSelect =
-	document.querySelector("#itemWhType");
+	const whTypeSelect =
+		document.querySelector("#itemWhType");
 
-itemTypeSelect.addEventListener("change", function() {
+	itemTypeSelect.addEventListener("change", function() {
 
-	const itemType = this.value;
+		const itemType = this.value;
 
-	let html =
-		'<option value="">창고 유형 선택</option>';
+		let html =
+			'<option value="">창고 유형 선택</option>';
 
-	// 원자재
-	if (itemType === "10") {
+		if (itemType === "10") {
 
-		html += '<option value="10">원자재냉동창고</option>';
-		html += '<option value="20">원자재냉장창고</option>';
-		html += '<option value="30">원자재상온창고</option>';
+			html += '<option value="10">원자재냉동창고</option>';
+			html += '<option value="20">원자재냉장창고</option>';
+			html += '<option value="30">원자재상온창고</option>';
 
-	}
+		} else if (itemType === "20") {
 
-	// 반제품
-	else if (itemType === "20") {
+			html += '<option value="40">반제품냉장창고</option>';
+			html += '<option value="50">반제품냉동창고</option>';
 
-		html += '<option value="40">반제품냉장창고</option>';
-		html += '<option value="50">반제품냉동창고</option>';
+		} else if (itemType === "30") {
 
-	}
+			html += '<option value="60">완제품창고</option>';
 
-	// 완제품
-	else if (itemType === "30") {
+		} else if (itemType === "40") {
 
-		html += '<option value="60">완제품창고</option>';
+			html += '<option value="70">기타 자재 창고</option>';
+		}
 
-	}
-	
-	else if (itemType === "40") {
-		html += '<option value="70">기타 자재 창고</option>'
-	}
-
-	whTypeSelect.innerHTML = html;
-
-});
+		whTypeSelect.innerHTML = html;
+	});
 
 });
 </script>
