@@ -28,6 +28,15 @@
 		</where>
 
 	</select>
+	
+	<select id="selectLotCount" parameterType="itemDTO" resultType="int">
+	
+		select count(*)
+		from lot
+		where lot_item = #{itemId}
+		and lot_status in (10, 20, 40)
+	
+	</select>
 
 
 	<select id="selectitemList" parameterType="map"
@@ -187,6 +196,14 @@
 	parameterType="string"
 	resultType="kr.or.chop.P09_lot.dto.LotDTO">
 
+
+		SELECT *
+		FROM
+		(
+		SELECT ROWNUM RN,
+		I.*
+		FROM
+		(
 		SELECT
 			LOT_ID AS lotId,
 			LOT_ITEM AS lotItem,
@@ -206,7 +223,19 @@
 		FROM LOT
 		WHERE LOT_ITEM = #{itemId}
 		ORDER BY LOT_ID DESC
+		) I
+		) WHERE RN BETWEEN #{page.startRow, javaType=int}
+		AND
+		#{page.endRow, javaType=int}
 	
+	</select>
+	
+	<select id="selectUnitList" resultType="string">
+		SELECT DISTINCT ITEM_UNIT
+		FROM ITEM
+		WHERE ITEM_UNIT IS NOT NULL
+		AND ITEM_USAGE = 'Y'
+		ORDER BY ITEM_UNIT
 	</select>
 
 </mapper>

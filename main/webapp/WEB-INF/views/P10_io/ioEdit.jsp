@@ -5,21 +5,16 @@
 <div class="content">
 
 	<div class="header-row">
-
 		<div>
 			<h2 class="page-title">입출고 이력 수정</h2>
-
 			<p class="page-subtitle">
 				입출고 이력(${io.ioId})의 정보를 수정하세요.
 			</p>
 		</div>
 
 		<div>
-			<p class="page-route">
-				홈 &gt; 입출고관리 &gt; 수정
-			</p>
+			<p class="page-route">홈 &gt; 입출고관리 &gt; 수정</p>
 		</div>
-
 	</div>
 
 	<form action="${pageContext.request.contextPath}/io/updateDo"
@@ -30,78 +25,61 @@
 		<input type="hidden" name="ioType" value="${io.ioType}">
 
 		<div style="display:flex; justify-content:flex-end; gap:12px;">
-
 			<a class="btn btn-white"
 				href="${pageContext.request.contextPath}/io/detail?ioId=${io.ioId}">
 				취소
 			</a>
 
-			<button type="submit" class="btn btn-main">
-				수정
-			</button>
-
+			<button type="submit" class="btn btn-main">수정</button>
 		</div>
 
 		<div style="display:flex; gap:40px; margin-bottom:26px;">
-
 			<div class="grid-wrap">
-
 				<div class="grid search-item"
 					style="display:flex; flex-direction:row; align-items:center; gap:25px;">
 
-					<label>
-						입출고 유형 <span class="red">*</span>
-					</label>
+					<label>입출고 유형 <span class="red">*</span></label>
 
 					<div style="display:flex; justify-content:flex-start; gap:20px; font-size:14px;">
-
 						<div style="display:flex; align-items:center; gap:7px;">
 							<input type="radio"
 								value="IN"
-								<c:if test="${io.ioType == 'IN'}">checked</c:if> disabled>
+								<c:if test="${io.ioType == 'IN'}">checked</c:if>
+								disabled>
 							입고
 						</div>
 
 						<div style="display:flex; align-items:center; gap:7px;">
 							<input type="radio"
 								value="OUT"
-								<c:if test="${io.ioType == 'OUT'}">checked</c:if> disabled>
+								<c:if test="${io.ioType == 'OUT'}">checked</c:if>
+								disabled>
 							출고
 						</div>
-
 					</div>
 
 				</div>
-
 			</div>
-
 		</div>
 
 		<div style="display:flex; gap:40px; margin-bottom:26px;">
-
 			<div class="search-item"
 				style="display:flex; flex-direction:column; flex:1;">
 
-				<label>
-					입출고 사유 <span class="red">*</span>
-				</label>
+				<label>입출고 사유 <span class="red">*</span></label>
 
 				<input type="text"
 					name="ioReason"
 					value="${io.ioReason}"
 					placeholder="입출고 사유 입력">
-
 			</div>
 
 			<div class="search-item"
 				style="display:flex; flex-direction:column; flex:1;">
 
-				<label>
-					담당자 <span class="red">*</span>
-				</label>
+				<label>담당자 <span class="red">*</span></label>
 
 				<div style="display:flex; gap:10px;">
-
 					<input type="text"
 						id="ioWorker"
 						name="ioWorker"
@@ -114,137 +92,101 @@
 						id="workerSearchBtn">
 						작업자 조회
 					</button>
-
 				</div>
-
 			</div>
-
 		</div>
-		
-		<div style="display:flex; gap:40px; margin-bottom:26px;">
 
+		<div style="display:flex; gap:40px; margin-bottom:26px;">
 			<div class="search-item"
 				style="display:flex; flex-direction:column; flex:1;">
 
-				<label>
-					품목유형 <span class="red">*</span>
-				</label>
+				<label>품목유형 <span class="red">*</span></label>
 
-<!-- 				<select id="itemType" name="itemType"> -->
-<!-- 					<option value="" disabled selected>품목유형 선택</option> -->
-<!-- 					<option value="10">원자재</option> -->
-<!-- 					<option value="20">반제품</option> -->
-<!-- 					<option value="30">완제품</option> -->
-<!-- 				</select> -->
 				<c:choose>
 					<c:when test="${io.itemType == '10'}">
 						<input type="text" value="원자재" readonly>
-					</c:when>	
+					</c:when>
 					<c:when test="${io.itemType == '20'}">
 						<input type="text" value="반제품" readonly>
-					</c:when>	
+					</c:when>
 					<c:when test="${io.itemType == '30'}">
 						<input type="text" value="완제품" readonly>
-					</c:when>	
+					</c:when>
 					<c:when test="${io.itemType == '40'}">
 						<input type="text" value="기타 자재" readonly>
-					</c:when>	
+					</c:when>
 				</c:choose>
-				<input type="hidden" name="itemType" value="${io.itemType}"> 
 
+				<input type="hidden" name="itemType" value="${io.itemType}">
 			</div>
 
 			<div class="search-item"
 				style="display:flex; flex-direction:column; flex:1;">
 
-				<label>
-					품목 <span class="red">*</span>
-				</label>
+				<label>품목 <span class="red">*</span></label>
 
-<!-- 				<select id="itemId" name="itemId"> -->
-<!-- 					<option value="" disabled selected>품목 선택</option> -->
-<!-- 				</select> -->
-					<input type="text" value="${io.itemName}" readonly>
-					<input type="hidden" id="itemId" name="itemId" value="${io.itemId}">
-
+				<input type="text" value="${io.itemName}" readonly>
+				<input type="hidden" id="itemId" name="itemId" value="${io.itemId}">
 			</div>
-
 		</div>
-		
-		<div style="display:flex; gap:40px; margin-bottom:26px;">
+
+		<div id="warehouseArea"
+			style="display:flex; gap:40px; margin-bottom:26px;">
 
 			<div class="search-item"
 				style="display:flex; flex-direction:column; flex:1;">
-		
+
 				<label>창고 <span class="red">*</span></label>
-		
+
 				<select id="warehouse" name="whId">
 					<option value="">창고 선택</option>
 				</select>
-		
 			</div>
-		
+
 			<div class="search-item"
 				style="display:flex; flex-direction:column; flex:1;">
-		
+
 				<label>창고 섹션 <span class="red">*</span></label>
-		
+
 				<select name="whSec" id="whSec">
 					<option value="">섹션 선택</option>
 				</select>
-		
 			</div>
-		
 		</div>
 
 		<div style="display:flex; gap:40px; margin-bottom:26px;">
-
 			<div class="search-item"
 				style="display:flex; flex-direction:column; flex:1;">
 
-				<label>
-					LOT
-				</label>
+				<label>LOT</label>
 
-				<input type="text"
-					value="${io.ioLot}"
-					readonly>
+				<input type="text" value="${io.ioLot}" readonly>
 				<input type="hidden" name="ioLot" value="${io.ioLot}">
-
 			</div>
 
 			<div class="search-item"
 				style="display:flex; flex-direction:column; flex:1;">
 
-				<label>
-					수량
-				</label>
+				<label>수량</label>
 
 				<input type="text"
 					value="${io.ioQty}"
 					readonly>
+
 				<input type="hidden"
 					name="ioQty"
 					value="${io.ioQty}">
-
 			</div>
-
 		</div>
 
 		<div style="display:flex; gap:40px; margin-bottom:26px;">
-
 			<div class="search-item"
 				style="display:flex; flex-direction:column; flex:1;">
 
-				<label>
-					거래처 타입 <span class="red">*</span>
-				</label>
+				<label>거래처 타입</label>
 
 				<select id="vendorType">
-
-					<option value="">
-						거래처 타입 선택
-					</option>
+					<option value="">거래처 타입 선택</option>
 
 					<option value="S"
 						<c:if test="${vendorType == 'S'}">selected</c:if>>
@@ -260,69 +202,60 @@
 						<c:if test="${vendorType == 'E'}">selected</c:if>>
 						기타
 					</option>
-
 				</select>
-
 			</div>
 
 			<div class="search-item"
 				style="display:flex; flex-direction:column; flex:1;">
 
-				<label>
-					거래처 <span class="red">*</span>
-				</label>
+				<label>거래처</label>
 
-				<select id="ioVendor"
-					name="ioVendor">
-
-					<option value="${io.ioVendor}">
-						${io.vendorName} (${io.ioVendor})
-					</option>
-
+				<select id="ioVendor" name="ioVendor">
+					<c:choose>
+						<c:when test="${not empty io.ioVendor}">
+							<option value="${io.ioVendor}">
+								${io.vendorName} (${io.ioVendor})
+							</option>
+						</c:when>
+						<c:otherwise>
+							<option value="">
+								거래처명(거래처코드) 선택
+							</option>
+						</c:otherwise>
+					</c:choose>
 				</select>
-
 			</div>
-
 		</div>
 
 		<div class="search-item"
 			style="display:flex; flex-direction:column; margin-bottom:26px;">
 
-			<label>
-				일시
-			</label>
+			<label>일시</label>
 
 			<div>
 				<input type="date"
 					name="ioDay"
 					value="${io.ioDay}"
-					placeholder="입출고 날짜"
 					required>
 
 				<input type="time"
 					name="ioTime"
 					value="${io.ioTime}"
-					placeholder="입출고 시간"
 					required>
 			</div>
-
 		</div>
 
 		<div class="search-item"
 			style="display:flex; flex-direction:column;">
 
-			<label>
-				비고
-			</label>
+			<label>비고</label>
 
 			<textarea name="ioMsg"
 				placeholder="비고를 입력하세요."
 				style="height:220px;">${io.ioMsg}</textarea>
-
 		</div>
 
 	</form>
-
 </div>
 
 <!-- 작업자 조회 모달 -->
@@ -348,44 +281,30 @@
 		box-sizing:border-box;
 	">
 
-		<h2 style="
-			margin-bottom:10px;
-			font-size:28px;
-			font-weight:700;
-		">
+		<h2 style="margin-bottom:10px; font-size:28px; font-weight:700;">
 			작업자 조회
 		</h2>
 
-		<p style="
-			color:#888;
-			margin-bottom:25px;
-		">
+		<p style="color:#888; margin-bottom:25px;">
 			작업자를 조회 후 선택해주세요.
 		</p>
 
-		<div style="
-			display:flex;
-			gap:10px;
-			margin-bottom:20px;
-			flex-direction: row;
-		" class="search-item">
+		<div class="search-item"
+			style="
+				display:flex;
+				gap:10px;
+				margin-bottom:20px;
+				flex-direction:row;
+			">
 
 			<input type="text"
 				id="workerKeyword"
 				placeholder="이름/사원번호 검색"
-				style="width: 60%;"
+				style="width:60%;"
 				oninput="searchRT()">
-
-<!-- 			<button type="button" -->
-<!-- 				class="btn btn-main" -->
-<!-- 				id="workerSearchSubmit"> -->
-<!-- 				검색 -->
-<!-- 			</button> -->
-
 		</div>
 
 		<table class="list-table table">
-
 			<thead>
 				<tr>
 					<th>사원번호</th>
@@ -394,9 +313,7 @@
 				</tr>
 			</thead>
 
-			<tbody id="workerTbody">
-			</tbody>
-
+			<tbody id="workerTbody"></tbody>
 		</table>
 
 		<div style="
@@ -405,7 +322,6 @@
 			gap:10px;
 			margin-top:25px;
 		">
-
 			<button type="button"
 				class="btn btn-white"
 				id="workerModalClose">
@@ -417,11 +333,8 @@
 				id="workerSelectBtn">
 				선택
 			</button>
-
 		</div>
-
 	</div>
-
 </div>
 
 <style>
@@ -445,6 +358,8 @@ window.addEventListener("load", function() {
 	const currentVendorId = "${io.ioVendor}";
 
 	const itemIdInput = document.querySelector("#itemId");
+
+	const warehouseArea = document.querySelector("#warehouseArea");
 	const warehouseSelect = document.querySelector("#warehouse");
 	const whSecSelect = document.querySelector("#whSec");
 
@@ -454,9 +369,21 @@ window.addEventListener("load", function() {
 	const workerModal = document.querySelector("#workerModal");
 	const workerSearchBtn = document.querySelector("#workerSearchBtn");
 	const workerModalClose = document.querySelector("#workerModalClose");
-	const workerTbody = document.querySelector("#workerTbody");
 	const workerSelectBtn = document.querySelector("#workerSelectBtn");
 	const ioWorkerInput = document.querySelector("#ioWorker");
+
+	function getIoType() {
+		return document.querySelector("input[name='ioType']").value;
+	}
+
+	function applyIoTypeMode() {
+
+		if (getIoType() === "IN") {
+			warehouseArea.style.display = "flex";
+		} else {
+			warehouseArea.style.display = "none";
+		}
+	}
 
 	function loadVendorList(vendorType, selectedVendorId) {
 
@@ -572,8 +499,8 @@ window.addEventListener("load", function() {
 
 					html += '<option value="' + result[i].secId + '" ' + selected + '>';
 					html += result[i].secId
-					+ ' (' + result[i].secPrevQty
-					+ '/' + result[i].secQty + ')';
+						+ ' (' + result[i].secPrevQty
+						+ '/' + result[i].secQty + ')';
 					html += '</option>';
 				}
 
@@ -589,9 +516,13 @@ window.addEventListener("load", function() {
 		loadVendorList(currentVendorType, currentVendorId);
 	}
 
-	if (itemIdInput && itemIdInput.value !== "") {
-		loadWarehouseList(itemIdInput.value, currentWhId, currentWhSec);
+	if (getIoType() === "IN") {
+		if (itemIdInput && itemIdInput.value !== "") {
+			loadWarehouseList(itemIdInput.value, currentWhId, currentWhSec);
+		}
 	}
+
+	applyIoTypeMode();
 
 	vendorTypeSelect.addEventListener("change", function() {
 		loadVendorList(this.value, "");
@@ -657,14 +588,52 @@ window.addEventListener("load", function() {
 			if (e.key === "-" || e.key === "e") {
 				e.preventDefault();
 			}
-
 		});
 	}
 
 	formatComma(qtyInput);
 	preventNegative(qtyInput);
 
-	form.addEventListener("submit", function() {
+	form.addEventListener("submit", function(e) {
+
+		const requiredLabels =
+			document.querySelectorAll("label .red");
+
+		for (let i = 0; i < requiredLabels.length; i++) {
+
+			const label =
+				requiredLabels[i].closest("label");
+
+			if (label.offsetParent === null) {
+				continue;
+			}
+
+			let target =
+				label.nextElementSibling;
+
+			if (target && !target.matches("input, select, textarea")) {
+				target = target.querySelector("input, select, textarea");
+			}
+
+			if (!target) {
+				continue;
+			}
+
+			if (target.offsetParent === null) {
+				continue;
+			}
+
+			if (target.value.trim() === "") {
+
+				alert(label.innerText.replace("*", "").trim()
+					+ " 항목을 입력하세요.");
+
+				target.focus();
+
+				e.preventDefault();
+				return;
+			}
+		}
 
 		qtyInput.value =
 			qtyInput.value.replace(/,/g, "");

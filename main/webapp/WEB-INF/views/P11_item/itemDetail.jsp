@@ -32,7 +32,41 @@
 
 	<div class="content-content">
 		<div class="content-content-content">
+		<div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                margin-bottom:14px;
+            ">
 			<div class="content-content-content-title">품목 상세정보</div>
+					<div>
+							<c:choose>
+									<c:when test="${itemDTO.itemType == '10'}">
+										<span class="status-back">
+											원자재
+										</span>
+									</c:when>
+									<c:when test="${itemDTO.itemType == '20'}">
+										<span class="status-back">
+										반제품
+										</span>
+									</c:when>
+									<c:when test="${itemDTO.itemType == '30'}">
+										<span class="status-back">
+										완제품
+										</span>
+									</c:when>
+									<c:when test="${itemDTO.itemType == '40'}">
+										<span class="status-back">
+										기타 자재
+										</span>
+									</c:when>
+									<c:otherwise>
+										-
+									</c:otherwise>
+								</c:choose>
+							</div>
+					</div>
 			<div class="info-table-wrap">
 				<table class="info-table">
 					<tbody>
@@ -43,29 +77,7 @@
 							<td colspan="2">${itemDTO.itemName}</td>
 						</tr>
 						<tr>
-							<th>품목타입</th>
-							<td colspan="2"><c:choose>
-									<c:when test="${itemDTO.itemType == '10'}">
-										원자재
-									</c:when>
-									<c:when test="${itemDTO.itemType == '20'}">
-										반제품
-									</c:when>
-									<c:when test="${itemDTO.itemType == '30'}">
-										완제품
-									</c:when>
-									<c:when test="${itemDTO.itemType == '40'}">
-										기타 자재
-									</c:when>
-									<c:otherwise>
-										-
-									</c:otherwise>
-								</c:choose></td>
-							<th>안전재고</th>
-							<td colspan="2">${itemDTO.safetyStock}</td>
-						</tr>
-						<tr>
-							<th>창고 유형</th>
+							<th>저장 창고 유형</th>
 							<td colspan="2">
 								<c:choose>
 									<c:when test="${itemDTO.itemWhType == '10'}">
@@ -94,6 +106,14 @@
 									</c:otherwise>
 								</c:choose>
 							</td>
+							<th>안전재고</th>
+							<td colspan="2">
+							<fmt:formatNumber value="${itemDTO.safetyStock}"
+									pattern="#,###" />
+							</td>
+						</tr>
+						<tr>
+							
 						</tr>
 						<tr>
 							<th>단위</th>
@@ -113,55 +133,69 @@
 			<table class="table">
 				<tr>
 					<th>LOT 번호</th>
-					<th>입고일</th>
+					<th>입고일시</th>
 					<th>유통기한</th>
 					<th>창고위치</th>
 					<th>LOT 상태</th>
 				</tr>
-				<c:forEach var="lot" items="${lotList}">
-					<tr onclick="location.href='${pageContext.request.contextPath}/lot/detail?lotId=${lot.lotId}'">
-						<td class="lotId">${lot.lotId}</td>
-						<td>${lot.lotEtw}</td>
-						<td>${lot.lotExp}</td>
-						<c:if test="${empty lot.lotAwhsec}">
-							<td>${lot.lotBwhsec}</td>
-						</c:if>
-						<c:if test="${not empty lot.lotAwhsec}">
-							<td>${lot.lotAwhsec}</td>
-						</c:if>
-						<td>
-							<c:choose>
-
-									<c:when test="${lot.lotStatus == '10'}">
-										<span class="status status-success"> • 사용가능 </span>
-									</c:when>
-
-									<c:when test="${lot.lotStatus == '20'}">
-										<span class="status status-safe"> • 사용중 </span>
-									</c:when>
-
-									<c:when test="${lot.lotStatus == '30'}">
-										<span class="status status-info"> • 사용완료 </span>
-									</c:when>
-									
-									<c:when test="${lot.lotStatus == '40'}">
-										<span class="status status-warning"> • 보류 </span>
-									</c:when>
-
-									<c:when test="${lot.lotStatus == '0'}">
-										<span class="status status-danger"> • 폐기 </span>
-									</c:when>
-
-									<c:otherwise>
-										<span class="status"> ${lot.lotStatus} </span>
-									</c:otherwise>
-
-							</c:choose>
-						</td>
+				<c:if test="${not empty lotList}">
+					<c:forEach var="lot" items="${lotList}">
+						<tr onclick="location.href='${pageContext.request.contextPath}/lot/detail?lotId=${lot.lotId}'">
+							<td class="lotId">${lot.lotId}</td>
+							<td>
+							<fmt:formatDate value="${lot.lotEtw}"
+								pattern="yyyy-MM-dd hh:mm" />
+							</td>
+							<td>
+							<fmt:formatDate value="${lot.lotExp}"
+								pattern="yyyy-MM-dd hh:mm" />
+							</td>
+							<c:if test="${empty lot.lotAwhsec}">
+								<td>${lot.lotBwhsec}</td>
+							</c:if>
+							<c:if test="${not empty lot.lotAwhsec}">
+								<td>${lot.lotAwhsec}</td>
+							</c:if>
+							<td>
+								<c:choose>
+	
+										<c:when test="${lot.lotStatus == '10'}">
+											<span class="status status-success"> • 사용가능 </span>
+										</c:when>
+	
+										<c:when test="${lot.lotStatus == '20'}">
+											<span class="status status-safe"> • 사용중 </span>
+										</c:when>
+	
+										<c:when test="${lot.lotStatus == '30'}">
+											<span class="status status-info"> • 사용완료 </span>
+										</c:when>
+										
+										<c:when test="${lot.lotStatus == '40'}">
+											<span class="status status-warning"> • 보류 </span>
+										</c:when>
+	
+										<c:when test="${lot.lotStatus == '0'}">
+											<span class="status status-danger"> • 폐기 </span>
+										</c:when>
+	
+										<c:otherwise>
+											<span class="status"> ${lot.lotStatus} </span>
+										</c:otherwise>
+	
+								</c:choose>
+							</td>
+						</tr>
+					</c:forEach>
+				</c:if>
+				<c:if test="${empty lotList}">
+					<tr>
+						<td colspan="5">조회된 LOT가 없습니다</td>
 					</tr>
-				</c:forEach>
+				</c:if>
 			</table>
 		</div>
+		<jsp:include page="/WEB-INF/views/common/paging.jsp" />
 	</div>
 
 </div>

@@ -190,9 +190,41 @@
 					단위 <span class="red">*</span>
 				</label>
 
+<!-- 				<input type="text" -->
+<!-- 					name="unit" -->
+<!-- 					id="unit" -->
+<!-- 					list="unitList" -->
+<!-- 					placeholder="단위 입력"> -->
+<!-- 				<datalist id="unitList"></datalist> -->
+				<div class="unit-wrap"
+				style="position:relative; width:100%;">
+			
 				<input type="text"
 					name="unit"
-					placeholder="단위 입력">
+					id="unit"
+					autocomplete="off"
+					placeholder="단위 입력"
+					style="width:100%;">
+			
+				<div id="unitAutoBox"
+					style="
+						display:none;
+						position:absolute;
+						top:44px;
+						left:0;
+						right:0;
+						width:100%;
+						background:white;
+						border:1px solid #ddd;
+						border-radius:6px;
+						z-index:1000;
+						max-height:160px;
+						overflow-y:auto;
+						box-sizing:border-box;
+					">
+				</div>
+			
+			</div>
 			</div>
 
 			<!-- 규격 -->
@@ -237,6 +269,103 @@
 <script>
 window.addEventListener("load", function() {
 
+	const unitInput = document.querySelector("#unit");
+	const unitAutoBox = document.querySelector("#unitAutoBox");
+
+	let unitArray = [];
+
+	fetch("${pageContext.request.contextPath}/item/unitList")
+		.then(function(response) {
+			return response.json();
+		})
+		.then(function(result) {
+
+			unitArray = result.map(function(row) {
+
+				// result가 ["EA", "KG"] 형태일 때
+				if (typeof row === "string") {
+					return row;
+				}
+
+				// result가 [{unit:"EA"}] 형태일 때
+				return row.unit;
+			});
+
+			console.log("단위 목록:", unitArray);
+		})
+		.catch(function(error) {
+			console.log("단위 목록 조회 실패", error);
+		});
+
+	function showUnitList() {
+
+		const keyword = unitInput.value.trim().toUpperCase();
+
+		unitAutoBox.innerHTML = "";
+
+		let filtered = unitArray.filter(function(unit) {
+
+			if (!unit) {
+				return false;
+			}
+
+			if (keyword === "") {
+				return true;
+			}
+
+			return unit.toUpperCase().indexOf(keyword) !== -1;
+		});
+
+		if (filtered.length === 0) {
+			unitAutoBox.style.display = "none";
+			return;
+		}
+
+		let html = "";
+
+		for (let i = 0; i < filtered.length; i++) {
+			html += '<div class="unit-option" ';
+			html += 'style="padding:10px 12px; cursor:pointer; font-size:13px;">';
+			html += filtered[i];
+			html += '</div>';
+		}
+
+		unitAutoBox.innerHTML = html;
+		unitAutoBox.style.display = "block";
+	}
+
+	unitInput.addEventListener("focus", showUnitList);
+	unitInput.addEventListener("input", showUnitList);
+
+	unitAutoBox.addEventListener("click", function(e) {
+
+		if (!e.target.classList.contains("unit-option")) {
+			return;
+		}
+
+		unitInput.value = e.target.innerText;
+		unitAutoBox.style.display = "none";
+	});
+
+	unitAutoBox.addEventListener("click", function(e) {
+
+		if (!e.target.classList.contains("unit-option")) {
+			return;
+		}
+
+		unitInput.value = e.target.innerText;
+		unitAutoBox.style.display = "none";
+	});
+
+	document.addEventListener("click", function(e) {
+
+		if (!unitInput.contains(e.target)
+			&& !unitAutoBox.contains(e.target)) {
+
+			unitAutoBox.style.display = "none";
+		}
+	});
+	
 	
 	const unitPriceInput =
 		document.querySelector("input[name='unitPrice']");

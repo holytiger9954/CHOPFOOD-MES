@@ -92,23 +92,17 @@
 					담당자 <span class="red">*</span>
 				</label>
 
-				<div style="display:flex; gap:10px;">
 
 					<input type="text"
 						id="ioWorker"
-						name="ioWorker"
-						placeholder="작업자 선택"
+						value="${sessionScope.loginUser.empName} (${sessionScope.loginUser.empId})"
 						readonly>
-
-					<button type="button"
-						class="btn btn-main"
-						id="workerSearchBtn">
-
-						작업자 조회
-
-					</button>
-
-				</div>
+						
+					<input type="hidden"
+						id="ioWorker"
+						name="ioWorker"
+						value="${sessionScope.loginUser.empId}"
+						readonly>
 
 			</div>
 
@@ -147,7 +141,7 @@
 
 		</div>
 		
-		<div style="display:flex; gap:40px; margin-bottom:26px;">
+		<div style="display:flex; gap:40px; margin-bottom:26px;" id="warehouseArea">
 		
 			<div class="search-item"
 				style="display:flex; flex-direction:column; flex:1;">
@@ -213,7 +207,7 @@
 				style="display:flex; flex-direction:column; flex:1;">
 
 				<label>
-					거래처 타입 <span class="red">*</span>
+					거래처 타입
 				</label>
 
 				<select id="vendorType" name="vendorType">
@@ -229,7 +223,7 @@
 				style="display:flex; flex-direction:column; flex:1;">
 
 				<label>
-					거래처 <span class="red">*</span>
+					거래처
 				</label>
 
 				<select id="ioVendor" name="ioVendor">
@@ -248,8 +242,8 @@
 			</label>
 
 			<div>
-				<input type="date" name="ioDay" required>
-				<input type="time" name="ioTime" required>
+				<input type="date" name="ioDay">
+				<input type="time" name="ioTime">
 			</div>
 
 		</div>
@@ -271,127 +265,19 @@
 
 </div>
 
-<!-- 작업자 조회 모달 -->
-<div id="workerModal" class="overlay"
-	>
-<!-- 
-	style="
-		display:none;
-		position:fixed;
-		top:0;
-		left:0;
-		width:100%;
-		height:100%;
-		background:rgba(0,0,0,0.35);
-		z-index:9999;
-		justify-content:center;
-		align-items:center;
-	"
--->
-
-	<div class="modal"
-	style="
-			width:620px;
-/* 			background:white; */
-/* 			border-radius:10px; */
-/* 			padding:30px; */
-/* 			box-sizing:border-box; */
-		">
-		<h2 class="modal-title">
-<!--		
-		style="
-			margin-bottom:10px;
-			font-size:28px;
-			font-weight:700;
-		"
--->
-			작업자 조회
-		</h2>
-
-		<p class="modal-subTitle">
-<!-- 
-		style="
-			color:#888;
-			margin-bottom:25px;
-		"
--->
-			작업자를 조회 후 선택해주세요.
-		</p>
-
-		<div style="
-			display:flex;
-			justify-content: center;
-			gap:10px;
-			margin-bottom:20px;
-			flex-direction: row;
-		" class="search-item">
-
-			<input type="text"
-				id="workerKeyword"
-				placeholder="이름/사원번호 검색"
-				style="width: 60%;"
-				oninput="searchRT()">
-
-<!-- 			<button type="button" -->
-<!-- 				class="btn btn-main" -->
-<!-- 				id="workerSearchSubmit"> -->
-
-<!-- 				검색 -->
-
-<!-- 			</button> -->
-
-		</div>
-
-		<table class="list-table table">
-
-			<thead>
-				<tr>
-					<th>사원번호</th>
-					<th>사원명</th>
-					<th>선택</th>
-				</tr>
-			</thead>
-
-			<tbody id="workerTbody">
-				
-			</tbody>
-
-		</table>
-
-		<div style="
-			display:flex;
-			justify-content:center;
-			gap:10px;
-			margin-top:25px;
-		">
-
-			<button type="button"
-				class="btn btn-white"
-				id="workerModalClose">
-
-				취소
-
-			</button>
-
-			<button type="button"
-				class="btn btn-main"
-				id="workerSelectBtn">
-
-				선택
-
-			</button>
-
-		</div>
-
-	</div>
-
-</div>
 
 <style>
 	input[type="radio"] {
 		width:15px;
 		min-width:15px;
 		height:15px;
+	}
+	
+	select:disabled {
+		background-color: var(--light-gray);
+    color: #000;
+    cursor: not-allowed;
+    outline: none;
 	}
 </style>
 
@@ -434,6 +320,8 @@ window.addEventListener("load", function() {
 
 	const ioWorkerInput =
 		document.querySelector("#ioWorker");
+	
+	const warehouseArea = document.querySelector("#warehouseArea");
 
 	function getIoType() {
 		return document.querySelector("input[name='ioType']:checked").value;
@@ -504,6 +392,9 @@ window.addEventListener("load", function() {
 
 			qtyInput.readOnly = false;
 			setQtyRequired(true);
+			
+			// 창고 영역 보이기
+			warehouseArea.style.display = "flex";
 
 		} else {
 
@@ -511,6 +402,9 @@ window.addEventListener("load", function() {
 
 			qtyInput.readOnly = true;
 			setQtyRequired(false);
+			
+			// 창고 영역 숨기기
+			warehouseArea.style.display = "none";
 
 			if (itemSelect.value !== "") {
 				loadLotList(itemSelect.value);
@@ -599,7 +493,7 @@ window.addEventListener("load", function() {
 					'<option value="" disabled selected>LOT 선택</option>';
 
 				for (let i = 0; i < result.length; i++) {
-
+						
 					html += '<option value="' + result[i].lotId + '" ';
 					html += 'data-lot-fqty="' + result[i].lotFqty + '">';
 					html += result[i].lotId + ' / 잔량 ' + result[i].lotFqty;
@@ -649,45 +543,6 @@ window.addEventListener("load", function() {
 
 	});
 
-	workerSearchBtn.addEventListener("click", function() {
-
-		workerModal.style.display = "flex";
-
-		loadWorkerList("");
-
-	});
-
-	workerModalClose.addEventListener("click", function() {
-
-		workerModal.style.display = "none";
-
-	});
-
-	
-	workerSelectBtn.addEventListener("click", function() {
-
-		const checked =
-			document.querySelector("input[name='workerRadio']:checked");
-
-		if (!checked) {
-
-			alert("작업자를 선택하세요.");
-			return;
-
-		}
-
-		const empId =
-			checked.value;
-
-		const empName =
-			checked.getAttribute("data-name");
-
-		ioWorkerInput.value =
-			empName + " (" + empId + ")";
-
-		workerModal.style.display = "none";
-
-	});
 
 	qtyInput.addEventListener("input", function() {
 
@@ -713,8 +568,66 @@ window.addEventListener("load", function() {
 
 	});
 
-	form.addEventListener("submit", function() {
+	form.addEventListener("submit", function(e) {
 
+		const requiredLabels = document.querySelectorAll("label .red");
+
+		for (let i = 0; i < requiredLabels.length; i++) {
+
+			const label = requiredLabels[i].closest("label");
+
+			if (label.offsetParent === null) {
+				continue;
+			}
+
+			let target = label.nextElementSibling;
+
+			if (target && !target.matches("input, select, textarea")) {
+				target = target.querySelector("input, select, textarea");
+			}
+
+			if (!target) {
+				continue;
+			}
+
+			if (target.offsetParent === null) {
+				continue;
+			}
+
+			if (target.value.trim() === "") {
+
+				alert(label.innerText.replace("*", "").trim()
+					+ " 항목을 입력하세요.");
+
+				target.focus();
+
+				e.preventDefault();
+				return;
+			}
+		}
+		
+		if (getIoType() === "IN") {
+
+			if (warehouseSelect.value === "") {
+
+				alert("창고를 선택하세요.");
+				warehouseSelect.focus();
+
+				e.preventDefault();
+				return;
+			}
+
+			if (whSecSelect.value === "") {
+
+				alert("창고 섹션을 선택하세요.");
+				whSecSelect.focus();
+
+				e.preventDefault();
+				return;
+			}
+
+		}
+		
 		qtyInput.value =
 			qtyInput.value.replace(/,/g, "");
 
@@ -723,61 +636,61 @@ window.addEventListener("load", function() {
 
 	});
 
-	applyIoTypeMode();
+// 	applyIoTypeMode();
 
 });
 
 
-function searchRT() {
-	const keyword = document.querySelector("#workerKeyword").value;
-	loadWorkerList(keyword);
-}
+// function searchRT() {
+// 	const keyword = document.querySelector("#workerKeyword").value;
+// 	loadWorkerList(keyword);
+// }
 
-function loadWorkerList(keyword) {
+// function loadWorkerList(keyword) {
 
-	fetch(
-		"${pageContext.request.contextPath}/io/workerList?keyword="
-		+ encodeURIComponent(keyword)
-	)
-	.then(function(response) {
-		return response.json();
-	})
-	.then(function(result) {
+// 	fetch(
+// 		"${pageContext.request.contextPath}/io/workerList?keyword="
+// 		+ encodeURIComponent(keyword)
+// 	)
+// 	.then(function(response) {
+// 		return response.json();
+// 	})
+// 	.then(function(result) {
 
-		let html = "";
+// 		let html = "";
 
-		for (let i = 0; i < result.length; i++) {
+// 		for (let i = 0; i < result.length; i++) {
 
-			html += "<tr>";
+// 			html += "<tr>";
 
-			html += "<td>" + result[i].empId + "</td>";
+// 			html += "<td>" + result[i].empId + "</td>";
 
-			html += "<td>" + result[i].empName + "</td>";
+// 			html += "<td>" + result[i].empName + "</td>";
 
-			html += "<td>";
-			html += "<input type='radio' ";
-			html += "name='workerRadio' ";
-			html += "value='" + result[i].empId + "' ";
-			html += "data-name='" + result[i].empName + "'>";
-			html += "</td>";
+// 			html += "<td>";
+// 			html += "<input type='radio' ";
+// 			html += "name='workerRadio' ";
+// 			html += "value='" + result[i].empId + "' ";
+// 			html += "data-name='" + result[i].empName + "'>";
+// 			html += "</td>";
 
-			html += "</tr>";
+// 			html += "</tr>";
 
-		}
+// 		}
 		
-		if (result.length == 0) {
-			html = `
-				<tr>
-					<td colspan="3">검색 결과가 없습니다.</td>
-				</tr>
-			`;
-		}
+// 		if (result.length == 0) {
+// 			html = `
+// 				<tr>
+// 					<td colspan="3">검색 결과가 없습니다.</td>
+// 				</tr>
+// 			`;
+// 		}
 
-		workerTbody.innerHTML = html;
+// 		workerTbody.innerHTML = html;
 
-	});
+// 	});
 
-}
+// }
 
 const warehouseSelect = document.querySelector("#warehouse");
 const whSecSelect = document.querySelector("#whSec");
@@ -856,5 +769,6 @@ function loadWhSecList(whId) {
 			alert("창고 섹션 조회 실패");
 		});
 }
+
 
 </script>

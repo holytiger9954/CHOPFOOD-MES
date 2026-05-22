@@ -11,11 +11,12 @@ public interface ItemDAO {
 
 	List<ItemDTO> selectAllItem(ItemDTO itemDTO, PageInfo pageInfo);
 	int selectItemCount(ItemDTO itemDTO);
-	int selectLotCount(LotDTO lotDTO);
+	int selectLotCount(String itemId);
 	int insertItem(ItemDTO itemDTO);
 	ItemDTO selectItemDetail(ItemDTO itemDTO);
 	void deleteItem(String itemId);
 	void updateItem(ItemDTO itemDTO);
-	List<LotDTO> selectLotListByItem(String itemId);
+	List<LotDTO> selectLotListByItem(String itemId, PageInfo pageInfo);
+	List<String> selectUnitList();
 	
 }

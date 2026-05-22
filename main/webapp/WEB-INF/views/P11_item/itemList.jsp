@@ -109,7 +109,8 @@
 									</c:otherwise>
 								</c:choose>
 							</td>
-							<td>${item.safetyStock}</td>
+							<td><fmt:formatNumber value="${item.safetyStock}"
+									pattern="#,###" /></td>
 							<td>${item.unit}</td>
 							<td>${item.spec}</td>
 							<td><fmt:formatNumber

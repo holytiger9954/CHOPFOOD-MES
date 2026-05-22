@@ -35,6 +35,12 @@ public class ItemAddController {
 
 		return "redirect:/item/list";
 	}
+	
+	@RequestMapping("/unitList")
+	@ResponseBody
+	public List<String> unitList() {
+		return itemService.selectUnitList();
+	}
 
 
 }

@@ -36,8 +36,8 @@ public class ItemServiceImpl implements ItemService {
 
 
 	@Override
-	public int selectLotCount(LotDTO lotDTO) {
-		return itemDAO.selectLotCount(lotDTO);
+	public int selectLotCount(String itemId) {
+		return itemDAO.selectLotCount(itemId);
 	}
 
 	@Override
@@ -60,8 +60,13 @@ public class ItemServiceImpl implements ItemService {
 	}
 	
 	@Override
-	public List<LotDTO> selectLotListByItem(String itemId) {
-		return itemDAO.selectLotListByItem(itemId);
+	public List<LotDTO> selectLotListByItem(String itemId, PageInfo pageInfo) {
+		return itemDAO.selectLotListByItem(itemId, pageInfo);
+	}
+
+	@Override
+	public List<String> selectUnitList() {
+		return itemDAO.selectUnitList();
 	}
 
 }

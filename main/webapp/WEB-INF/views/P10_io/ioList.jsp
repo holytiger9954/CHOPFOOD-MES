@@ -104,11 +104,11 @@
                         <td>
                             <c:choose>
                                 <c:when test="${io.ioType == 'IN'}">
-                                    <span class="status status-safe">입고</span>
+                                    <span class="status status-safe">• 입고</span>
                                 </c:when>
 
                                 <c:when test="${io.ioType == 'OUT'}">
-                                    <span class="status status-warning">출고</span>
+                                    <span class="status status-warning">• 출고</span>
                                 </c:when>
 
                                 <c:otherwise>

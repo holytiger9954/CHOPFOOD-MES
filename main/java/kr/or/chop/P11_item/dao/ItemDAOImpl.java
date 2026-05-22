@@ -26,7 +26,6 @@ public class ItemDAOImpl implements ItemDAO {
 		paramMap.put("searchType", itemDTO.getSearchType());
 		paramMap.put("searchKeyword", itemDTO.getSearchKeyword());
 		paramMap.put("page", pageInfo);
-		System.out.println(paramMap);
 
 		return sqlSession.selectList("mapper.P11_item.selectitemList", paramMap);
 	}
@@ -43,8 +42,8 @@ public class ItemDAOImpl implements ItemDAO {
 	}
 
 	@Override
-	public int selectLotCount(LotDTO lotDTO) {
-		return sqlSession.selectOne("mapper.P11_item.selectLotCount", lotDTO);
+	public int selectLotCount(String itemId) {
+		return sqlSession.selectOne("mapper.P11_item.selectLotCount", itemId);
 	}
 
 	@Override
@@ -70,8 +69,17 @@ public class ItemDAOImpl implements ItemDAO {
 
 
 	@Override
-	public List<LotDTO> selectLotListByItem(String itemId) {
-		return sqlSession.selectList("mapper.P11_item.selectLotListByItem", itemId);
+	public List<LotDTO> selectLotListByItem(String itemId, PageInfo pageInfo) {
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("itemId", itemId);
+		paramMap.put("page", pageInfo);
+		
+		return sqlSession.selectList("mapper.P11_item.selectLotListByItem", paramMap);
+	}
+
+	@Override
+	public List<String> selectUnitList() {
+		return sqlSession.selectList("mapper.P11_item.selectUnitList");
 	}
 
 }

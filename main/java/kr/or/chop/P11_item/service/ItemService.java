@@ -11,11 +11,12 @@ public interface ItemService {
 
 	public List<ItemDTO> ItemSelectAll(ItemDTO itemDTO, PageInfo pageInfo);
 	public int selectItemCount(ItemDTO itemDTO);
-	public int selectLotCount(LotDTO lotDTO);
+	public int selectLotCount(String itemId);
 	public int insertItem(ItemDTO itemDTO);
 	ItemDTO selectItemDetail(ItemDTO itemDTO);
 	void deleteItem(String itemId);
 	void updateItem(ItemDTO itemDTO);
-	List<LotDTO> selectLotListByItem(String itemId);
+	List<LotDTO> selectLotListByItem(String itemId, PageInfo pageInfo);
+	List<String> selectUnitList();
 	
 }

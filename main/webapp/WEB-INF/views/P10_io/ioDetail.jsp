@@ -70,13 +70,13 @@
 
                         <c:when test="${io.ioType == 'IN'}">
                             <span class="status-back status-back-safe">
-                                입고
+                                • 입고
                             </span>
                         </c:when>
 
                         <c:when test="${io.ioType == 'OUT'}">
                             <span class="status-back status-back-warning">
-                                출고
+                                • 출고
                             </span>
                         </c:when>
 
@@ -116,7 +116,7 @@
                     </tr>
                     <tr>
                         <th>입출고 LOT</th>
-                        <td>${io.ioLot}</td>
+                        <td><a class="toDetail" href="${pageContext.request.contextPath}/lot/detail?lotId=${io.ioLot}">${io.ioLot}</a></td>
 
                         <th>입출고 품목</th>
                         <td>
@@ -128,7 +128,7 @@
 						        </c:when>
 						
 						        <c:otherwise>
-						            ${io.itemName} (${io.itemId})
+						            <a class="toDetail" href="${pageContext.request.contextPath}/item/detail?itemId=${io.itemId}">${io.itemName} (${io.itemId})</a>
 						        </c:otherwise>
 						
 						    </c:choose>
@@ -144,10 +144,10 @@
 						<td>
 						    <c:choose>
 						        <c:when test="${empty io.vendorName}">
-						            ${io.ioVendor}
+						            -
 						        </c:when>
 						        <c:otherwise>
-						            ${io.vendorName} (${io.ioVendor})
+						            <a class="toDetail" href="${pageContext.request.contextPath}/vendor/detail?vendorId=${io.ioVendor}">${io.vendorName} (${io.ioVendor})</a>
 						        </c:otherwise>
 						    </c:choose>
 						</td>
