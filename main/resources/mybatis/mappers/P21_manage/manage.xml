@@ -14,8 +14,11 @@
 		ON e.emp_deptno = d.deptno
 		WHERE e.emp_inoffice != 99
 
-		<if test="searchDeptno != null">
-			AND e.emp_deptno = #{searchDeptno}
+		<if test="searchDeptnos != null and searchDeptnos.size() > 0">
+		    AND e.emp_deptno IN
+		    <foreach collection="searchDeptnos" item="deptno" open="(" separator="," close=")">
+		        #{deptno}
+		    </foreach>
 		</if>
 
 		<if test="searchAuth != null">
@@ -63,8 +66,11 @@
 		ON e.emp_deptno = d.deptno
 		WHERE e.emp_inoffice != 99
 
-		<if test="adminDTO.searchDeptno != null">
-			AND e.emp_deptno = #{adminDTO.searchDeptno}
+		<if test="adminDTO.searchDeptnos != null and adminDTO.searchDeptnos.size() > 0">
+		    AND e.emp_deptno IN
+		    <foreach collection="adminDTO.searchDeptnos" item="deptno" open="(" separator="," close=")">
+		        #{deptno}
+		    </foreach>
 		</if>
 
 		<if test="adminDTO.searchAuth != null">
@@ -168,5 +174,20 @@
 		WHERE emp_id = #{empId}
 
 	</update>
+	
+	<select id="selectDeptSummary" resultType="adminDTO">
+
+	    SELECT
+	        d.deptno AS empDeptno,
+	        d.dname AS deptName,
+	        COUNT(e.emp_id) AS deptCount
+	    FROM dept d
+	    LEFT JOIN emp e
+	        ON e.emp_deptno = d.deptno
+	       AND e.emp_inoffice != 99
+	    GROUP BY d.deptno, d.dname
+	    ORDER BY d.deptno
+	
+	</select>
 
 </mapper>

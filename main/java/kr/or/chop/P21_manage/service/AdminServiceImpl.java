@@ -44,4 +44,9 @@ public class AdminServiceImpl implements AdminService {
 	public int deleteAdmin(String empId) {
 		return adminDAO.deleteAdmin(empId);
 	}
+	
+	@Override
+	public List<AdminDTO> selectDeptSummary() {
+	    return adminDAO.selectDeptSummary();
+	}
 }

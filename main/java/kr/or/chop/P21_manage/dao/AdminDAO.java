@@ -10,6 +10,8 @@ public interface AdminDAO {
 	int selectAdminCount(AdminDTO adminDTO);
 
 	List<AdminDTO> selectAdminList(AdminDTO adminDTO, PageInfo page);
+	
+	List<AdminDTO> selectDeptSummary();
 
 	AdminDTO selectAdminDetail(String empId);
 

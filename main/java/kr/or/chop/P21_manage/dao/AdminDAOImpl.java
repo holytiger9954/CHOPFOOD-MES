@@ -51,4 +51,9 @@ public class AdminDAOImpl implements AdminDAO {
 	public int deleteAdmin(String empId) {
 		return sqlSession.update("mapper.P21_manage.deleteAdmin", empId);
 	}
+	
+	@Override
+	public List<AdminDTO> selectDeptSummary() {
+	    return sqlSession.selectList("mapper.P21_manage.selectDeptSummary");
+	}
 }

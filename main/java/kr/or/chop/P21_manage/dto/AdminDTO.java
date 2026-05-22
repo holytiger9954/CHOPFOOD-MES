@@ -1,6 +1,7 @@
 package kr.or.chop.P21_manage.dto;
 
 import java.sql.Date;
+import java.util.List;
 
 import lombok.Data;
 
@@ -19,6 +20,9 @@ public class AdminDTO {
 	private Date empHiredate;
 	
 	private String deptName;
+	private String deptCode;
+	private Integer deptCount;
+	private List<Integer> searchDeptnos;
 	
 	private String searchType;
     private String searchKeyword;

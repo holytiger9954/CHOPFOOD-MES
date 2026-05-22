@@ -28,6 +28,8 @@ public class AdminListController {
 
         int listCount = adminService.selectAdminCount(adminDTO);
 
+        int totalAdminCount = adminService.selectAdminCount(new AdminDTO());
+
         PageInfo page = Pagination.getPageInfo(
                 listCount,
                 currentPage,
@@ -37,8 +39,14 @@ public class AdminListController {
 
         List<AdminDTO> adminList =
                 adminService.selectAdminList(adminDTO, page);
+        
+        List<AdminDTO> deptSummary =
+                adminService.selectDeptSummary();
 
         model.addAttribute("adminList", adminList);
+        model.addAttribute("deptSummary", deptSummary);
+        model.addAttribute("totalAdminCount", totalAdminCount);
+
         model.addAttribute("page", page);
         model.addAttribute("search", adminDTO);
 
