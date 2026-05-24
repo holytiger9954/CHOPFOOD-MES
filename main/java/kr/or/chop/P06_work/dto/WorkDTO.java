@@ -2,32 +2,82 @@ package kr.or.chop.P06_work.dto;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.List;
 
 import lombok.Data;
 
 @Data
 public class WorkDTO {
 	
-	String workId;
-	String workPlan;
+	private String workId;
+	private String workPlan;
 	
-	int workOrderQty;
-	Integer workPrevQty;
+	private String workItem;
+    private String workItemName;
+    private String workItemUnit;
+	
+    private int workOrderQty;
+	private Integer workPrevQty;
 	
 	// 작업지시는 시간 안 따지고 일자까지만 따질 거니까 그냥 date로 했음
-	Date workDate;
+	private Date workDate;
 	
-	String workDirector;
-	String workDname;
-	String workDmsg;
+	private String workDirector;
+	private String workDname;
+	private String workDmsg;
 	
-	String workWorker;
-	String workWname;
-	String workWmsg;
+	private String workWorker;
+	private String workWname;
+	private String workWmsg;
 	
-	int workStatus;
+	private int workStatus;
 	
-	Timestamp workCdate;
-	Timestamp workMdate;
+	private Timestamp workCdate;
+	private Timestamp workMdate;
+	
+	// 검색 조건
+    private String workSearchSdate;
+    private String workSearchEdate;
+    private Integer searchType;
+    private String searchKeyword;
 
+    // 카드 선택
+    private List<String> cardTypes;
+
+    // 카드 수량
+    private int totalCnt;
+    private int finCnt;
+    private int ingCnt;
+    private int waitCnt;
+    private int delayCnt;
+    private int etcCnt;
+    
+    
+    
+    // Detail
+    private String routId;
+    private String routName;
+    private String routContent;
+    private String routDtlId;
+    private int routDtlStep;
+
+    private String procId;
+    private String procName;
+    private String procContent;
+    private Integer procWpType;
+
+    private String wpId;
+    private String wpName;
+    private Integer wpType;
+
+    private String eqId;
+    private String eqName;
+    
+    public int getProgressRate() {
+    	if (workOrderQty <= 0) {
+    		return 0;
+    	}
+    	return (int) Math.round((workPrevQty * 100.0) / workOrderQty);
+    }
+    
 }

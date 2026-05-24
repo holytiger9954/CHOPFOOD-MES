@@ -138,6 +138,39 @@
 		WHERE rn <![CDATA[>=]]> #{page.startRow}
 	</select>
 	
+<!-- 	<select id="selectPlanCardCnt" parameterType="planDTO" resultType="planDTO"> -->
+<!-- 	    SELECT -->
+<!-- 	        COUNT(*) AS totalCnt, -->
+<!-- 	        SUM(CASE WHEN p.plan_status = 20 THEN 1 ELSE 0 END) AS ingCnt, -->
+<!-- 	        SUM(CASE WHEN p.plan_status = 10 THEN 1 ELSE 0 END) AS waitCnt, -->
+<!-- 	        SUM(CASE WHEN p.plan_status = 30 THEN 1 ELSE 0 END) AS finCnt, -->
+<!-- 	        SUM(CASE WHEN p.plan_status = 40 THEN 1 ELSE 0 END) AS delayCnt, -->
+<!-- 	        SUM(CASE WHEN p.plan_status = 0 THEN 1 ELSE 0 END) AS etcCnt -->
+<!-- 	    FROM plan p -->
+<!-- 	        LEFT OUTER JOIN item i ON p.plan_item = i.item_id -->
+<!-- 	    WHERE p.plan_usage = 'Y' -->
+	
+<!-- 	        <if test="(planSearchSdate != null and planSearchSdate != '')"> -->
+<!-- 	            AND p.plan_edate <![CDATA[>=]]> TO_DATE(#{planDTO.planSearchSdate}, 'YYYY-MM-DD') -->
+<!-- 	        </if> -->
+	
+<!-- 	        <if test="(planSearchEdate != null and planSearchEdate != '')"> -->
+<!-- 	            AND p.plan_sdate <![CDATA[<=]]> TO_DATE(#{planDTO.planSearchEdate}, 'YYYY-MM-DD') -->
+<!-- 	        </if> -->
+	
+<!-- 	        <if test="searchType != null and searchType != ''"> -->
+<!-- 	            AND p.plan_status = #{searchType} -->
+<!-- 	        </if> -->
+	
+<!-- 	        <if test="searchKeyword != null and searchKeyword != ''"> -->
+<!-- 	            AND ( -->
+<!-- 	                UPPER(p.plan_id) LIKE TRIM(UPPER('%' || #{searchKeyword} || '%')) -->
+<!-- 	                OR UPPER(p.plan_item) LIKE TRIM(UPPER('%' || #{searchKeyword} || '%')) -->
+<!-- 	                OR UPPER(i.item_name) LIKE TRIM(UPPER('%' || #{searchKeyword} || '%')) -->
+<!-- 	            ) -->
+<!-- 	        </if> -->
+<!-- 	</select> -->
+	
 	<select id="selectPlanCardCnt" parameterType="planDTO" resultType="planDTO">
 	    SELECT
 	        COUNT(*) AS totalCnt,
@@ -150,16 +183,12 @@
 	        LEFT OUTER JOIN item i ON p.plan_item = i.item_id
 	    WHERE p.plan_usage = 'Y'
 	
-	        <if test="(planSearchSdate != null and planSearchSdate != '')">
-	            AND p.plan_edate <![CDATA[>=]]> TO_DATE(#{planDTO.planSearchSdate}, 'YYYY-MM-DD')
+	        <if test="planSearchSdate != null and planSearchSdate != ''">
+	            AND p.plan_edate <![CDATA[>=]]> TO_DATE(#{planSearchSdate}, 'YYYY-MM-DD')
 	        </if>
 	
-	        <if test="(planSearchEdate != null and planSearchEdate != '')">
-	            AND p.plan_sdate <![CDATA[<=]]> TO_DATE(#{planDTO.planSearchEdate}, 'YYYY-MM-DD')
-	        </if>
-	
-	        <if test="searchType != null and searchType != ''">
-	            AND p.plan_status = #{searchType}
+	        <if test="planSearchEdate != null and planSearchEdate != ''">
+	            AND p.plan_sdate <![CDATA[<=]]> TO_DATE(#{planSearchEdate}, 'YYYY-MM-DD')
 	        </if>
 	
 	        <if test="searchKeyword != null and searchKeyword != ''">

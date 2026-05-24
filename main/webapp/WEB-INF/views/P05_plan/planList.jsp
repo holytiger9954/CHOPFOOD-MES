@@ -22,10 +22,16 @@
 	</div>
 	
 	<div class="card-wrap planCard">
-		<div class="card info plan-all"
+	    <div class="card info plan-all"
 	         data-card-type="all">
 	        <div class="card-title">전체 계획</div>
 	        <div class="card-value">${planCard.totalCnt}</div>
+	    </div>
+	
+	    <div class="card safe plan-card"
+	         data-card-type="fin">
+	        <div class="card-title">완료된 계획</div>
+	        <div class="card-value">${planCard.finCnt}</div>
 	    </div>
 	
 	    <div class="card success plan-card"
@@ -53,141 +59,144 @@
 	    </div>
 	</div>
 	
-	<form class="search-box"
-		action="${pageContext.request.contextPath}/plan/list"
-		id="planSearchForm"
-		method="get">
-<%-- 		<input type="hidden" name="cardType" id="cardType" value="${search.cardType}"> --%>
+	<div class="content-content">
 		
-		<div class="search-item">
-			<label>기간</label>
-			<div>
-				<input type="date" id="planSearchSdate" name="planSearchSdate" value="${search.planSearchSdate}"
-					onchange="limitDate()"> ~ <input type="date" id="planSearchEdate" name="planSearchEdate" value="${search.planSearchEdate}">
+		<form class="search-box"
+			action="${pageContext.request.contextPath}/plan/list"
+			id="planSearchForm"
+			method="get">
+	<%-- 		<input type="hidden" name="cardType" id="cardType" value="${search.cardType}"> --%>
+	
+			<div class="search-item">
+				<label>기간</label>
+				<div>
+					<input type="date" id="planSearchSdate" name="planSearchSdate" value="${search.planSearchSdate}"
+						onchange="limitDate()"> ~ <input type="date" id="planSearchEdate" name="planSearchEdate" value="${search.planSearchEdate}">
+				</div>
 			</div>
-		</div>
-		
-		<div class="search-item">
-			<label>상태</label>
 			
-			<select name="searchType">
-				<option value="">전체</option>
+			<div class="search-item">
+				<label>상태</label>
+				
+				<select name="searchType" id="searchType">
+					<option value="">전체</option>
+				
+					<option value="20"
+						${search.searchType == '20' ? 'selected' : ''}>
+						진행 중
+					</option>
+					<option value="30"
+						${search.searchType == '30' ? 'selected' : ''}>
+						완료
+					</option>
+					<option value="10"
+						${search.searchType == '10' ? 'selected' : ''}>
+						대기
+					</option>
+					<option value="40"
+						${search.searchType == '40' ? 'selected' : ''}>
+						지연
+					</option>
+					<option value="0"
+						${search.searchType == '0' ? 'selected' : ''}>
+						보류
+					</option>
+				</select>
+			</div>
 			
-				<option value="20"
-					${search.searchType == '20' ? 'selected' : ''}>
-					진행 중
-				</option>
-				<option value="30"
-					${search.searchType == '30' ? 'selected' : ''}>
-					완료
-				</option>
-				<option value="10"
-					${search.searchType == '10' ? 'selected' : ''}>
-					대기
-				</option>
-				<option value="40"
-					${search.searchType == '40' ? 'selected' : ''}>
-					지연
-				</option>
-				<option value="0"
-					${search.searchType == '0' ? 'selected' : ''}>
-					보류
-				</option>
-			</select>
-		</div>
-		
-		<div class="search-item keyword">
-			<label>품목명/품목코드/생산계획 코드 검색</label>
+			<div class="search-item keyword">
+				<label>품목명/품목코드/생산계획 코드 검색</label>
+				
+				<input type="text"
+					class="short"
+					name="searchKeyword"
+					value="${search.searchKeyword}"
+					placeholder="내용을 입력하세요.">
+			</div>
 			
-			<input type="text"
-				class="short"
-				name="searchKeyword"
-				value="${search.searchKeyword}"
-				placeholder="내용을 입력하세요.">
-		</div>
+			<div class="search-btn-area">
+				<button type="submit" class="btn btn-main" >
+					검색
+				</button>
+				<a class="btn btn-white" href="${pageContext.request.contextPath}/plan/list">
+					초기화
+				</a>
+			</div>
+		</form>
 		
-		<div class="search-btn-area">
-			<button type="submit" class="btn btn-main" >
-				검색
-			</button>
-			<a class="btn btn-white" href="${pageContext.request.contextPath}/plan/list">
-				초기화
-			</a>
-		</div>
-	</form>
-	
-	
-	
-	<div>
-		<div class="table-wrap">
-			<table class="table">
-				<thead>
-					<tr>
-						<th>생산계획</th>
-						<th>품목</th>
-						<th>계획수량</th>
-						<th>기간</th>
-						<th>상태</th>
-						<th>등록일</th>
-					</tr>
-				</thead>
-				<tbody>
-					<c:forEach var="plan" items="${planList}">
-						<tr class="planList">
-							<td class="planId">${plan.planId}</td>
-							<td>${plan.planItemName} (${plan.planItem})</td>
-							<td><fmt:formatNumber value="${plan.planFinQty}" pattern="#,###" /></td>
-							<td>
-<%-- 								<fmt:formatDate value="${plan.planSdate}" pattern="yyyy-MM-dd" /> --%>
-<!-- 								~ -->
-<%-- 								<fmt:formatDate value="${plan.planEdate}" pattern="yyyy-MM-dd" /> --%>
-								${fn:substring(plan.planSdate, 0, 10)}
-								    ~
-							    ${fn:substring(plan.planEdate, 0, 10)}
-							</td>
-							<td>
-								<c:choose>
-									<c:when test="${plan.planStatus == 10}">
-										<span class="status status-warning">• 대기중</span>
-									</c:when>
-									<c:when test="${plan.planStatus == 20}">
-										<span class="status status-success">• 작업중</span>
-									</c:when>
-									<c:when test="${plan.planStatus == 30}">
-										<span class="status status-safe">• 완료</span>
-									</c:when>
-									<c:when test="${plan.planStatus == 40}">
-										<span class="status status-danger">• 지연</span>
-									</c:when>
-									<c:when test="${plan.planStatus == 0}">
-										<span class="status status-info">• 보류</span>
-									</c:when>
-									<c:otherwise>
-										<span class="status status-info">• 기타</span>
-									</c:otherwise>
-								</c:choose>
-							</td>
-							<td>
-								<fmt:formatDate value="${plan.planCdate}" pattern="yyyy-MM-dd HH:mm:ss"/>
-							</td>
-							<td class="whId">${wh.whId}</td>
-						</tr>	
-					</c:forEach>
-					
-					<c:if test="${empty planList}">
+		
+		<div class="content-content-content-title" style="">전체 생산 계획</div>
+		<div>
+			<div class="table-wrap">
+				<table class="table">
+					<thead>
 						<tr>
-							<td colspan="7" style="text-align: center;">
-								조회된 내역이 없습니다.
-							</td>
+							<th>생산계획</th>
+							<th>품목</th>
+							<th>계획수량</th>
+							<th>기간</th>
+							<th>상태</th>
+							<th>등록일</th>
 						</tr>
-					</c:if>				
+					</thead>
+					<tbody>
+						<c:forEach var="plan" items="${planList}">
+							<tr class="planList">
+								<td class="planId">${plan.planId}</td>
+								<td>${plan.planItemName} (${plan.planItem})</td>
+								<td><fmt:formatNumber value="${plan.planFinQty}" pattern="#,###" /></td>
+								<td>
+	<%-- 								<fmt:formatDate value="${plan.planSdate}" pattern="yyyy-MM-dd" /> --%>
+	<!-- 								~ -->
+	<%-- 								<fmt:formatDate value="${plan.planEdate}" pattern="yyyy-MM-dd" /> --%>
+									${fn:substring(plan.planSdate, 0, 10)}
+									    ~
+								    ${fn:substring(plan.planEdate, 0, 10)}
+								</td>
+								<td>
+									<c:choose>
+										<c:when test="${plan.planStatus == 10}">
+											<span class="status status-warning">• 대기중</span>
+										</c:when>
+										<c:when test="${plan.planStatus == 20}">
+											<span class="status status-success">• 작업중</span>
+										</c:when>
+										<c:when test="${plan.planStatus == 30}">
+											<span class="status status-safe">• 완료</span>
+										</c:when>
+										<c:when test="${plan.planStatus == 40}">
+											<span class="status status-danger">• 지연</span>
+										</c:when>
+										<c:when test="${plan.planStatus == 0}">
+											<span class="status status-info">• 보류</span>
+										</c:when>
+										<c:otherwise>
+											<span class="status status-info">• 기타</span>
+										</c:otherwise>
+									</c:choose>
+								</td>
+								<td>
+									<fmt:formatDate value="${plan.planCdate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+								</td>
+								<td class="whId">${wh.whId}</td>
+							</tr>	
+						</c:forEach>
 						
-				</tbody>
-			</table>
+						<c:if test="${empty planList}">
+							<tr>
+								<td colspan="7" style="text-align: center;">
+									조회된 내역이 없습니다.
+								</td>
+							</tr>
+						</c:if>				
+							
+					</tbody>
+				</table>
+			</div>
+			
+			<jsp:include page="/WEB-INF/views/common/paging.jsp" />
+			
 		</div>
-		
-		<jsp:include page="/WEB-INF/views/common/paging.jsp" />
-		
 	</div>
 </div>
 
@@ -256,10 +265,12 @@
 		limitDate();
 	}
 	
+	// bindCardFilter start
 	function bindCardFilter() {
 	    const allCard = document.querySelector(".planCard .plan-all");
 	    const planCards = document.querySelectorAll(".planCard .plan-card");
 	    const form = document.querySelector("#planSearchForm");
+	    const searchType = document.querySelector("#searchType");
 
 	    if (!allCard || !planCards.length || !form) {
 	        return;
@@ -268,8 +279,10 @@
 	    const params = new URLSearchParams(window.location.search);
 	    const selectedCardTypes = params.getAll("cardTypes");
 
+	    // URL에 cardTypes가 있을 때만 hidden input 복원
 	    syncSelectedCardTypesToForm(selectedCardTypes);
 
+	    // 카드 active 복원
 	    if (selectedCardTypes.length === 0) {
 	        allCard.classList.add("active");
 	    } else {
@@ -282,6 +295,9 @@
 	                card.classList.add("active");
 	            }
 	        });
+
+	        // 카드 선택 결과 기준으로 상태 select 동기화
+	        syncSearchTypeByCardTypes(selectedCardTypes);
 	    }
 
 	    allCard.addEventListener("click", () => {
@@ -299,22 +315,26 @@
 	            card.classList.toggle("active");
 	            allCard.classList.remove("active");
 
-	            const activeCards = document.querySelectorAll(".planCard .plan-card.active");
-	            const selectedValues = [];
-
-	            activeCards.forEach(activeCard => {
-	                selectedValues.push(activeCard.dataset.cardType);
-	            });
+	            const selectedValues = getActiveCardTypes();
 
 	            if (selectedValues.length === 0) {
 	                allCard.classList.add("active");
-	                submitCardFilter([]);
-	                return;
 	            }
 
 	            submitCardFilter(selectedValues);
 	        });
 	    });
+
+	    function getActiveCardTypes() {
+	        const activeCards = document.querySelectorAll(".planCard .plan-card.active");
+	        const selectedValues = [];
+
+	        activeCards.forEach(activeCard => {
+	            selectedValues.push(activeCard.dataset.cardType);
+	        });
+
+	        return selectedValues;
+	    }
 
 	    function syncSelectedCardTypesToForm(selectedValues) {
 	        form.querySelectorAll("input[name='cardTypes']").forEach(input => {
@@ -332,8 +352,32 @@
 	        });
 	    }
 
+	    function syncSearchTypeByCardTypes(selectedValues) {
+	        if (!searchType) {
+	            return;
+	        }
+
+	        const statusMap = {
+	            fin: "30",
+	            ing: "20",
+	            wait: "10",
+	            delay: "40",
+	            etc: "0"
+	        };
+
+	        // 카드 1개 선택 시에만 상태 select 동기화
+	        if (selectedValues.length === 1) {
+	            searchType.value = statusMap[selectedValues[0]];
+	            return;
+	        }
+
+	        // 카드 0개 또는 2개 이상 선택 시 전체로
+	        searchType.value = "";
+	    }
+
 	    function submitCardFilter(selectedValues) {
 	        syncSelectedCardTypesToForm(selectedValues);
+	        syncSearchTypeByCardTypes(selectedValues);
 
 	        const pageInput = form.querySelector("input[name='page']");
 	        if (pageInput) {
@@ -343,6 +387,9 @@
 	        form.submit();
 	    }
 	}
+	// bindCardFilter start
+	
+	
 	
 	function moveDetail() {
 	    const planLists = document.querySelectorAll(".planList");

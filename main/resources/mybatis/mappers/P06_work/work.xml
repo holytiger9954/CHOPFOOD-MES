@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.P06_work">
+
+    <select id="selectWorkCount" parameterType="workDTO" resultType="int">
+        SELECT COUNT(*)
+        FROM work w
+            LEFT OUTER JOIN plan p ON w.work_plan = p.plan_id
+            LEFT OUTER JOIN item i ON p.plan_item = i.item_id
+            LEFT OUTER JOIN emp d ON w.work_director = d.emp_id
+            LEFT OUTER JOIN emp worker ON w.work_worker = worker.emp_id
+        WHERE w.work_usage = 'Y'
+
+            <if test="workSearchSdate != null and workSearchSdate != ''">
+                AND w.work_date <![CDATA[>=]]> TO_DATE(#{workSearchSdate}, 'YYYY-MM-DD')
+            </if>
+
+            <if test="workSearchEdate != null and workSearchEdate != ''">
+                AND w.work_date <![CDATA[<]]> TO_DATE(#{workSearchEdate}, 'YYYY-MM-DD') + 1
+            </if>
+
+            <if test="searchType != null and searchType != ''">
+                AND w.work_status = #{searchType}
+            </if>
+
+            <if test="searchKeyword != null and searchKeyword != ''">
+                AND (
+                    UPPER(w.work_id) LIKE TRIM(UPPER('%' || #{searchKeyword} || '%'))
+                    OR UPPER(w.work_plan) LIKE TRIM(UPPER('%' || #{searchKeyword} || '%'))
+                    OR UPPER(p.plan_item) LIKE TRIM(UPPER('%' || #{searchKeyword} || '%'))
+                    OR UPPER(i.item_name) LIKE TRIM(UPPER('%' || #{searchKeyword} || '%'))
+                    OR UPPER(d.emp_name) LIKE TRIM(UPPER('%' || #{searchKeyword} || '%'))
+                    OR UPPER(worker.emp_name) LIKE TRIM(UPPER('%' || #{searchKeyword} || '%'))
+                )
+            </if>
+
+            <if test="cardTypes != null and cardTypes.size() > 0">
+                AND (
+                    <foreach collection="cardTypes" item="cardType" separator=" OR ">
+                        <choose>
+                            <when test="cardType == 'fin'">
+                                w.work_status = 30
+                            </when>
+                            <when test="cardType == 'ing'">
+                                w.work_status = 20
+                            </when>
+                            <when test="cardType == 'wait'">
+                                w.work_status = 10
+                            </when>
+                            <when test="cardType == 'delay'">
+                                w.work_status = 40
+                            </when>
+                            <when test="cardType == 'etc'">
+                                w.work_status = 0
+                            </when>
+                        </choose>
+                    </foreach>
+                )
+            </if>
+    </select>
+
+
+    <select id="selectAllWork" parameterType="map" resultType="workDTO">
+        SELECT *
+        FROM (
+            SELECT ROWNUM rn, work_list.*
+            FROM (
+                SELECT
+                    w.work_id workId,
+                    w.work_plan workPlan,
+                    p.plan_item workItem,
+                    i.item_name workItemName,
+                    i.item_unit workItemUnit,
+                    w.work_order_qty workOrderQty,
+                    NVL(w.work_prev_qty, 0) workPrevQty,
+                    w.work_date workDate,
+                    w.work_director workDirector,
+                    d.emp_name workDname,
+                    w.work_worker workWorker,
+                    worker.emp_name workWname,
+                    w.work_status workStatus,
+                    w.work_cdate workCdate,
+                    w.work_mdate workMdate
+                FROM work w
+                    LEFT OUTER JOIN plan p ON w.work_plan = p.plan_id
+                    LEFT OUTER JOIN item i ON p.plan_item = i.item_id
+                    LEFT OUTER JOIN emp d ON w.work_director = d.emp_id
+                    LEFT OUTER JOIN emp worker ON w.work_worker = worker.emp_id
+                WHERE w.work_usage = 'Y'
+
+                    <if test="workDTO.workSearchSdate != null and workDTO.workSearchSdate != ''">
+                        AND w.work_date <![CDATA[>=]]> TO_DATE(#{workDTO.workSearchSdate}, 'YYYY-MM-DD')
+                    </if>
+
+                    <if test="workDTO.workSearchEdate != null and workDTO.workSearchEdate != ''">
+                        AND w.work_date <![CDATA[<]]> TO_DATE(#{workDTO.workSearchEdate}, 'YYYY-MM-DD') + 1
+                    </if>
+
+                    <if test="workDTO.searchType != null and workDTO.searchType != ''">
+                        AND w.work_status = #{workDTO.searchType}
+                    </if>
+
+                    <if test="workDTO.searchKeyword != null and workDTO.searchKeyword != ''">
+                        AND (
+                            UPPER(w.work_id) LIKE TRIM(UPPER('%' || #{workDTO.searchKeyword} || '%'))
+                            OR UPPER(w.work_plan) LIKE TRIM(UPPER('%' || #{workDTO.searchKeyword} || '%'))
+                            OR UPPER(p.plan_item) LIKE TRIM(UPPER('%' || #{workDTO.searchKeyword} || '%'))
+                            OR UPPER(i.item_name) LIKE TRIM(UPPER('%' || #{workDTO.searchKeyword} || '%'))
+                            OR UPPER(d.emp_name) LIKE TRIM(UPPER('%' || #{workDTO.searchKeyword} || '%'))
+                            OR UPPER(worker.emp_name) LIKE TRIM(UPPER('%' || #{workDTO.searchKeyword} || '%'))
+                        )
+                    </if>
+
+                    <if test="workDTO.cardTypes != null and workDTO.cardTypes.size() > 0">
+                        AND (
+                            <foreach collection="workDTO.cardTypes" item="cardType" separator=" OR ">
+                                <choose>
+                                    <when test="cardType == 'fin'">
+                                        w.work_status = 30
+                                    </when>
+                                    <when test="cardType == 'ing'">
+                                        w.work_status = 20
+                                    </when>
+                                    <when test="cardType == 'wait'">
+                                        w.work_status = 10
+                                    </when>
+                                    <when test="cardType == 'delay'">
+                                        w.work_status = 40
+                                    </when>
+                                    <when test="cardType == 'etc'">
+                                        w.work_status = 0
+                                    </when>
+                                </choose>
+                            </foreach>
+                        )
+                    </if>
+
+                ORDER BY
+                    CASE w.work_status
+                        WHEN 40 THEN 1
+                        WHEN 20 THEN 2
+                        WHEN 10 THEN 3
+                        WHEN 30 THEN 4
+                        WHEN 0 THEN 5
+                        ELSE 6
+                    END ASC,
+                    CASE
+                        WHEN w.work_status IN (40, 20, 10) THEN w.work_date
+                    END ASC,
+                    CASE
+                        WHEN w.work_status IN (30, 0) THEN w.work_date
+                    END DESC,
+                    w.work_id DESC
+            ) work_list
+            WHERE ROWNUM <![CDATA[<=]]> #{page.endRow}
+        )
+        WHERE rn <![CDATA[>=]]> #{page.startRow}
+    </select>
+
+
+   <select id="selectWorkCardCnt" parameterType="workDTO" resultType="workDTO">
+		SELECT
+	        SUM(
+	            CASE 
+	                WHEN TRUNC(w.work_date) = TRUNC(SYSDATE + (9/24))
+	                THEN 1 
+	                ELSE 0 
+	            END
+	        ) AS totalCnt,
+	
+	        SUM(
+	            CASE 
+	                WHEN w.work_status = 20
+	                    AND TRUNC(w.work_date) = TRUNC(SYSDATE + (9/24))
+	                THEN 1 
+	                ELSE 0 
+	            END
+	        ) AS ingCnt,
+	
+	        SUM(
+	            CASE 
+	                WHEN w.work_status = 10
+	                    AND TRUNC(w.work_date) = TRUNC(SYSDATE + (9/24))
+	                THEN 1 
+	                ELSE 0 
+	            END
+	        ) AS waitCnt,
+	
+	        SUM(
+	            CASE 
+	                WHEN w.work_status = 30
+	                    AND TRUNC(w.work_date) = TRUNC(SYSDATE + (9/24))
+	                THEN 1 
+	                ELSE 0 
+	            END
+	        ) AS finCnt,
+	
+	        SUM(
+	            CASE 
+	                WHEN w.work_status = 40
+	                THEN 1 
+	                ELSE 0 
+	            END
+	        ) AS delayCnt,
+	
+	        SUM(
+	            CASE 
+	                WHEN w.work_status = 0
+	                THEN 1 
+	                ELSE 0 
+	            END
+	        ) AS etcCnt
+	
+	    FROM work w
+	        LEFT OUTER JOIN plan p ON w.work_plan = p.plan_id
+	        LEFT OUTER JOIN item i ON p.plan_item = i.item_id
+	        LEFT OUTER JOIN emp d ON w.work_director = d.emp_id
+	        LEFT OUTER JOIN emp worker ON w.work_worker = worker.emp_id
+	
+	    WHERE w.work_usage = 'Y'
+	
+	        <if test="searchKeyword != null and searchKeyword != ''">
+	            AND (
+	                UPPER(w.work_id) LIKE TRIM(UPPER('%' || #{searchKeyword} || '%'))
+	                OR UPPER(w.work_plan) LIKE TRIM(UPPER('%' || #{searchKeyword} || '%'))
+	                OR UPPER(p.plan_item) LIKE TRIM(UPPER('%' || #{searchKeyword} || '%'))
+	                OR UPPER(i.item_name) LIKE TRIM(UPPER('%' || #{searchKeyword} || '%'))
+	                OR UPPER(d.emp_name) LIKE TRIM(UPPER('%' || #{searchKeyword} || '%'))
+	                OR UPPER(worker.emp_name) LIKE TRIM(UPPER('%' || #{searchKeyword} || '%'))
+	            )
+	        </if>
+	</select>
+	
+	<select id="selectWorkDetail" parameterType="workDTO" resultType="workDTO">
+		SELECT
+			w.work_id workId,
+			w.work_plan workPlan,
+	
+			p.plan_item workItem,
+			i.item_name workItemName,
+			i.item_unit workItemUnit,
+	
+			w.work_order_qty workOrderQty,
+			NVL(w.work_prev_qty, 0) workPrevQty,
+			w.work_date workDate,
+	
+			w.work_director workDirector,
+			d.emp_name workDname,
+	
+			w.work_worker workWorker,
+			worker.emp_name workWname,
+	
+			w.work_dmsg workDmsg,
+			w.work_wmsg workWmsg,
+	
+			w.work_status workStatus,
+			w.work_cdate workCdate,
+			w.work_mdate workMdate,
+	
+			r.rout_id routId,
+			r.rout_name routName,
+			r.rout_content routContent
+	
+		FROM work w
+			LEFT OUTER JOIN plan p 
+				ON w.work_plan = p.plan_id
+			LEFT OUTER JOIN item i 
+				ON p.plan_item = i.item_id
+			LEFT OUTER JOIN emp d 
+				ON w.work_director = d.emp_id
+			LEFT OUTER JOIN emp worker 
+				ON w.work_worker = worker.emp_id
+			LEFT OUTER JOIN routing r
+				ON r.rout_item = p.plan_item
+				AND r.rout_usage = 'Y'
+	
+		WHERE w.work_usage = 'Y'
+			AND w.work_id = #{workId}
+	</select>
+	
+	<select id="selectWorkProcList" parameterType="workDTO" resultType="workDTO">
+		SELECT
+			rd.rout_dtl_id routDtlId,
+			rd.rout_dtl_step routDtlStep,
+	
+			pr.proc_id procId,
+			pr.proc_name procName,
+			pr.proc_content procContent,
+			pr.proc_wp_type procWpType,
+	
+			MIN(wp.wp_id) wpId,
+			MIN(wp.wp_name) wpName,
+	
+			MIN(eq.eq_id) eqId,
+			MIN(eq.eq_name) eqName
+	
+		FROM work w
+			LEFT OUTER JOIN plan p 
+				ON w.work_plan = p.plan_id
+			LEFT OUTER JOIN routing r
+				ON r.rout_item = p.plan_item
+				AND r.rout_usage = 'Y'
+			LEFT OUTER JOIN routing_detail rd
+				ON rd.rout_dtl_rout = r.rout_id
+				AND rd.rout_dtl_usage = 'Y'
+			LEFT OUTER JOIN process pr
+				ON rd.rout_dtl_proc = pr.proc_id
+				AND pr.proc_usage = 'Y'
+			LEFT OUTER JOIN workplace wp
+				ON wp.wp_type = pr.proc_wp_type
+				AND wp.wp_usage = 'Y'
+			LEFT OUTER JOIN equipment eq
+				ON eq.eq_wpid = wp.wp_id
+	
+		WHERE w.work_usage = 'Y'
+			AND w.work_id = #{workId}
+	
+		GROUP BY
+			rd.rout_dtl_id,
+			rd.rout_dtl_step,
+			pr.proc_id,
+			pr.proc_name,
+			pr.proc_content,
+			pr.proc_wp_type
+	
+		ORDER BY rd.rout_dtl_step ASC, rd.rout_dtl_id ASC
+	</select>
+	
+	<select id="selectWorkPlanList" resultType="planDTO">
+		SELECT
+			p.plan_id planId,
+			p.plan_status planStatus,
+			p.plan_item planItem,
+			i.item_name planItemName,
+			i.item_unit planItemUnit,
+			p.plan_fin_qty planFinQty,
+			p.plan_sdate planSdate,
+			p.plan_edate planEdate,
+			NVL(SUM(
+				CASE
+					WHEN w.work_usage = 'Y'
+					THEN w.work_order_qty
+					ELSE 0
+				END
+			), 0) planWorkingQty
+		FROM plan p
+			LEFT OUTER JOIN item i
+				ON p.plan_item = i.item_id
+			LEFT OUTER JOIN work w
+				ON p.plan_id = w.work_plan
+		WHERE p.plan_usage = 'Y'
+			AND p.plan_status IN (10, 20)
+		GROUP BY
+			p.plan_id,
+			p.plan_status,
+			p.plan_item,
+			i.item_name,
+			i.item_unit,
+			p.plan_fin_qty,
+			p.plan_sdate,
+			p.plan_edate
+		HAVING p.plan_fin_qty > NVL(SUM(
+			CASE
+				WHEN w.work_usage = 'Y'
+				THEN w.work_order_qty
+				ELSE 0
+			END
+		), 0)
+		ORDER BY
+			CASE p.plan_status
+				WHEN 20 THEN 1
+				WHEN 10 THEN 2
+				ELSE 3
+			END,
+			p.plan_id DESC
+	</select>
+	
+	<select id="selectWorkerList" parameterType="workDTO" resultType="adminDTO">
+		SELECT
+		emp_id AS empId,
+		emp_name AS empName
+		FROM emp
+		<where>
+			emp_inoffice = 0 and emp_deptno = 10
+			<if test="searchKeyword != null and searchKeyword != ''">
+				AND (
+					UPPER(e.emp_id) LIKE TRIM(UPPER('%' || #{searchKeyword} || '%'))
+					OR UPPER(e.emp_name) LIKE TRIM(UPPER('%' || #{searchKeyword} || '%'))
+				)
+			</if>
+		</where>
+		ORDER BY emp_id
+	</select>
+	
+	<insert id="insertWork" parameterType="workDTO">
+		INSERT INTO work (
+			work_id,
+			work_plan,
+			work_order_qty,
+			work_prev_qty,
+			work_date,
+			work_director,
+			work_worker,
+			work_dmsg,
+			work_status,
+			work_cdate,
+			work_usage
+		)
+		VALUES (
+			'WO' || work_seq.NEXTVAL,
+			#{workPlan},
+			#{workOrderQty},
+			0,
+			#{workDate},
+			#{workDirector},
+			#{workWorker},
+			#{workDmsg},
+			10,
+			SYSDATE + (9/24),
+			'Y'
+		)
+	</insert>
+
+</mapper>
