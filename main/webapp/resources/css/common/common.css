@@ -197,6 +197,10 @@ textarea:focus {
     cursor: pointer;
 }
 
+.btn {
+	min-width: 25.77px;
+}
+
 .btn:hover {
 	text-decoration : underline;
 }
