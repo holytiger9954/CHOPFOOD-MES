@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.P22_ai">
+
+    <select id="selectAiQualityList"
+            resultType="kr.or.chop.P22_ai.dto.AiQualityDTO">
+
+        SELECT
+            ai_data_id AS aiDataId,
+            item_id AS itemId,
+            process_id AS processId,
+            equipment_id AS equipmentId,
+            workplace_id AS workplaceId,
+            worker_id AS workerId,
+            prod_qty AS prodQty,
+            defect_qty AS defectQty,
+            defect_rate AS defectRate,
+            temperature AS temperature,
+            humidity AS humidity,
+            equipment_runtime AS equipmentRuntime,
+            work_shift AS workShift,
+            risk_level AS riskLevel,
+            result_yn AS resultYn,
+            TO_CHAR(created_at, 'YYYY-MM-DD HH24:MI') AS createdAt
+        FROM ai_quality_data
+        ORDER BY created_at DESC
+
+    </select>
+
+    <select id="selectAiQualityCount"
+            resultType="int">
+
+        SELECT COUNT(*)
+        FROM ai_quality_data
+
+    </select>
+    
+    <select id="selectAiSummary"
+	        resultType="kr.or.chop.P22_ai.dto.AiSummaryDTO">
+	
+	    SELECT
+	        total_count AS totalCount,
+	        high_count AS highCount,
+	        avg_defect_rate AS avgDefectRate,
+	        top_risk_equipment_id AS topRiskEquipmentId,
+	        top_risk_equipment_rate AS topRiskEquipmentRate
+	    FROM
+	    (
+	        SELECT
+	            (SELECT COUNT(*)
+	             FROM ai_quality_data) AS total_count,
+	
+	            (SELECT COUNT(*)
+	             FROM ai_quality_data
+	             WHERE risk_level = 'HIGH') AS high_count,
+	
+	            (SELECT ROUND(NVL(AVG(defect_rate), 0), 2)
+	             FROM ai_quality_data) AS avg_defect_rate,
+	
+	            (SELECT equipment_id
+	             FROM (
+	                SELECT
+	                    equipment_id,
+	                    ROUND(AVG(defect_rate), 2) AS avg_rate
+	                FROM ai_quality_data
+	                GROUP BY equipment_id
+	                ORDER BY avg_rate DESC
+	             )
+	             WHERE ROWNUM = 1) AS top_risk_equipment_id,
+	
+	            (SELECT avg_rate
+	             FROM (
+	                SELECT
+	                    equipment_id,
+	                    ROUND(AVG(defect_rate), 2) AS avg_rate
+	                FROM ai_quality_data
+	                GROUP BY equipment_id
+	                ORDER BY avg_rate DESC
+	             )
+	             WHERE ROWNUM = 1) AS top_risk_equipment_rate
+	        FROM dual
+	    )
+	
+	</select>
+	
+	<select id="selectRiskChartData"
+	        resultType="kr.or.chop.P22_ai.dto.AiRiskChartDTO">
+	
+	    SELECT
+	        risk_level AS riskLevel,
+	        COUNT(*) AS count
+	    FROM ai_quality_data
+	    GROUP BY risk_level
+	    ORDER BY risk_level
+	
+	</select>
+	
+	<select id="selectAiInsight"
+	        resultType="kr.or.chop.P22_ai.dto.AiInsightDTO">
+	
+	    SELECT
+	        a.highRiskRate AS highRiskRate,
+	        a.dayAvgDefectRate AS dayAvgDefectRate,
+	        a.nightAvgDefectRate AS nightAvgDefectRate,
+	        b.topRiskEquipmentId AS topRiskEquipmentId,
+	        b.topRiskEquipmentRate AS topRiskEquipmentRate,
+	        a.highTempRiskRate AS highTempRiskRate
+	    FROM
+	    (
+	        SELECT
+	            ROUND(
+	                SUM(CASE WHEN risk_level = 'HIGH' THEN 1 ELSE 0 END)
+	                / COUNT(*) * 100
+	            , 2) AS highRiskRate,
+	
+	            ROUND(
+	                AVG(CASE WHEN work_shift = 'DAY' THEN defect_rate END)
+	            , 2) AS dayAvgDefectRate,
+	
+	            ROUND(
+	                AVG(CASE WHEN work_shift = 'NIGHT' THEN defect_rate END)
+	            , 2) AS nightAvgDefectRate,
+	
+	            ROUND(
+	                AVG(CASE WHEN temperature >= 30 THEN defect_rate END)
+	            , 2) AS highTempRiskRate
+	        FROM ai_quality_data
+	    ) a,
+	    (
+	        SELECT
+	            equipment_id AS topRiskEquipmentId,
+	            avg_rate AS topRiskEquipmentRate
+	        FROM
+	        (
+	            SELECT
+	                equipment_id,
+	                ROUND(AVG(defect_rate), 2) AS avg_rate
+	            FROM ai_quality_data
+	            GROUP BY equipment_id
+	            ORDER BY avg_rate DESC
+	        )
+	        WHERE ROWNUM = 1
+	    ) b
+	
+	</select>
+	
+	<insert id="insertPredictHistory"
+	        parameterType="kr.or.chop.P22_ai.dto.AiPredictHistoryDTO">
+	
+	    INSERT INTO ai_predict_history
+	    (
+	        predict_id,
+	        prod_qty,
+	        temperature,
+	        humidity,
+	        equipment_runtime,
+	        work_shift_num,
+	        risk_level,
+	        created_at
+	    )
+	    VALUES
+	    (
+	        'AIP' || seq_ai_predict_history.NEXTVAL,
+	        #{prodQty},
+	        #{temperature},
+	        #{humidity},
+	        #{equipmentRuntime},
+	        #{workShiftNum},
+	        #{riskLevel},
+	        SYSDATE
+	    )
+	
+	</insert>
+	
+	<select id="selectRecentPredictHistory"
+	        resultType="kr.or.chop.P22_ai.dto.AiPredictHistoryDTO">
+	
+	    SELECT
+	        predict_id AS predictId,
+	        prod_qty AS prodQty,
+	        temperature AS temperature,
+	        humidity AS humidity,
+	        equipment_runtime AS equipmentRuntime,
+	        work_shift_num AS workShiftNum,
+	        risk_level AS riskLevel,
+	        TO_CHAR(created_at, 'YYYY-MM-DD HH24:MI') AS createdAt
+	    FROM
+	    (
+	        SELECT *
+	        FROM ai_predict_history
+	        ORDER BY created_at DESC
+	    )
+	    WHERE ROWNUM &lt;= 5
+	
+	</select>
+
+</mapper>
