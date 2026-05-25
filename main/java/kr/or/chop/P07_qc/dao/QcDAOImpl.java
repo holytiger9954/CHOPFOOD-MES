@@ -1,5 +1,67 @@
 package kr.or.chop.P07_qc.dao;
 
-public class QcDAOImpl {
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import kr.or.chop.P07_qc.dto.QcDTO;
+import kr.or.chop.common.pagination.PageInfo;
+
+@Repository
+public class QcDAOImpl implements QcDAO {
+
+	@Autowired
+    private SqlSessionTemplate sqlSession;
+
+    private final String namespace = "kr.or.chop.P07_qc.";
+
+    @Override
+    public int selectQcCount(QcDTO dto) {
+        return sqlSession.selectOne(namespace + "selectQcCount", dto);
+    }
+	
+    @Override
+    public List<QcDTO> selectQcList(QcDTO dto, PageInfo pageInfo) {
+
+        Map<String, Object> map = new HashMap<String, Object>();
+
+
+        map.put("page", pageInfo);
+        map.put("status", dto.getQcStatus());
+        map.put("startDate", dto.getStartDate());
+        map.put("endDate", dto.getEndDate());
+        map.put("searchKeyword", dto.getSearchKeyword());
+
+        return sqlSession.selectList(namespace + "selectQcList", map);
+    }
+
+    @Override
+    public QcDTO selectQcSummary(QcDTO dto) {
+        return sqlSession.selectOne(namespace + "selectQcSummary", dto);
+    }
+
+    @Override
+    public QcDTO selectQcDetail(String qcId) {
+        return sqlSession.selectOne(namespace + "selectQcDetail", qcId);
+    }
+
+    @Override
+    public int insertQc(QcDTO dto) {
+        return sqlSession.insert(namespace + "insertQc", dto);
+    }
+
+    @Override
+    public int updateQc(QcDTO dto) {
+        return sqlSession.update(namespace + "updateQc", dto);
+    }
+
+    @Override
+    public int deleteQc(String qcId) {
+        return sqlSession.update(namespace + "deleteQc", qcId);
+    }
+    
 }

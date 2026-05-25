@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.or.chop.P07_qc">
+
+    <sql id="qcWhere">
+        <where>
+            Q.QC_USAGE = 'Y'
+
+            <if test="startDate != null and startDate != ''">
+                AND Q.QC_DATE <![CDATA[>=]]> TO_DATE(#{startDate}, 'YYYY-MM-DD')
+            </if>
+
+            <if test="endDate != null and endDate != ''">
+                AND Q.QC_DATE <![CDATA[<]]> TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+            </if>
+
+            <if test="status != 0">
+                AND Q.QC_STATUS = #{status}
+            </if>
+
+            <if test="searchKeyword != null and searchKeyword != ''">
+                AND (
+                    UPPER(Q.QC_ID) LIKE UPPER('%' || #{searchKeyword} || '%')
+                    OR UPPER(Q.QC_LOT) LIKE UPPER('%' || #{searchKeyword} || '%')
+                    OR UPPER(Q.QC_CONTENT) LIKE UPPER('%' || #{searchKeyword} || '%')
+                    OR UPPER(Q.QC_DIRECTOR) LIKE UPPER('%' || #{searchKeyword} || '%')
+                )
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectQcList"
+            parameterType="map"
+            resultType="kr.or.chop.P07_qc.dto.QcDTO">
+
+        SELECT *
+        FROM (
+            SELECT ROWNUM RN, A.*
+            FROM (
+                SELECT
+                    Q.QC_ID AS qcId,
+                    Q.QC_LOT AS qcLot,
+                    Q.QC_TYPE AS qcType,
+                    Q.QC_CONTENT AS qcContent,
+                    Q.QC_QTY AS qcQty,
+                    Q.QC_STATUS AS qcStatus,
+                    Q.QC_ODATE AS qcOdate,
+                    Q.QC_DIRECTOR AS qcDirector,
+                    Q.QC_DMSG AS qcDmsg,
+                    Q.QC_DATE AS qcDate,
+                    Q.QC_WMSG AS qcWmsg,
+                    Q.QC_PASS_QTY AS qcPassQty,
+                    Q.QC_USAGE AS qcUsage
+                FROM QC Q
+
+                <include refid="qcWhere" />
+
+                ORDER BY Q.QC_ID DESC
+            ) A
+            WHERE ROWNUM <![CDATA[<=]]> #{page.endRow}
+        )
+        WHERE RN <![CDATA[>=]]> #{page.startRow}
+
+    </select>
+
+    <select id="selectQcCount"
+            parameterType="kr.or.chop.P07_qc.dto.QcDTO"
+            resultType="int">
+
+        SELECT COUNT(*)
+        FROM QC Q
+        <where>
+            Q.QC_USAGE = 'Y'
+
+            <if test="startDate != null and startDate != ''">
+                AND Q.QC_DATE <![CDATA[>=]]> TO_DATE(#{startDate}, 'YYYY-MM-DD')
+            </if>
+
+            <if test="endDate != null and endDate != ''">
+                AND Q.QC_DATE <![CDATA[<]]> TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+            </if>
+
+            <if test="qcStatus != 0">
+                AND Q.QC_STATUS = #{qcStatus}
+            </if>
+
+            <if test="searchKeyword != null and searchKeyword != ''">
+                AND (
+                    UPPER(Q.QC_ID) LIKE UPPER('%' || #{searchKeyword} || '%')
+                    OR UPPER(Q.QC_LOT) LIKE UPPER('%' || #{searchKeyword} || '%')
+                    OR UPPER(Q.QC_CONTENT) LIKE UPPER('%' || #{searchKeyword} || '%')
+                    OR UPPER(Q.QC_DIRECTOR) LIKE UPPER('%' || #{searchKeyword} || '%')
+                )
+            </if>
+        </where>
+
+    </select>
+
+    <select id="selectQcSummary"
+            parameterType="kr.or.chop.P07_qc.dto.QcDTO"
+            resultType="kr.or.chop.P07_qc.dto.QcDTO">
+
+        SELECT
+            NVL(SUM(Q.QC_QTY), 0) AS qcQty,
+            NVL(SUM(Q.QC_PASS_QTY), 0) AS qcPassQty
+        FROM QC Q
+        WHERE Q.QC_USAGE = 'Y'
+        AND TRUNC(Q.QC_DATE) = TRUNC(SYSDATE)
+
+    </select>
+
+    <select id="selectQcDetail"
+            parameterType="string"
+            resultType="kr.or.chop.P07_qc.dto.QcDTO">
+
+        SELECT
+            Q.QC_ID AS qcId,
+            Q.QC_LOT AS qcLot,
+            Q.QC_TYPE AS qcType,
+            Q.QC_CONTENT AS qcContent,
+            Q.QC_QTY AS qcQty,
+            Q.QC_STATUS AS qcStatus,
+            Q.QC_ODATE AS qcOdate,
+            Q.QC_DIRECTOR AS qcDirector,
+            Q.QC_DMSG AS qcDmsg,
+            Q.QC_DATE AS qcDate,
+            Q.QC_WMSG AS qcWmsg,
+            Q.QC_PASS_QTY AS qcPassQty,
+            Q.QC_USAGE AS qcUsage
+        FROM QC Q
+        WHERE Q.QC_ID = #{qcId}
+
+    </select>
+
+    <insert id="insertQc"
+            parameterType="kr.or.chop.P07_qc.dto.QcDTO">
+
+        INSERT INTO QC (
+            QC_ID,
+            QC_LOT,
+            QC_TYPE,
+            QC_CONTENT,
+            QC_QTY,
+            QC_STATUS,
+            QC_ODATE,
+            QC_DIRECTOR,
+            QC_DMSG,
+            QC_DATE,
+            QC_WMSG,
+            QC_PASS_QTY,
+            QC_USAGE
+        )
+        VALUES (
+            'QC' || QC_SEQ.NEXTVAL,
+            #{qcLot},
+            #{qcType},
+            #{qcContent},
+            #{qcQty},
+            #{qcStatus},
+            SYSDATE,
+            #{qcDirector},
+            #{qcDmsg},
+            #{qcDate},
+            #{qcWmsg},
+            #{qcPassQty},
+            'Y'
+        )
+
+    </insert>
+
+    <update id="updateQc"
+            parameterType="kr.or.chop.P07_qc.dto.QcDTO">
+
+        UPDATE QC
+        SET
+            QC_LOT = #{qcLot},
+            QC_TYPE = #{qcType},
+            QC_CONTENT = #{qcContent},
+            QC_QTY = #{qcQty},
+            QC_STATUS = #{qcStatus},
+            QC_DIRECTOR = #{qcDirector},
+            QC_DMSG = #{qcDmsg},
+            QC_DATE = #{qcDate},
+            QC_WMSG = #{qcWmsg},
+            QC_PASS_QTY = #{qcPassQty}
+        WHERE QC_ID = #{qcId}
+
+    </update>
+
+    <update id="deleteQc"
+            parameterType="string">
+
+        UPDATE QC
+        SET QC_USAGE = 'N'
+        WHERE QC_ID = #{qcId}
+
+    </update>
+
+</mapper>
