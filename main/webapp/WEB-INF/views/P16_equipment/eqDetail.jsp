@@ -414,7 +414,7 @@
 			document.querySelector("#stopNowTime").value = time;
 
 			// 모달 열기
-			document.querySelector("#stopOverlay").style.display = "flex";
+			openModal(document.querySelector("#stopOverlay"));
 		});
 	}
 
@@ -424,7 +424,7 @@
 
 		closeStopModal.addEventListener("click", function() {
 
-			document.querySelector("#stopOverlay").style.display = "none";
+			closeModal(document.querySelector("#stopOverlay"));
 		});
 	}
 

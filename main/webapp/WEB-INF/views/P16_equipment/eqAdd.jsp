@@ -239,9 +239,6 @@
 
 </div>
 
-
-
-
 <script>
 	document
 			.querySelector("#openManagerModal")
@@ -249,7 +246,7 @@
 					"click",
 					function() {
 
-						document.querySelector("#managerOverlay").style.display = "flex";
+						openModal(document.querySelector("#managerOverlay"));
 
 						loadManagerList();
 					});
@@ -260,7 +257,7 @@
 					"click",
 					function() {
 
-						document.querySelector("#managerOverlay").style.display = "none";
+						closeModal(document.querySelector("#managerOverlay"));
 					});
 
 	document.querySelector("#managerKeyword").addEventListener("keyup",
@@ -324,7 +321,7 @@
 
 		document.querySelector("#eqManager").value = managerId;
 
-		document.querySelector("#managerOverlay").style.display = "none";
+		closeModal(document.querySelector("#managerOverlay"));
 	}
 
 	document
@@ -350,8 +347,7 @@
 	document.querySelector("#openVendorModal")
 	.addEventListener("click", function () {
 
-		document.querySelector("#vendorOverlay")
-			.style.display = "flex";
+		openModal(document.querySelector("#vendorOverlay"));
 
 		loadVendorList();
 	});
@@ -360,8 +356,7 @@
 	document.querySelector("#closeVendorModal")
 	.addEventListener("click", function () {
 
-		document.querySelector("#vendorOverlay")
-			.style.display = "none";
+		closeModal(document.querySelector("#vendorOverlay"));
 	});
 
 
@@ -438,8 +433,7 @@
 		document.querySelector("#eqVendor")
 			.value = vendorId;
 
-		document.querySelector("#vendorOverlay")
-			.style.display = "none";
+		closeModal(document.querySelector("#vendorOverlay"));
 	});
 	
 	document.querySelector("#wpType")

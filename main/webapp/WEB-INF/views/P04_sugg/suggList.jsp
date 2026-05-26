@@ -293,23 +293,18 @@ function bind() {
 
 function openPwdModal(suggNo) {
 
-	document.querySelector("#modal_sugg_no").value
-		= suggNo;
+	document.querySelector("#modal_sugg_no").value = suggNo;
 	
-	document.querySelector("input[name='sugg_pw']").value
-		= "";
+	document.querySelector("input[name='sugg_pw']").value = "";
 
-	document.querySelector("#pwdModal").style.display
-		= "flex";
+	openModal(document.querySelector("#pwdModal"));
 }
 
 function closePwdModal() {
 
-	document.querySelector("input[name='sugg_pw']").value
-	= "";
+	document.querySelector("input[name='sugg_pw']").value = "";
 	
-	document.querySelector("#pwdModal").style.display
-		= "none";
+	closeModal(document.querySelector("#pwdModal"));
 }
 
 
@@ -346,7 +341,7 @@ function dateCheck() {
  } 
 
  .suggTitle:hover { 
- 	color:var(--main-green); 
+ 	color:  var(--main-green); 
  	text-decoration: underline; 
  } 
 /* .search-box { */
