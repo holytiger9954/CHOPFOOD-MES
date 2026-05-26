@@ -60,82 +60,73 @@
 </div>
 
     <form class="search-box"
-        action="${pageContext.request.contextPath}/equip/list"
-        method="get"
-        style="width:100%; justify-content:space-between;">
-        
-        <div style="display:flex; gap:20px;">
+    action="${pageContext.request.contextPath}/equip/list"
+    method="get">
 
-            <div class="search-item">
-                <label>작업장</label>
+    <div class="search-item">
+        <label>작업장</label>
 
-<select name="eqWpid">
-    <option value="">전체</option>
+        <select name="eqWpid">
+            <option value="">전체</option>
 
-    <c:forEach var="wp" items="${wpList}">
-        <option value="${wp.wpId}"
-            <c:if test="${search.eqWpid == wp.wpId}">selected</c:if>>
-            ${wp.wpName}
-        </option>
-    </c:forEach>
-</select>
-            </div>
+            <c:forEach var="wp" items="${wpList}">
+                <option value="${wp.wpId}"
+                    <c:if test="${search.eqWpid == wp.wpId}">selected</c:if>>
+                    ${wp.wpName}
+                </option>
+            </c:forEach>
+        </select>
+    </div>
 
-            <div class="search-item">
-                <label>상태</label>
+    <div class="search-item">
+        <label>상태</label>
 
-                <select name="eqStatus">
-                    <option value="0">전체</option>
+        <select name="eqStatus">
+            <option value="0">전체</option>
 
-                    <option value="10"
-                        <c:if test="${search.eqStatus == 10}">selected</c:if>>
-                        가동중
-                    </option>
+            <option value="10"
+                <c:if test="${search.eqStatus == 10}">selected</c:if>>
+                가동중
+            </option>
 
-                    <option value="20"
-                        <c:if test="${search.eqStatus == 20}">selected</c:if>>
-                        정지
-                    </option>
+            <option value="20"
+                <c:if test="${search.eqStatus == 20}">selected</c:if>>
+                정지
+            </option>
 
-                    <option value="30"
-                        <c:if test="${search.eqStatus == 30}">selected</c:if>>
-                        점검중
-                    </option>
+            <option value="30"
+                <c:if test="${search.eqStatus == 30}">selected</c:if>>
+                점검중
+            </option>
 
-                    <option value="40"
-                        <c:if test="${search.eqStatus == 40}">selected</c:if>>
-                        고장
-                    </option>
-                </select>
-            </div>
+            <option value="40"
+                <c:if test="${search.eqStatus == 40}">selected</c:if>>
+                고장
+            </option>
+        </select>
+    </div>
 
-        </div>
+    <div class="search-item keyword">
+        <label>설비명/설비코드</label>
 
-        <div style="display:flex; align-items:flex-end; gap:8px;">
+        <input type="text"
+            name="searchKeyword"
+            value="${search.searchKeyword}"
+            placeholder="내용을 입력하세요.">
+    </div>
 
-            <div class="search-item">
-                <label>설비명/설비코드</label>
+    <div class="search-btn-area">
+        <button type="submit" class="btn btn-main">
+            검색
+        </button>
 
-                <input type="text"
-                    name="searchKeyword"
-                    value="${search.searchKeyword}"
-                    placeholder="내용을 입력하세요."
-                    style="width:360px;">
-            </div>
+        <a class="btn btn-white"
+            href="${pageContext.request.contextPath}/equip/list">
+            초기화
+        </a>
+    </div>
 
-            <button type="submit"
-                class="btn btn-main">
-                검색
-            </button>
-            
-            <a class="btn btn-white"
-			   href="${pageContext.request.contextPath}/equip/list">
-			    초기화
-		    </a>
-
-        </div>
-
-    </form>
+	</form>
 
     <div class="table-wrap">
 
@@ -280,19 +271,40 @@ function bindCardFilter() {
     const statusSelect =
         document.querySelector("select[name='eqStatus']");
 
-    if (!allCard || !eqCards.length || !form || !statusSelect) {
+    if (!allCard || !eqCards.length || !form) {
         return;
     }
 
-    const currentStatus =
-        statusSelect.value;
+    const params =
+        new URLSearchParams(window.location.search);
 
-    // active 복원
-    if (currentStatus == "0") {
+    const selectedStatusList =
+        params.getAll("eqStatusList");
+
+    // 카드 필터를 쓸 때 상태 select는 항상 전체로 표시
+    if (statusSelect) {
+        statusSelect.value = "0";
+    }
+
+    // 검색 버튼만 눌러도 기존 카드 선택 유지되도록 form에 hidden input 복원
+    syncSelectedStatusToForm(selectedStatusList);
+
+    // URL 기준으로 active 복원
+    if (selectedStatusList.length === 0) {
+
         allCard.classList.add("active");
+
     } else {
+
+        allCard.classList.remove("active");
+
         eqCards.forEach(card => {
-            if (card.dataset.cardType == currentStatus) {
+
+            const cardType =
+                card.dataset.cardType;
+
+            if (selectedStatusList.includes(cardType)) {
+
                 card.classList.add("active");
             }
         });
@@ -300,16 +312,106 @@ function bindCardFilter() {
 
     // 전체 설비 클릭
     allCard.addEventListener("click", () => {
-        statusSelect.value = "0";
-        form.submit();
+
+        eqCards.forEach(card => {
+            card.classList.remove("active");
+        });
+
+        allCard.classList.add("active");
+
+        if (statusSelect) {
+            statusSelect.value = "0";
+        }
+
+        submitCardFilter([]);
     });
 
     // 상태 카드 클릭
     eqCards.forEach(card => {
+
         card.addEventListener("click", () => {
-            statusSelect.value = card.dataset.cardType;
-            form.submit();
+
+            card.classList.toggle("active");
+
+            allCard.classList.remove("active");
+
+            const activeCards =
+                document.querySelectorAll(".eqCard .eq-card.active");
+
+            const selectedValues = [];
+
+            activeCards.forEach(activeCard => {
+                selectedValues.push(activeCard.dataset.cardType);
+            });
+
+            if (selectedValues.length === 0) {
+
+                allCard.classList.add("active");
+
+                if (statusSelect) {
+                    statusSelect.value = "0";
+                }
+
+                submitCardFilter([]);
+                return;
+            }
+
+            // 카드 필터는 hidden으로만 보내고, 상태 select는 전체로 고정
+            if (statusSelect) {
+                statusSelect.value = "0";
+            }
+
+            submitCardFilter(selectedValues);
         });
     });
+
+    // 현재 선택값을 form hidden input으로 맞춰주는 함수
+    function syncSelectedStatusToForm(selectedValues) {
+
+        form.querySelectorAll("input[name='eqStatusList']").forEach(input => {
+            input.remove();
+        });
+
+        selectedValues.forEach(status => {
+
+            const input =
+                document.createElement("input");
+
+            input.type = "hidden";
+            input.name = "eqStatusList";
+            input.value = status;
+
+            form.appendChild(input);
+        });
+    }
+
+    // 카드 클릭 시 submit
+    function submitCardFilter(selectedValues) {
+
+        form.querySelectorAll("input[name='eqStatusList']").forEach(input => {
+            input.remove();
+        });
+
+        selectedValues.forEach(status => {
+
+            const input =
+                document.createElement("input");
+
+            input.type = "hidden";
+            input.name = "eqStatusList";
+            input.value = status;
+
+            form.appendChild(input);
+        });
+
+        const pageInput =
+            form.querySelector("input[name='page']");
+
+        if (pageInput) {
+            pageInput.value = 1;
+        }
+
+        form.submit();
+    }
 }
 </script>

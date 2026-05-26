@@ -24,6 +24,7 @@ public class EqDAOImpl implements EqDAO {
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		paramMap.put("eqWpid", eqDTO.getEqWpid());
 		paramMap.put("eqStatus", eqDTO.getEqStatus());
+		paramMap.put("eqStatusList", eqDTO.getEqStatusList());
 		paramMap.put("searchKeyword", eqDTO.getSearchKeyword());
 		paramMap.put("page", pageInfo);
 
@@ -37,6 +38,7 @@ public class EqDAOImpl implements EqDAO {
 
 	    paramMap.put("eqWpid", eqDTO.getEqWpid());
 	    paramMap.put("eqStatus", eqDTO.getEqStatus());
+	    paramMap.put("eqStatusList", eqDTO.getEqStatusList());
 	    paramMap.put("searchKeyword", eqDTO.getSearchKeyword());
 
 	    return sqlSession.selectOne(

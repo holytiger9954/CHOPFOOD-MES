@@ -218,24 +218,56 @@
 			</div>
 
 			<div class="pagination">
-
-				<c:forEach begin="${mtPage.startPage}" end="${mtPage.endPage}"
-					var="i">
-
-					<c:choose>
-						<c:when test="${i == mtPage.currentPage}">
-							<a class="active">${i}</a>
-						</c:when>
-
-						<c:otherwise>
-							<a
-								href="${pageContext.request.contextPath}/equip/detail?eqId=${eqp.eqId}&mtPage=${i}&runPage=${runPage.currentPage}">
-								${i} </a>
-						</c:otherwise>
-					</c:choose>
-
-				</c:forEach>
-
+			
+			    <c:choose>
+			        <c:when test="${mtPage.currentPage == 1}">
+			            <a class="disabled">&laquo;</a>
+			        </c:when>
+			        <c:otherwise>
+			            <a href="${pageContext.request.contextPath}/equip/detail?eqId=${eqp.eqId}&mtPage=1&runPage=${runPage.currentPage}">&laquo;</a>
+			        </c:otherwise>
+			    </c:choose>
+			
+			    <c:choose>
+			        <c:when test="${mtPage.currentPage == 1}">
+			            <a class="disabled">&lt;</a>
+			        </c:when>
+			        <c:otherwise>
+			            <a href="${pageContext.request.contextPath}/equip/detail?eqId=${eqp.eqId}&mtPage=${mtPage.currentPage - 1}&runPage=${runPage.currentPage}">&lt;</a>
+			        </c:otherwise>
+			    </c:choose>
+			
+			    <c:forEach begin="${mtPage.startPage}" end="${mtPage.endPage}" var="i">
+			        <c:choose>
+			            <c:when test="${i == mtPage.currentPage}">
+			                <a class="active">${i}</a>
+			            </c:when>
+			            <c:otherwise>
+			                <a href="${pageContext.request.contextPath}/equip/detail?eqId=${eqp.eqId}&mtPage=${i}&runPage=${runPage.currentPage}">
+			                    ${i}
+			                </a>
+			            </c:otherwise>
+			        </c:choose>
+			    </c:forEach>
+			
+			    <c:choose>
+			        <c:when test="${mtPage.currentPage == mtPage.maxPage}">
+			            <a class="disabled">&gt;</a>
+			        </c:when>
+			        <c:otherwise>
+			            <a href="${pageContext.request.contextPath}/equip/detail?eqId=${eqp.eqId}&mtPage=${mtPage.currentPage + 1}&runPage=${runPage.currentPage}">&gt;</a>
+			        </c:otherwise>
+			    </c:choose>
+			
+			    <c:choose>
+			        <c:when test="${mtPage.currentPage == mtPage.maxPage}">
+			            <a class="disabled">&raquo;</a>
+			        </c:when>
+			        <c:otherwise>
+			            <a href="${pageContext.request.contextPath}/equip/detail?eqId=${eqp.eqId}&mtPage=${mtPage.maxPage}&runPage=${runPage.currentPage}">&raquo;</a>
+			        </c:otherwise>
+			    </c:choose>
+			
 			</div>
 
 		</div>
@@ -294,24 +326,56 @@
 			</div>
 
 			<div class="pagination">
-
-				<c:forEach begin="${runPage.startPage}" end="${runPage.endPage}"
-					var="i">
-
-					<c:choose>
-						<c:when test="${i == runPage.currentPage}">
-							<a class="active">${i}</a>
-						</c:when>
-
-						<c:otherwise>
-							<a
-								href="${pageContext.request.contextPath}/equip/detail?eqId=${eqp.eqId}&mtPage=${mtPage.currentPage}&runPage=${i}">
-								${i} </a>
-						</c:otherwise>
-					</c:choose>
-
-				</c:forEach>
-
+			
+			    <c:choose>
+			        <c:when test="${runPage.currentPage == 1}">
+			            <a class="disabled">&laquo;</a>
+			        </c:when>
+			        <c:otherwise>
+			            <a href="${pageContext.request.contextPath}/equip/detail?eqId=${eqp.eqId}&mtPage=${mtPage.currentPage}&runPage=1">&laquo;</a>
+			        </c:otherwise>
+			    </c:choose>
+			
+			    <c:choose>
+			        <c:when test="${runPage.currentPage == 1}">
+			            <a class="disabled">&lt;</a>
+			        </c:when>
+			        <c:otherwise>
+			            <a href="${pageContext.request.contextPath}/equip/detail?eqId=${eqp.eqId}&mtPage=${mtPage.currentPage}&runPage=${runPage.currentPage - 1}">&lt;</a>
+			        </c:otherwise>
+			    </c:choose>
+			
+			    <c:forEach begin="${runPage.startPage}" end="${runPage.endPage}" var="i">
+			        <c:choose>
+			            <c:when test="${i == runPage.currentPage}">
+			                <a class="active">${i}</a>
+			            </c:when>
+			            <c:otherwise>
+			                <a href="${pageContext.request.contextPath}/equip/detail?eqId=${eqp.eqId}&mtPage=${mtPage.currentPage}&runPage=${i}">
+			                    ${i}
+			                </a>
+			            </c:otherwise>
+			        </c:choose>
+			    </c:forEach>
+			
+			    <c:choose>
+			        <c:when test="${runPage.currentPage == runPage.maxPage}">
+			            <a class="disabled">&gt;</a>
+			        </c:when>
+			        <c:otherwise>
+			            <a href="${pageContext.request.contextPath}/equip/detail?eqId=${eqp.eqId}&mtPage=${mtPage.currentPage}&runPage=${runPage.currentPage + 1}">&gt;</a>
+			        </c:otherwise>
+			    </c:choose>
+			
+			    <c:choose>
+			        <c:when test="${runPage.currentPage == runPage.maxPage}">
+			            <a class="disabled">&raquo;</a>
+			        </c:when>
+			        <c:otherwise>
+			            <a href="${pageContext.request.contextPath}/equip/detail?eqId=${eqp.eqId}&mtPage=${mtPage.currentPage}&runPage=${runPage.maxPage}">&raquo;</a>
+			        </c:otherwise>
+			    </c:choose>
+			
 			</div>
 
 		</div>
