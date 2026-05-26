@@ -19,6 +19,8 @@ public class AdminDTO {
 	private int empInOffice;
 	private Date empHiredate;
 	
+	private String empImg;
+	
 	private String deptName;
 	private String deptCode;
 	private Integer deptCount;

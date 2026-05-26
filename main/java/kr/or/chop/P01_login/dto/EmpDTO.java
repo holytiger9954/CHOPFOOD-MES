@@ -24,5 +24,6 @@ public class EmpDTO {
 	private Date empHiredate;
 	
 	private String empImg;
+	private String delImg;
 
 }

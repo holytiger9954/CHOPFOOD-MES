@@ -19,7 +19,16 @@
 	    	
 	    	<!-- 프로필 -->
 	        <div class="header-profile">
-	            <span class="profile-img"></span>
+	            <span class="profile-img">
+	            	<c:choose>
+					    <c:when test="${not empty sessionScope.loginUser.empImg}">
+					        <img src="${pageContext.request.contextPath}${sessionScope.loginUser.empImg}" alt="프로필 이미지">
+					    </c:when>
+					    <c:otherwise>
+					        <img src="${pageContext.request.contextPath}/upload/P02_login/basic.png" alt="기본 프로필 이미지">
+					    </c:otherwise>
+					</c:choose>
+	            </span>
 	            <span class="profile-name">
 	            	<a href="${pageContext.request.contextPath}/mypage?empId=${sessionScope.loginUser.empId}">
 		            	${sessionScope.loginUser.empName} (${sessionScope.loginUser.empId})

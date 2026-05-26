@@ -114,7 +114,8 @@
 		e.emp_auth AS empAuth,
 		e.emp_first AS empFirst,
 		e.emp_inoffice AS empInOffice,
-		e.emp_hiredate AS empHiredate
+		e.emp_hiredate AS empHiredate,
+		e.emp_img AS empImg
 		FROM emp e
 		LEFT JOIN dept d
 		ON e.emp_deptno = d.deptno

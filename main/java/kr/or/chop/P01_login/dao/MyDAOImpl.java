@@ -30,5 +30,20 @@ public class MyDAOImpl implements MyDAO {
 	public List<SuggDTO> selectAllSugg(EmpDTO loginUser) {
 		return session.selectList("mapper.P01_login.selectAllSugg", loginUser);
 	}
+
+	@Override
+	public int updateUser(EmpDTO empDTO) {
+		return session.update("mapper.P01_login.updateUser", empDTO);
+	}
+
+	@Override
+	public int updateUserImg(EmpDTO empDTO) {
+		return session.update("mapper.P01_login.updateUserImg", empDTO);
+	}
+
+	@Override
+	public EmpDTO reSelectUserInfo(EmpDTO loginUser) {
+		return session.selectOne("mapper.P01_login.reSelectUserInfo", loginUser);
+	}
 	
 }

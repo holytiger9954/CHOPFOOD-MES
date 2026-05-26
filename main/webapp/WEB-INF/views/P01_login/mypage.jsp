@@ -31,7 +31,7 @@
             <div class="emp-profile-img">
            		<c:choose>
 				    <c:when test="${not empty user.empImg}">
-				        <img src="${pageContext.request.contextPath}/${user.empImg}" alt="프로필 이미지">
+				        <img src="${pageContext.request.contextPath}${user.empImg}" alt="프로필 이미지">
 				    </c:when>
 				    <c:otherwise>
 				        <img src="${pageContext.request.contextPath}/upload/P02_login/basic.png" alt="기본 프로필 이미지">

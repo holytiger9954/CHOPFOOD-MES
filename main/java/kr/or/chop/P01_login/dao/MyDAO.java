@@ -11,5 +11,10 @@ public interface MyDAO {
 	public List<UserWorkDTO> selectAllWo (EmpDTO loginUser);
 	public List<UserWorkDTO> selectAllQc (EmpDTO loginUser);
 	public List<SuggDTO> selectAllSugg(EmpDTO loginUser);
+	
+	public int updateUser(EmpDTO empDTO);
+	public int updateUserImg(EmpDTO empDTO);
+	
+	public EmpDTO reSelectUserInfo(EmpDTO loginUser);
 
 }
