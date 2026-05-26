@@ -14,6 +14,8 @@ public interface WorkDAO {
 	
 	public WorkDTO selectWorkDetail(WorkDTO workDTO);
 	public List<WorkDTO> selectWorkProcList(WorkDTO workDTO);
+	public List<WorkDTO> selectProcWpList(WorkDTO workDTO);
+	public List<WorkDTO> selectProcEqList(WorkDTO workDTO);
 	
 	public List<PlanDTO> selectWorkPlanList();
 	public List<WorkDTO> selectWorkerList(WorkDTO workDTO);

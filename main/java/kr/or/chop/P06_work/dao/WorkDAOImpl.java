@@ -48,6 +48,16 @@ public class WorkDAOImpl implements WorkDAO {
 	}
 	
 	@Override
+	public List<WorkDTO> selectProcWpList(WorkDTO workDTO) {
+		return session.selectList("mapper.P06_work.selectProcWpList", workDTO);
+	}
+
+	@Override
+	public List<WorkDTO> selectProcEqList(WorkDTO workDTO) {
+		return session.selectList("mapper.P06_work.selectProcEqList", workDTO);
+	}
+	
+	@Override
 	public List<PlanDTO> selectWorkPlanList() {
 		return session.selectList("mapper.P06_work.selectWorkPlanList");
 	}

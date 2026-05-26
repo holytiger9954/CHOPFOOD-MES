@@ -295,22 +295,26 @@
 								<div class="proc-place">
 									<div>
 										<c:choose>
-											<c:when test="${empty proc.wpName}">
+											<c:when test="${empty proc.wpList}">
 												작업장 미지정
 											</c:when>
 											<c:otherwise>
-												${proc.wpName} (${proc.wpId})
+												<c:forEach var="wp" items="${proc.wpList}" varStatus="status">
+													${wp.wpName} (${wp.wpId})<c:if test="${!status.last}">, </c:if>
+												</c:forEach>
 											</c:otherwise>
 										</c:choose>
 									</div>
 
 									<div>
 										<c:choose>
-											<c:when test="${empty proc.eqName}">
+											<c:when test="${empty proc.eqList}">
 												설비 미지정
 											</c:when>
 											<c:otherwise>
-												${proc.eqName} (${proc.eqId})
+												<c:forEach var="equip" items="${proc.eqList}" varStatus="status">
+													${equip.eqName} (${equip.eqId})<c:if test="${!status.last}">, </c:if>
+												</c:forEach>
 											</c:otherwise>
 										</c:choose>
 									</div>

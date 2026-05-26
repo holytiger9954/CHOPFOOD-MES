@@ -289,13 +289,7 @@
 			pr.proc_id procId,
 			pr.proc_name procName,
 			pr.proc_content procContent,
-			pr.proc_wp_type procWpType,
-	
-			MIN(wp.wp_id) wpId,
-			MIN(wp.wp_name) wpName,
-	
-			MIN(eq.eq_id) eqId,
-			MIN(eq.eq_name) eqName
+			pr.proc_wp_type procWpType
 	
 		FROM work w
 			LEFT OUTER JOIN plan p 
@@ -309,24 +303,37 @@
 			LEFT OUTER JOIN process pr
 				ON rd.rout_dtl_proc = pr.proc_id
 				AND pr.proc_usage = 'Y'
-			LEFT OUTER JOIN workplace wp
-				ON wp.wp_type = pr.proc_wp_type
-				AND wp.wp_usage = 'Y'
-			LEFT OUTER JOIN equipment eq
-				ON eq.eq_wpid = wp.wp_id
 	
 		WHERE w.work_usage = 'Y'
 			AND w.work_id = #{workId}
 	
-		GROUP BY
-			rd.rout_dtl_id,
-			rd.rout_dtl_step,
-			pr.proc_id,
-			pr.proc_name,
-			pr.proc_content,
-			pr.proc_wp_type
-	
 		ORDER BY rd.rout_dtl_step ASC, rd.rout_dtl_id ASC
+	</select>
+	
+	<select id="selectProcWpList" parameterType="workDTO" resultType="workDTO">
+		SELECT
+			wp.wp_id wpId,
+			wp.wp_name wpName,
+			wp.wp_type wpType
+		FROM workplace wp
+		WHERE wp.wp_usage = 'Y'
+			AND wp.wp_type = #{procWpType}
+		ORDER BY wp.wp_id ASC
+	</select>
+	
+	<select id="selectProcEqList" parameterType="workDTO" resultType="workDTO">
+		SELECT
+			eq.eq_id eqId,
+			eq.eq_name eqName,
+			wp.wp_id wpId,
+			wp.wp_name wpName,
+			wp.wp_type wpType
+		FROM equipment eq
+			INNER JOIN workplace wp
+				ON eq.eq_wpid = wp.wp_id
+		WHERE wp.wp_usage = 'Y'
+			AND wp.wp_type = #{procWpType}
+		ORDER BY wp.wp_id ASC, eq.eq_id ASC
 	</select>
 	
 	<select id="selectWorkPlanList" resultType="planDTO">

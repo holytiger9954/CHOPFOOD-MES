@@ -73,6 +73,10 @@ public class WorkDTO {
     private String eqId;
     private String eqName;
     
+    // 공정별 작업장/설비 목록
+    private List<WorkDTO> wpList;
+    private List<WorkDTO> eqList;
+    
     public int getProgressRate() {
     	if (workOrderQty <= 0) {
     		return 0;

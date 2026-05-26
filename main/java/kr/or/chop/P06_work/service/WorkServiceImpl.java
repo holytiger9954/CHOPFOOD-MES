@@ -38,7 +38,24 @@ public class WorkServiceImpl implements WorkService {
 
 	@Override
 	public List<WorkDTO> selectWorkProcList(WorkDTO workDTO) {
-		return workDAO.selectWorkProcList(workDTO);
+		List<WorkDTO> procList = workDAO.selectWorkProcList(workDTO);
+
+		for (WorkDTO proc : procList) {
+			proc.setWpList(workDAO.selectProcWpList(proc));
+			proc.setEqList(workDAO.selectProcEqList(proc));
+		}
+
+		return procList;
+	}
+	
+	@Override
+	public List<WorkDTO> selectProcWpList(WorkDTO workDTO) {
+		return workDAO.selectProcWpList(workDTO);
+	}
+
+	@Override
+	public List<WorkDTO> selectProcEqList(WorkDTO workDTO) {
+		return workDAO.selectProcEqList(workDTO);
 	}
 
 	@Override
