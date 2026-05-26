@@ -49,5 +49,55 @@ public class QcServiceImpl implements QcService{
 	public int deleteQc(String qcId) {
 		return qcDAO.deleteQc(qcId);
 	}
+	
+	@Override
+	public List<QcDTO> selectQcLotList() {
+	    return qcDAO.selectQcLotList();
+	}
+	
+	@Override
+	public int updateQcResult(QcDTO dto) {
+		int result = qcDAO.updateQcResult(dto);
+
+	    if (dto.getQcStatus() == 30) {
+	        qcDAO.updateLotByQcResult(dto);
+	    }
+	    if (dto.getDefectType() != null) {
+
+	        for (int i = 0; i < dto.getDefectType().length; i++) {
+
+	            QcDTO def = new QcDTO();
+
+	            def.setQcId(dto.getQcId());
+	            def.setDefType(dto.getDefectType()[i]);
+	            def.setDefQty(dto.getDefectQty()[i]);
+	            def.setDefAction(dto.getDefectAction()[i]);
+	            def.setDefDiscard(dto.getDefectDiscard()[i]);
+
+	            qcDAO.insertDefLog(def);
+	        }
+	    }
+
+	    return result;
+	}
+	
+	@Override
+	public List<QcDTO> selectDefectTypeList() {
+	    return qcDAO.selectDefectTypeList();
+	}
+	
+	@Override
+	public List<QcDTO> selectWarehouseListByItem(String itemId) {
+
+	    return qcDAO.selectWarehouseListByItem(itemId);
+
+	}
+
+	@Override
+	public List<QcDTO> selectSectionListByWarehouse(String whId) {
+
+	    return qcDAO.selectSectionListByWarehouse(whId);
+
+	}
 
 }

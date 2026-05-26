@@ -25,6 +25,10 @@ public class RefreshDAOImpl implements RefreshDAO {
 		return session.update("mapper.P02_dashboard.updatePlanStatusAuto");
 	}
 	
+	@Override
+	public int updateQcStatusAuto() {
+		return session.update("mapper.P02_dashboard.updateQcStatusAuto");
+	}
 	
 	
 }

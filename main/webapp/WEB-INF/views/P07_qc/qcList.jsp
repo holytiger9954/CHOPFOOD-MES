@@ -46,20 +46,22 @@
     <div class="card warning qc-card"
     	data-card-type="warning">
         <div class="card-title">불량률</div>
-        <div class="card-value">${summary.failRate}%</div>
+        <div class="card-value">${summary.failRate} <span style="color: #555; font-size: 20px;">%</span></div>
         <div class="card-subtitle">전체 대비 불량률</div>
     </div>
 
 </div>
 
-    <form action="${pageContext.request.contextPath}/qc/list" method="get"
+    <form action="${pageContext.request.contextPath}/quality/list" method="get"
         class="search-box">
 
         <div class="search-item">
             <label>기간</label>
+		<div style="display: flex; align-items: center; gap: 8px;">
             <input type="date" name="startDate" value="${search.startDate}">
             <span>~</span>
             <input type="date" name="endDate" value="${search.endDate}">
+        </div>
         </div>
 
         <div class="search-item">
@@ -77,7 +79,7 @@
             <label>검색어</label>
             <input type="text" name="searchKeyword"
                 value="${search.searchKeyword}"
-                placeholder="검사코드 / LOT / 검사내용 / 담당자">
+                placeholder="검사코드 / LOT">
         </div>
 
         <button type="submit" class="btn btn-main">검색</button>
@@ -89,11 +91,10 @@
                 <th>검사코드</th>
                 <th>LOT</th>
                 <th>검사유형</th>
-                <th>검사내용</th>
                 <th>검사수량</th>
                 <th>합격수량</th>
                 <th>상태</th>
-                <th>검사일</th>
+                <th>검사자</th>
             </tr>
         </thead>
 
@@ -109,13 +110,31 @@
 
                 <c:otherwise>
                     <c:forEach var="qc" items="${qcList}">
-                        <tr onclick="location.href='${pageContext.request.contextPath}/qc/detail?qcId=${qc.qcId}'">
+                        <tr onclick="location.href='${pageContext.request.contextPath}/quality/detail?qcId=${qc.qcId}'">
                             <td>${qc.qcId}</td>
                             <td>${qc.qcLot}</td>
-                            <td>${qc.qcType}</td>
-                            <td>${qc.qcContent}</td>
-                            <td>${qc.qcQty}</td>
-                            <td>${qc.qcPassQty}</td>
+                            <td>
+                            	<c:choose>
+                                    <c:when test="${qc.qcType == 10}">
+                                        <span class="status status-warning">수입검사</span>
+                                    </c:when>
+                                    <c:when test="${qc.qcType == 20}">
+                                        <span class="status status-safe">공정검사</span>
+                                    </c:when>
+                                    <c:when test="${qc.qcType == 30}">
+                                        <span class="status status-success">출하검사</span>
+                                    </c:when>
+                                    <c:when test="${qc.qcType == 0}">
+                                        <span class="status status-danger">기타</span>
+                                    </c:when>
+                                </c:choose>
+                            </td>
+                            <td>
+                            	<fmt:formatNumber value="${qc.qcQty}" pattern="#,###" />
+                            </td>
+                            <td>
+                            	<fmt:formatNumber value="${qc.qcPassQty}" pattern="#,###" />
+                            </td>
 
                             <td>
                                 <c:choose>
@@ -136,10 +155,10 @@
                                     </c:otherwise>
                                 </c:choose>
                             </td>
-
                             <td>
-                                <fmt:formatDate value="${qc.qcDate}" pattern="yyyy-MM-dd" />
+                            	${qc.workerName}(${qc.qcWorker})
                             </td>
+
                         </tr>
                     </c:forEach>
                 </c:otherwise>
@@ -151,7 +170,6 @@
 </div>
 <style>
 	.card {
-		cursor: pointer;
     	width: 155px;
 	    	   
 	    display: flex;
@@ -161,28 +179,4 @@
 	    gap: 10px;
 	}
 	
-	.card.info:hover, .card.info.active {
-		border: 1px solid var(--dark-gray);
-		background-color : var(--dark-gray);
-	}
-	
-	.card.success:hover, .card.success.active {
-		background-color : var(--success);
-	}
-	
-	.card.safe:hover, .card.safe.active {
-		background-color : var(--safe);
-	}
-	
-	.card.warning:hover, .card.warning.active {
-		background-color : var(--warning);
-	}
-	
-	.card.danger:hover, .card.danger.active {
-		background-color : var(--danger);
-	}
-	
-	.card:hover div, .card.active div {
-		color : white !important;
-	}
 </style>

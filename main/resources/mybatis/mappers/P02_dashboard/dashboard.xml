@@ -46,6 +46,31 @@
 				END,
 			p.plan_mdate = SYSDATE + (9/24)
 		WHERE p.plan_usage = 'Y' AND p.plan_status != 0 AND p.plan_status != 30
+	</update>
+	
+	<update id="updateQcStatusAuto">
+
+	    UPDATE QC Q
+	    SET
+	        Q.QC_STATUS =
+	            CASE
+	                WHEN NVL(Q.QC_PASS_QTY, 0) >= NVL(Q.QC_QTY, 0)
+	                    AND NVL(Q.QC_QTY, 0) > 0 THEN 30
+	
+	                WHEN TRUNC(Q.QC_DATE) <![CDATA[<]]> TRUNC(SYSDATE + (9/24))
+	                    AND NVL(Q.QC_PASS_QTY, 0) <![CDATA[<]]> NVL(Q.QC_QTY, 0) THEN 40
+	
+	                WHEN TRUNC(Q.QC_DATE) = TRUNC(SYSDATE + (9/24))
+	                    AND NVL(Q.QC_PASS_QTY, 0) <![CDATA[<]]> NVL(Q.QC_QTY, 0) THEN 20
+	
+	                WHEN TRUNC(Q.QC_DATE) <![CDATA[>]]> TRUNC(SYSDATE + (9/24)) THEN 10
+	
+	                ELSE 10
+	            END
+	    WHERE Q.QC_USAGE = 'Y'
+	      AND Q.QC_STATUS != 0
+	      AND Q.QC_STATUS != 30
+	
 	</update>	
 	
 </mapper>

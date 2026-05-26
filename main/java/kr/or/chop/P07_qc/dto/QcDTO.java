@@ -20,15 +20,51 @@ public class QcDTO {
 	private String qcWmsg;
 	private int qcPassQty;
 	private String qcUsage;
+	private String qcTypeName;
+	private String qcStatusName;
+
+	private String directorName;
+	private String workerName;
+
+	
+	private String qcWorker;
+
+	private String lotId;
+	private int lotQty;
+	private String itemId;
+	private String itemName;
 	
 	private int todayQty;
 	private int passQty;
 	private int failQty;
 	private double failRate;
 	
+	private String defTypeId;
+	private String defTypeName;
+	private String defStandardAction;
+	
+	private String awhsec;
+	private String secId;
+	private String whId;
+	private String whName;
+	private String whTypeNo;
+	
+	private int secQty;
+	private int secPrevQty;
+	
 	private String startDate;
 	private String endDate;
 	private String searchKeyword;
 	private String searchType;
+	
+	private String[] defectType;
+	private int[] defectQty;
+	private String[] defectAction;
+	private String[] defectDiscard;
+	
+	private String defType;
+	private int defQty;
+	private String defAction;
+	private String defDiscard;
 	
 }

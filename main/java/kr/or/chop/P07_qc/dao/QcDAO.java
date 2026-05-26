@@ -14,5 +14,11 @@ public interface QcDAO {
 	int insertQc(QcDTO dto);
 	int updateQc(QcDTO dto);
 	int deleteQc(String qcId);
-	
+	List<QcDTO> selectQcLotList();
+	int updateQcResult(QcDTO dto);
+	int updateLotByQcResult(QcDTO dto);
+	List<QcDTO> selectDefectTypeList();
+	List<QcDTO> selectWarehouseListByItem(String itemId);
+	List<QcDTO> selectSectionListByWarehouse(String whId);
+	int insertDefLog(QcDTO dto);
 }

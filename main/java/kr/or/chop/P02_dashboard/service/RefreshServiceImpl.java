@@ -18,6 +18,7 @@ public class RefreshServiceImpl implements RefreshService{
 		dao.updateWorkStatusAuto();
 		dao.updatePlanWpQty();
 		dao.updatePlanStatusAuto();
+		dao.updateQcStatusAuto();
 	}
 
 }

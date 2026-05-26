@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import kr.or.chop.P02_dashboard.service.RefreshService;
 import kr.or.chop.P07_qc.dto.QcDTO;
 import kr.or.chop.P07_qc.service.QcService;
 import kr.or.chop.common.pagination.PageInfo;
@@ -17,30 +18,29 @@ import kr.or.chop.common.pagination.Pagination;
 @RequestMapping("/quality")
 public class QcListController {
 
-	 @Autowired
-	    private QcService qcService;
+	@Autowired
+	private QcService qcService;
+	@Autowired
+	RefreshService refService;
 
-	    @RequestMapping("/list")
-	    public String qcList(QcDTO qcDTO, Model model,
-	            @RequestParam(value = "page", defaultValue = "1") int currentPage) {
+	@RequestMapping("/list")
+	public String qcList(QcDTO qcDTO, Model model, @RequestParam(value = "page", defaultValue = "1") int currentPage) {
 
-	        int listCount = qcService.selectQcCount(qcDTO);
+		refService.refreshStatus();
+		
+		int listCount = qcService.selectQcCount(qcDTO);
 
-	        PageInfo pageInfo = Pagination.getPageInfo(
-	                listCount,
-	                currentPage,
-	                5,
-	                10);
+		PageInfo pageInfo = Pagination.getPageInfo(listCount, currentPage, 5, 10);
 
-	        List<QcDTO> qcList = qcService.selectQcList(qcDTO, pageInfo);
-	        QcDTO summary = qcService.selectQcSummary(qcDTO);
+		List<QcDTO> qcList = qcService.selectQcList(qcDTO, pageInfo);
+		QcDTO summary = qcService.selectQcSummary(qcDTO);
 
-	        model.addAttribute("qcList", qcList);
-	        model.addAttribute("summary", summary);
-	        model.addAttribute("search", qcDTO);
-	        model.addAttribute("page", pageInfo);
+		model.addAttribute("qcList", qcList);
+		model.addAttribute("summary", summary);
+		model.addAttribute("search", qcDTO);
+		model.addAttribute("page", pageInfo);
 
-	        return "P07_qc/qcList.tiles";
-	    }
-	
+		return "P07_qc/qcList.tiles";
+	}
+
 }

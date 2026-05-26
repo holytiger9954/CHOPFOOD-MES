@@ -20,5 +20,14 @@ public interface QcService {
 	int updateQc(QcDTO dto);
 
 	int deleteQc(String qcId);
+	
+	List<QcDTO> selectQcLotList();
+	
+	int updateQcResult(QcDTO dto);
+	
+	List<QcDTO> selectDefectTypeList();
+	
+	List<QcDTO> selectWarehouseListByItem(String itemId);
 
+	List<QcDTO> selectSectionListByWarehouse(String whId);
 }

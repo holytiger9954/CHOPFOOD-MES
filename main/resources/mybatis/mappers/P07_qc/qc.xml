@@ -37,32 +37,55 @@
             resultType="kr.or.chop.P07_qc.dto.QcDTO">
 
         SELECT *
-        FROM (
-            SELECT ROWNUM RN, A.*
-            FROM (
-                SELECT
-                    Q.QC_ID AS qcId,
-                    Q.QC_LOT AS qcLot,
-                    Q.QC_TYPE AS qcType,
-                    Q.QC_CONTENT AS qcContent,
-                    Q.QC_QTY AS qcQty,
-                    Q.QC_STATUS AS qcStatus,
-                    Q.QC_ODATE AS qcOdate,
-                    Q.QC_DIRECTOR AS qcDirector,
-                    Q.QC_DMSG AS qcDmsg,
-                    Q.QC_DATE AS qcDate,
-                    Q.QC_WMSG AS qcWmsg,
-                    Q.QC_PASS_QTY AS qcPassQty,
-                    Q.QC_USAGE AS qcUsage
-                FROM QC Q
-
-                <include refid="qcWhere" />
-
-                ORDER BY Q.QC_ID DESC
-            ) A
-            WHERE ROWNUM <![CDATA[<=]]> #{page.endRow}
-        )
-        WHERE RN <![CDATA[>=]]> #{page.startRow}
+	    FROM (
+	        SELECT ROWNUM RN, A.*
+	        FROM (
+	            SELECT
+	                Q.QC_ID AS qcId,
+	                Q.QC_LOT AS qcLot,
+	
+	                Q.QC_TYPE AS qcType,
+	
+	                Q.QC_CONTENT AS qcContent,
+	
+	                Q.QC_QTY AS qcQty,
+	
+	                Q.QC_STATUS AS qcStatus,
+	
+	                Q.QC_ODATE AS qcOdate,
+	
+	                Q.QC_WORKER AS qcWorker,
+	                EW.EMP_NAME AS workerName,
+	
+	                Q.QC_DIRECTOR AS qcDirector,
+	                ED.EMP_NAME AS directorName,
+	
+	                Q.QC_DMSG AS qcDmsg,
+	
+	                Q.QC_DATE AS qcDate,
+	
+	                Q.QC_WMSG AS qcWmsg,
+	
+	                Q.QC_PASS_QTY AS qcPassQty,
+	
+	                Q.QC_USAGE AS qcUsage
+	
+	            FROM QC Q
+	
+	            LEFT JOIN EMP EW
+	                ON Q.QC_WORKER = EW.EMP_ID
+	
+	            LEFT JOIN EMP ED
+	                ON Q.QC_DIRECTOR = ED.EMP_ID
+	
+	            <include refid="qcWhere" />
+	
+	            ORDER BY Q.QC_ID DESC
+	
+	        ) A
+	        WHERE ROWNUM <![CDATA[<=]]> #{page.endRow}
+	    )
+	    WHERE RN <![CDATA[>=]]> #{page.startRow}
 
     </select>
 
@@ -92,7 +115,6 @@
                     UPPER(Q.QC_ID) LIKE UPPER('%' || #{searchKeyword} || '%')
                     OR UPPER(Q.QC_LOT) LIKE UPPER('%' || #{searchKeyword} || '%')
                     OR UPPER(Q.QC_CONTENT) LIKE UPPER('%' || #{searchKeyword} || '%')
-                    OR UPPER(Q.QC_DIRECTOR) LIKE UPPER('%' || #{searchKeyword} || '%')
                 )
             </if>
         </where>
@@ -113,61 +135,111 @@
     </select>
 
     <select id="selectQcDetail"
-            parameterType="string"
-            resultType="kr.or.chop.P07_qc.dto.QcDTO">
+        parameterType="string"
+        resultType="kr.or.chop.P07_qc.dto.QcDTO">
 
-        SELECT
-            Q.QC_ID AS qcId,
-            Q.QC_LOT AS qcLot,
-            Q.QC_TYPE AS qcType,
-            Q.QC_CONTENT AS qcContent,
-            Q.QC_QTY AS qcQty,
-            Q.QC_STATUS AS qcStatus,
-            Q.QC_ODATE AS qcOdate,
-            Q.QC_DIRECTOR AS qcDirector,
-            Q.QC_DMSG AS qcDmsg,
-            Q.QC_DATE AS qcDate,
-            Q.QC_WMSG AS qcWmsg,
-            Q.QC_PASS_QTY AS qcPassQty,
-            Q.QC_USAGE AS qcUsage
-        FROM QC Q
-        WHERE Q.QC_ID = #{qcId}
-
-    </select>
+	    SELECT
+	        Q.QC_ID AS qcId,
+	        Q.QC_LOT AS qcLot,
+	
+	        L.LOT_ITEM AS itemId,
+	        I.ITEM_NAME AS itemName,
+	
+	        Q.QC_TYPE AS qcType,
+	        QT.QC_TYPE_NAME AS qcTypeName,
+	
+	        Q.QC_CONTENT AS qcContent,
+	
+	        Q.QC_QTY AS qcQty,
+	
+	        Q.QC_STATUS AS qcStatus,
+	        QS.QC_STATUS_NAME AS qcStatusName,
+	
+	        Q.QC_ODATE AS qcOdate,
+	
+	        Q.QC_DIRECTOR AS qcDirector,
+	        ED.EMP_NAME AS directorName,
+	
+	        Q.QC_DMSG AS qcDmsg,
+	
+	        Q.QC_DATE AS qcDate,
+	
+	        Q.QC_WORKER AS qcWorker,
+	        EW.EMP_NAME AS workerName,
+	
+	        Q.QC_WMSG AS qcWmsg,
+	
+	        Q.QC_PASS_QTY AS qcPassQty,
+	
+	        Q.QC_USAGE AS qcUsage,
+	
+	        NVL(Q.QC_QTY - NVL(Q.QC_PASS_QTY, 0), 0) AS failQty,
+	
+	        CASE
+	            WHEN NVL(Q.QC_QTY, 0) = 0 THEN 0
+	            ELSE ROUND(
+	                ((Q.QC_QTY - NVL(Q.QC_PASS_QTY, 0))
+	                / Q.QC_QTY) * 100
+	            , 1)
+	        END AS failRate
+	
+	    FROM QC Q
+	
+	    LEFT JOIN LOT L
+	        ON Q.QC_LOT = L.LOT_ID
+	
+	    LEFT JOIN ITEM I
+	        ON L.LOT_ITEM = I.ITEM_ID
+	
+	    LEFT JOIN QC_TYPE QT
+	        ON Q.QC_TYPE = QT.QC_TYPE_NO
+	
+	    LEFT JOIN QC_STATUS QS
+	        ON Q.QC_STATUS = QS.QC_STATUS_NO
+	
+	    LEFT JOIN EMP ED
+	        ON Q.QC_DIRECTOR = ED.EMP_ID
+	
+	    LEFT JOIN EMP EW
+	        ON Q.QC_WORKER = EW.EMP_ID
+	
+	    WHERE Q.QC_ID = #{qcId}
+	
+	</select>
 
     <insert id="insertQc"
             parameterType="kr.or.chop.P07_qc.dto.QcDTO">
 
         INSERT INTO QC (
-            QC_ID,
-            QC_LOT,
-            QC_TYPE,
-            QC_CONTENT,
-            QC_QTY,
-            QC_STATUS,
-            QC_ODATE,
-            QC_DIRECTOR,
-            QC_DMSG,
-            QC_DATE,
-            QC_WMSG,
-            QC_PASS_QTY,
-            QC_USAGE
-        )
-        VALUES (
-            'QC' || QC_SEQ.NEXTVAL,
-            #{qcLot},
-            #{qcType},
-            #{qcContent},
-            #{qcQty},
-            #{qcStatus},
-            SYSDATE,
-            #{qcDirector},
-            #{qcDmsg},
-            #{qcDate},
-            #{qcWmsg},
-            #{qcPassQty},
-            'Y'
-        )
+	        QC_ID,
+	        QC_LOT,
+	        QC_TYPE,
+	        QC_CONTENT,
+	        QC_QTY,
+	        QC_STATUS,
+	        QC_ODATE,
+	        QC_DIRECTOR,
+	        QC_DMSG,
+	        QC_WORKER,
+	        QC_WMSG,
+	        QC_PASS_QTY,
+	        QC_USAGE
+	    )
+	    VALUES (
+	        'QC' || QC_SEQ.NEXTVAL,
+	        #{qcLot},
+	        #{qcType},
+	        #{qcContent},
+	        #{qcQty},
+	        #{qcStatus},
+	        SYSDATE + (9/24),
+	        #{qcDirector},
+	        #{qcDmsg},
+	        #{qcWorker},
+	        #{qcWmsg},
+	        #{qcPassQty},
+	        'Y'
+	    )
 
     </insert>
 
@@ -175,18 +247,12 @@
             parameterType="kr.or.chop.P07_qc.dto.QcDTO">
 
         UPDATE QC
-        SET
-            QC_LOT = #{qcLot},
-            QC_TYPE = #{qcType},
-            QC_CONTENT = #{qcContent},
-            QC_QTY = #{qcQty},
-            QC_STATUS = #{qcStatus},
-            QC_DIRECTOR = #{qcDirector},
-            QC_DMSG = #{qcDmsg},
-            QC_DATE = #{qcDate},
-            QC_WMSG = #{qcWmsg},
-            QC_PASS_QTY = #{qcPassQty}
-        WHERE QC_ID = #{qcId}
+	    SET
+	        QC_TYPE = #{qcType},
+	        QC_DMSG = #{qcDmsg},
+	        QC_ODATE = sysdate + (9/24),
+	        QC_WORKER = #{qcWorker}
+	    WHERE QC_ID = #{qcId}
 
     </update>
 
@@ -198,5 +264,138 @@
         WHERE QC_ID = #{qcId}
 
     </update>
+    
+    <select id="selectQcLotList"
+        resultType="kr.or.chop.P07_qc.dto.QcDTO">
+
+	    SELECT
+	        L.LOT_ID AS lotId,
+	        L.LOT_QTY AS lotQty,
+	        L.LOT_ITEM AS itemId,
+	        I.ITEM_NAME AS itemName
+	    FROM LOT L
+	    LEFT JOIN ITEM I
+	        ON L.LOT_ITEM = I.ITEM_ID
+	    WHERE L.LOT_qc = 'N'
+	    ORDER BY L.LOT_ID DESC
+	
+	</select>
+	
+	<update id="updateQcResult"
+        parameterType="kr.or.chop.P07_qc.dto.QcDTO">
+
+	    UPDATE QC
+    SET
+        QC_STATUS = #{qcStatus},
+        QC_PASS_QTY = #{qcPassQty},
+        QC_WMSG = #{qcWmsg},
+        QC_DATE = #{qcDate}
+    WHERE QC_ID = #{qcId}
+	
+	</update>
+	
+	<update id="updateLotByQcResult"
+        parameterType="kr.or.chop.P07_qc.dto.QcDTO">
+
+	    UPDATE LOT
+	    SET
+	        LOT_CQTY = #{qcQty},
+	        LOT_FQTY = #{qcPassQty},
+	        LOT_AWHSEC = #{awhsec},
+	        LOT_QC = 'Y'
+	    WHERE LOT_ID = #{qcLot}
+	
+	</update>
+	
+	<select id="selectDefectTypeList"
+        resultType="kr.or.chop.P07_qc.dto.QcDTO">
+
+	    SELECT
+	        DEF_TYPE_ID AS defTypeId,
+	        DEF_TYPE_NAME AS defTypeName,
+	        DEF_STANDARD_ACTION AS defStandardAction
+	    FROM DEFECT
+	    WHERE DEF_USAGE = 'Y'
+	    ORDER BY DEF_TYPE_ID
+	
+	</select>
+	
+	<select id="selectWarehouseListByItem"
+        parameterType="string"
+        resultType="kr.or.chop.P07_qc.dto.QcDTO">
+
+	    SELECT
+	        W.WH_ID AS whId,
+	        W.WH_NAME AS whName,
+	        W.WH_TYPE AS whTypeNo
+	
+	    FROM ITEM I
+	
+	    INNER JOIN WAREHOUSE W
+	        ON I.ITEM_WHTYPE = W.WH_TYPE
+	
+	    WHERE I.ITEM_ID = #{itemId}
+	      AND W.WH_USAGE = 'Y'
+	
+	    ORDER BY W.WH_ID
+	
+	</select>
+	
+	
+	<select id="selectSectionListByWarehouse"
+	        parameterType="string"
+	        resultType="kr.or.chop.P07_qc.dto.QcDTO">
+	
+	     SELECT
+	        S.WH_SEC_ID AS secId,
+	        S.WH_SEC_QTY AS secQty,
+	        NVL(LOT_SUM.secPrevQty, 0) AS secPrevQty
+	    FROM WH_SEC S
+	
+	    LEFT JOIN (
+	        SELECT
+	            CASE
+	                WHEN L.LOT_QC = 'N' THEN L.LOT_BWHSEC
+	                WHEN L.LOT_QC = 'Y' THEN L.LOT_AWHSEC
+	            END AS secId,
+	            COUNT(L.LOT_ID) AS secPrevQty
+	        FROM LOT L
+	        WHERE L.LOT_STATUS NOT IN (0, 30)
+	        GROUP BY
+	            CASE
+	                WHEN L.LOT_QC = 'N' THEN L.LOT_BWHSEC
+	                WHEN L.LOT_QC = 'Y' THEN L.LOT_AWHSEC
+	            END
+	    ) LOT_SUM
+	        ON S.WH_SEC_ID = LOT_SUM.secId
+	
+	    WHERE S.WH_SEC_WHID = #{whId}
+	      AND S.WH_SEC_USAGE = 'Y'
+	
+	    ORDER BY S.WH_SEC_ID
+	
+	</select>
+	
+	<insert id="insertDefLog"
+        parameterType="kr.or.chop.P07_qc.dto.QcDTO">
+
+	    INSERT INTO DEF_LOG (
+	        DLOG_ID,
+	        DLOG_QCID,
+	        DLOG_DEF,
+	        DLOG_QTY,
+	        DLOG_ACTION,
+	        DLOG_DISPOSE
+	    )
+	    VALUES (
+	        'DLOG' || DEF_LOG_SEQ.NEXTVAL,
+	        #{qcId},
+	        #{defType},
+	        #{defQty},
+	        #{defAction},
+	        #{defDiscard}
+	    )
+	
+	</insert>
 
 </mapper>
