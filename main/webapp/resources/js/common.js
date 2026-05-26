@@ -62,7 +62,7 @@ function setSnbActiveMenu() {
         const pathParts = linkPath.split("/");
         const rootPath = "/" + pathParts[1] + "/" + pathParts[2];
 
-        if (currentPath === linkPath || currentPath.startsWith(rootPath + "/")) {
+        if (currentPath === linkPath || currentPath.startsWith(linkPath + "/")) {
             link.classList.add("active");
 
             const group = link.closest(".snb-group");

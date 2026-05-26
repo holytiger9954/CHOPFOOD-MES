@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <div class="content">
 
@@ -32,18 +33,46 @@
         </div>
 
         <div class="search-item">
-            <label>품목</label>
-            <select name="itemId">
-                <option value="">전체</option>
-            </select>
-        </div>
-
-        <div class="search-item">
-            <label>불량유형</label>
-            <select name="defTypeId">
-                <option value="">전체</option>
-            </select>
-        </div>
+		    <label>품목</label>
+		
+		    <select name="itemId">
+		
+		        <option value="">전체</option>
+		
+		        <c:forEach var="item" items="${itemList}">
+		
+		            <option value="${item.code}"
+		                ${searchDTO.itemId == item.code ? 'selected' : ''}>
+		
+		                ${item.name}
+		
+		            </option>
+		
+		        </c:forEach>
+		
+		    </select>
+		</div>
+		
+		<div class="search-item">
+		    <label>불량유형</label>
+		
+		    <select name="defTypeId">
+		
+		        <option value="">전체</option>
+		
+		        <c:forEach var="def" items="${defectTypeList}">
+		
+		            <option value="${def.code}"
+		                ${searchDTO.defTypeId == def.code ? 'selected' : ''}>
+		
+		                ${def.name}
+		
+		            </option>
+		
+		        </c:forEach>
+		
+		    </select>
+		</div>
 
         <div class="search-btn-area"
              style="width:100%; justify-content:flex-end;">
@@ -147,12 +176,27 @@
                 </thead>
 
                 <tbody>
-                    <tr>
-                        <td colspan="8" style="text-align:center;">
-                            조회된 품질 리포트 데이터가 없습니다.
-                        </td>
-                    </tr>
-                </tbody>
+				    <c:forEach var="q" items="${qualityList}">
+				        <tr>
+				            <td>${q.lotId}</td>
+				            <td>${q.itemName}</td>
+				            <td>${q.qcQty}</td>
+				            <td>${q.qcPassQty}</td>
+				            <td>${q.defectQty}</td>
+				            <td>${q.defectRate}%</td>
+				            <td>${q.qcResult}</td>
+				            <td>${q.qcDate}</td>
+				        </tr>
+				    </c:forEach>
+				
+				    <c:if test="${empty qualityList}">
+				        <tr>
+				            <td colspan="8" style="text-align:center;">
+				                조회된 품질 리포트 데이터가 없습니다.
+				            </td>
+				        </tr>
+				    </c:if>
+				</tbody>
             </table>
         </div>
 

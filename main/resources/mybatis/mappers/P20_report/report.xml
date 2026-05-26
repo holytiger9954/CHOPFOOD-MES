@@ -73,5 +73,111 @@
         </if>
 
     </select>
+    
+    <!-- LOT별 검사 현황 리스트 -->
+	<select id="selectQualityReportList"
+	        parameterType="qualityReportSearchDTO"
+	        resultType="qualityReportListDTO">
+	
+	    SELECT
+	        q.qc_lot AS lotId,
+	        i.item_name AS itemName,
+	
+	        q.qc_qty AS qcQty,
+	        q.qc_pass_qty AS qcPassQty,
+	
+	        (q.qc_qty - NVL(q.qc_pass_qty, 0)) AS defectQty,
+	
+	        ROUND(
+	            NVL(
+	                (q.qc_qty - NVL(q.qc_pass_qty, 0))
+	                / NULLIF(q.qc_qty, 0)
+	                * 100,
+	                0
+	            ),
+	            1
+	        ) AS defectRate,
+	
+	        CASE
+			    WHEN q.qc_pass_qty = q.qc_qty THEN '합격'
+			    WHEN q.qc_pass_qty = 0 THEN '불합격'
+			    ELSE '부분합격'
+			END AS qcResult,
+	
+	        TO_CHAR(q.qc_date, 'YYYY-MM-DD') AS qcDate
+	
+	    FROM qc q
+	
+	        JOIN lot l
+	            ON q.qc_lot = l.lot_id
+	
+	        JOIN item i
+	            ON l.lot_item = i.item_id
+	
+	    WHERE q.qc_usage = 'Y'
+	
+	    <if test="startDate != null and startDate != ''">
+	        AND q.qc_date <![CDATA[ >= ]]>
+	            TO_DATE(#{startDate}, 'YYYY-MM-DD')
+	    </if>
+	
+	    <if test="endDate != null and endDate != ''">
+	        AND q.qc_date <![CDATA[ < ]]>
+	            TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+	    </if>
+	
+	    <if test="itemId != null and itemId != ''">
+	        AND l.lot_item = #{itemId}
+	    </if>
+	
+	    <if test="defTypeId != null and defTypeId != ''">
+	
+	        AND EXISTS (
+	
+	            SELECT 1
+	            FROM def_log dl
+	
+	            WHERE dl.dlog_qcid = q.qc_id
+	              AND dl.dlog_def = #{defTypeId}
+	
+	        )
+	
+	    </if>
+	
+	    ORDER BY q.qc_date DESC, q.qc_id DESC
+	
+	</select>
+	
+	<!-- 품목 목록 -->
+	<select id="selectItemList"
+	        resultType="reportSelectDTO">
+	
+	    SELECT
+	        item_id AS code,
+	        item_name AS name
+	
+	    FROM item
+	
+	    WHERE item_usage = 'Y'
+	
+	    ORDER BY item_name
+	
+	</select>
+	
+	<!-- 불량유형 목록 -->
+	<select id="selectDefectTypeList"
+	        resultType="reportSelectDTO">
+	
+	    SELECT
+	        def_type_id AS code,
+	        def_type_name AS name
+	
+	    FROM defect
+	
+	    WHERE def_usage = 'Y'
+	
+	    ORDER BY def_type_name
+	
+	</select>
 
 </mapper>
