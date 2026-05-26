@@ -27,7 +27,7 @@
 
                 NVL(
                     ROUND(
-                        (SYSDATE - MIN(R.EQ_RUN_STIME)) * 24,
+                        (SYSDATE- E.EQ_SDATE) * 24,
                         1
                     ),
                     0
@@ -58,7 +58,7 @@
                                 )
                                 /
                                 NULLIF(
-                                    (SYSDATE - MIN(R.EQ_RUN_STIME)) * 24,
+                                    (SYSDATE - E.EQ_SDATE) * 24,
                                     0
                                 )
                             ) * 100,
@@ -180,7 +180,7 @@
 
         NVL(
             ROUND(
-                (SYSDATE - MIN(R.EQ_RUN_STIME)) * 24,
+                (SYSDATE - E.EQ_SDATE) * 24,
                 1
             ),
             0
@@ -210,8 +210,9 @@
                             ) * 24
                         )
                         /
+                       
                         NULLIF(
-                            (SYSDATE - MIN(R.EQ_RUN_STIME)) * 24,
+                            (SYSDATE - E.EQ_SDATE) * 24,
                             0
                         )
                     ) * 100,
@@ -282,8 +283,8 @@
             SELECT
                 L.ELOG_ID AS elogId,
                 L.ELOG_EQID AS elogEqid,
-                L.ELOG_SDATE AS elogSdate,
-                L.ELOG_EDATE AS elogEdate,
+				L.ELOG_SDATE + (9/24) AS elogSdate,
+				L.ELOG_EDATE + (9/24) AS elogEdate,
                 L.ELOG_REASON AS elogReason,
                 L.ELOG_CONTENT AS elogContent,
                 L.ELOG_RESULT AS elogResult,
@@ -316,6 +317,7 @@
 	        WP_ID AS wpId,
 	        WP_NAME AS wpName
 	    FROM WORKPLACE
+	    where wp_usage = 'Y'
 	    ORDER BY WP_ID ASC
 	
 </select>
@@ -341,8 +343,8 @@
             SELECT
                 EQ_RUN_NO AS eqRunNo,
                 EQ_RUN_EQID AS eqRunEqid,
-                EQ_RUN_STIME AS eqRunStime,
-                EQ_RUN_ETIME AS eqRunEtime,
+				EQ_RUN_STIME + (9/24) AS eqRunStime,
+				EQ_RUN_ETIME + (9/24) AS eqRunEtime,
                 EQ_STOP_REASON AS eqStopReason
             FROM EQ_RUN_LOG
             WHERE EQ_RUN_EQID = #{eqId}
@@ -495,7 +497,7 @@
     ) VALUES (
         EQ_RUN_SEQ.NEXTVAL,
         #{eqId},
-        SYSDATE + (9/24),
+        SYSDATE,
         NULL,
         NULL
     )
@@ -507,7 +509,7 @@
 
     UPDATE EQ_RUN_LOG
     SET
-        EQ_RUN_ETIME = SYSDATE + (9/24),
+        EQ_RUN_ETIME = SYSDATE,
         EQ_STOP_REASON = #{eqStopReason}
     WHERE EQ_RUN_EQID = #{eqId}
     AND EQ_RUN_ETIME IS NULL

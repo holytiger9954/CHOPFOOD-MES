@@ -41,6 +41,7 @@ public class EqListController {
 	    model.addAttribute("eqList", eqList);
 	    model.addAttribute("search", eqDTO);
 	    model.addAttribute("page", pageInfo);
+	    model.addAttribute("wpList", eqService.selectWpList());
 
 	    model.addAttribute("totalCount", eqService.selectEqTotalCount(new EqDTO()));
 	    model.addAttribute("runCount", eqService.selectEqCountByStatus(10));

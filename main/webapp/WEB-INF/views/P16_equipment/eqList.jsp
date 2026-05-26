@@ -69,14 +69,16 @@
             <div class="search-item">
                 <label>작업장</label>
 
-                <select name="eqWpid">
-                    <option value="">전체</option>
+<select name="eqWpid">
+    <option value="">전체</option>
 
-                    <option value="WP1001-01"
-                        <c:if test="${search.eqWpid == 'WP1001-01'}">selected</c:if>>
-                        WP1001-01
-                    </option>
-                </select>
+    <c:forEach var="wp" items="${wpList}">
+        <option value="${wp.wpId}"
+            <c:if test="${search.eqWpid == wp.wpId}">selected</c:if>>
+            ${wp.wpName}
+        </option>
+    </c:forEach>
+</select>
             </div>
 
             <div class="search-item">
@@ -256,16 +258,6 @@
 .card:hover div,
 .card.active div {
     color: white !important;
-}
-
-.eqId {
-    transition: all 0.2s ease;
-}
-
-.table tbody tr:hover .eqId {
-    color: var(--main-green);
-    text-decoration: underline;
-    cursor: pointer;
 }
 </style>
 

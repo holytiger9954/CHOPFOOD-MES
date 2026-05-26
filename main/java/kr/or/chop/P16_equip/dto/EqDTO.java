@@ -1,6 +1,7 @@
 package kr.or.chop.P16_equip.dto;
 
 import java.sql.Date;
+import java.util.List;
 
 import lombok.Data;
 
@@ -15,6 +16,7 @@ public class EqDTO {
 	private String eqWpid;        // EQ_WPID 작업장코드
 	private String eqVendor;      // EQ_VENDOR 관리업체코드
 	private String eqManager;     // EQ_MANAGER 책임자(EMP_ID)
+	private List<String> eqStatusList;
 
 	
 	// JOIN 해서 가져올 이름
