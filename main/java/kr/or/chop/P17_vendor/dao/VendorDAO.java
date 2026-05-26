@@ -17,6 +17,7 @@ public interface VendorDAO {
     VendorDTO selectVendorDetail(String vendorId);
 
     int updateVendor(VendorDTO vendor);
+    int updateVenImg(VendorDTO vendor);
 
     int deleteVendor(String vendorId);
 

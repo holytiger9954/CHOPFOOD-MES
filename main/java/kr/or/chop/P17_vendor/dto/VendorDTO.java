@@ -17,10 +17,15 @@ public class VendorDTO {
 	private String vendorAddrDetail;
 	private String vendorUsage;
 	
+	private String vendorBRN;
+	private String vendorImg;
+	
 	private String searchType;
 	private String searchKeyword;
 	
 	private int vendorTypeCount;
 	private List<String> searchTypes;
+	
+	private String delImg;
 	
 }

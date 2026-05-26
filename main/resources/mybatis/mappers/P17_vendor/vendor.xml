@@ -53,7 +53,9 @@
 		vendor_zipcode AS vendorZipcode,
 		vendor_addr AS vendorAddr,
 		vendor_addr_detail AS vendorAddrDetail,
-		vendor_usage AS vendorUsage
+		vendor_usage AS vendorUsage,
+		vendor_BRN AS vendorBRN,
+		vendor_img AS vendorImg
 		FROM vendor
 		WHERE vendor_usage = 'Y'
 			<if test="vendorDTO.searchTypes != null and vendorDTO.searchTypes.size() > 0">
@@ -86,6 +88,10 @@
 	<!-- 거래처 등록 -->
 	<insert id="insertVendor"
 	    parameterType="kr.or.chop.P17_vendor.dto.VendorDTO">
+	    
+	    <selectKey keyProperty="vendorId" resultType="string" order="BEFORE">
+			SELECT 'VD' || vendor_seq.NEXTVAL FROM dual
+		</selectKey>
 	
 	    INSERT INTO vendor
 	    (
@@ -97,11 +103,12 @@
 	        vendor_zipcode,
 	        vendor_addr,
 	        vendor_addr_detail,
-	        vendor_usage
+	        vendor_usage,
+	        vendor_BRN
 	    )
 	    VALUES
 	    (
-	        'VD' || VENDOR_SEQ.NEXTVAL,
+	        #{vendorId},
 	        #{vendorName},
 	        #{vendorType},
 	        #{vendorTel},
@@ -109,10 +116,17 @@
 	        #{vendorZipcode},
 	        #{vendorAddr},
 	        #{vendorAddrDetail},
-	        'Y'
+	        'Y',
+	        #{vendorBRN}
 	    )
 	
 	</insert>
+	
+	<update id="updateVenImg" parameterType="kr.or.chop.P17_vendor.dto.VendorDTO">
+		UPDATE vendor
+		SET vendor_img = #{vendorImg}
+		WHERE vendor_id = #{vendorId}
+	</update>
 	
 	<!-- 거래처 상세 -->
 	<select id="selectVendorDetail"
@@ -128,7 +142,9 @@
 	        vendor_zipcode AS vendorZipcode,
 	        vendor_addr AS vendorAddr,
 	        vendor_addr_detail AS vendorAddrDetail,
-	        vendor_usage AS vendorUsage
+	        vendor_usage AS vendorUsage,
+	        vendor_BRN AS vendorBRN,
+	        vendor_img AS vendorImg
 	    FROM vendor
 	    WHERE vendor_id = #{vendorId}
 	      AND vendor_usage = 'Y'
@@ -147,7 +163,8 @@
 	        vendor_email = #{vendorEmail},
 	        vendor_zipcode = #{vendorZipcode},
 	        vendor_addr = #{vendorAddr},
-	        vendor_addr_detail = #{vendorAddrDetail}
+	        vendor_addr_detail = #{vendorAddrDetail},
+	        vendor_BRN = #{vendorBRN}
 	    WHERE vendor_id = #{vendorId}
 	
 	</update>

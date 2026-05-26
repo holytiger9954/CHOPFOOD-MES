@@ -1,10 +1,16 @@
 package kr.or.chop.P17_vendor.controller;
 
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import kr.or.chop.P17_vendor.dto.VendorDTO;
 import kr.or.chop.P17_vendor.service.VendorService;
@@ -25,9 +31,14 @@ public class VendorAddController {
     // 거래처 등록
     @PostMapping("/insert")
     public String insertVendor(
-            @ModelAttribute VendorDTO vendorDTO) {
-
-        vendorService.insertVendor(vendorDTO);
+    		@RequestParam("venImgFile") MultipartFile venImgFile,
+	        HttpServletRequest request,
+            @ModelAttribute VendorDTO vendorDTO) throws IllegalStateException, IOException {
+    	
+    	String uploadPath = "D:/chop_upload/P17_vendor";
+		String uploadUrl = "/upload/P17_vendor";
+		
+        vendorService.insertVendor(vendorDTO, venImgFile, uploadPath, uploadUrl);
 
         return "redirect:/vendor/list";
     }

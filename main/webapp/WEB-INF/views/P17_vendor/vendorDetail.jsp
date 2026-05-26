@@ -41,8 +41,12 @@
 	<div class="content-content">
 
 		<div class="content-content-content">
+		
+			<div class="detail-title-row">
+				<div class="content-content-content-title">거래처 상세정보</div>
+				<button type="button" class="btn btn-orange" id="imgBtn" onclick="openImgModal()">사업자 등록증</button>		
+			</div>
 
-			<div class="content-content-content-title">거래처 상세정보</div>
 
 			<div class="info-table-wrap">
 				<table class="info-table">
@@ -50,11 +54,11 @@
 					<tbody>
 
 						<tr>
-							<th>거래처 코드</th>
-							<td>${vendor.vendorId}</td>
+							<th>거래처</th>
+							<td>${vendor.vendorName} (${vendor.vendorId})</td>
 
-							<th>거래처명</th>
-							<td>${vendor.vendorName}</td>
+							<th>사업자 번호</th>
+							<td>${vendor.vendorBRN}</td>
 						</tr>
 
 						<tr>
@@ -222,20 +226,102 @@
 
 </div>
 
+
+<div id="imgModal" class="overlay">
+	<div class="modal vendor-img-modal">
+		<div class="vendor-img-title-row">
+			<div class="modal-title">사업자 등록증</div>
+
+			<button type="button" class="btn btn-white" onclick="closeImgModal()">
+				닫기
+			</button>
+		</div>
+
+		<div class="vendor-img-wrap">
+			<c:choose>
+				<c:when test="${not empty vendor.vendorImg}">
+					<img class="vendor-img"
+						src="${pageContext.request.contextPath}${vendor.vendorImg}"
+						alt="사업자 등록증">
+				</c:when>
+
+				<c:otherwise>
+					<div class="vendor-img-empty">
+						등록된 사업자 등록증 이미지가 없습니다.
+					</div>
+				</c:otherwise>
+			</c:choose>
+		</div>
+	</div>
+</div>
+
 <style>
-.vendor-address-detail-row {
-	display: inline-flex;
-	align-items: center;
-	gap: 12px;
-	flex-wrap: wrap;
-}
+	.vendor-address-detail-row {
+		display: inline-flex;
+		align-items: center;
+		gap: 12px;
+		flex-wrap: wrap;
+	}
+	
+	.detail-title-row {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-end;
+	}
+	
+	.detail-title-row .content-content-content-title {
+		margin-bottom: 0;
+	}
+	
+	.vendor-img-modal {
+		width: 650px;
+		max-width: 90vw;
+		max-height: 90vh;
+	}
+	
+	.vendor-img-title-row {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 20px;
+	}
+	
+	.vendor-img-wrap {
+		max-height: 70vh;
+		overflow: auto;
+		text-align: center;
+	}
+	
+	.vendor-img {
+		max-width: 100%;
+		height: auto;
+	}
+	
+	.vendor-img-empty {
+		padding: 60px 20px;
+		text-align: center;
+		color: var(--dark-gray);
+	}
+	
 </style>
 
+
+
 <script
-	src="//dapi.kakao.com/v2/maps/sdk.js?appkey=47bbd47c04e70af1e13f9280c52c609b&libraries=services"></script>
+	src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=47bbd47c04e70af1e13f9280c52c609b&libraries=services"></script>
 
 <script>
 	let vendorMapLoaded = false;
+	
+	function openImgModal() {
+		document.querySelector("#imgModal").classList.add("active");
+		document.body.classList.add("modal-open");
+	}
+
+	function closeImgModal() {
+		document.querySelector("#imgModal").classList.remove("active");
+		document.body.classList.remove("modal-open");
+	}
 
 	function showVendorMap() {
 

@@ -51,6 +51,11 @@ public class VendorDAOImpl implements VendorDAO {
 	public int updateVendor(VendorDTO vendor) {
 		return sqlSession.update(NAMESPACE + "updateVendor", vendor);
 	}
+	
+	@Override
+	public int updateVenImg(VendorDTO vendor) {
+		return sqlSession.update(NAMESPACE + "updateVenImg", vendor);
+	}
 
 	@Override
 	public int deleteVendor(String vendorId) {

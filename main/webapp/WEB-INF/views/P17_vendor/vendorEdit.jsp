@@ -20,6 +20,7 @@
 
     <form action="${pageContext.request.contextPath}/vendor/update"
           method="post"
+          enctype="multipart/form-data"
           class="grid-form">
 
         <input type="hidden"
@@ -73,6 +74,16 @@
                        value="${vendor.vendorName}"
                        required>
             </div>
+            
+            <div class="grid search-item vendor-name">
+                <label>사업자 번호 <span class="red">*</span></label>
+
+                <input type="text"
+                       name="vendorBRN"
+                       placeholder="사업자 번호 입력 (ex.000-00-00000)"
+                       value="${vendor.vendorBRN}"
+                       required>
+            </div>
         </div>
 
         <div class="grid-wrap vendor-row">
@@ -90,7 +101,8 @@
 
                 <input type="text"
                        name="vendorEmail"
-                       value="${vendor.vendorEmail}">
+                       value="${vendor.vendorEmail}"
+                       placeholder="이메일 입력 (선택)">
             </div>
         </div>
 
@@ -132,6 +144,39 @@
             </div>
 
         </div>
+        
+        <div class="search-item">
+        	<input type="hidden" name="vendorImg" value="${vendor.vendorImg}">
+        	<input type="hidden" name="delImg" id="delImg" value="N">
+        	
+			<label style="font-size: 13px; font-weight: 600; color: #555;">
+	   			사업자 등록증 <span class="red">*</span>
+	   		</label>
+	   		<div style="display: flex; gap: 15px;">
+				<input type="file" name="venImgFile" id="venImgFile" accept="image/*" style="display: none;">
+				<input type="text" id="fileName"
+						value="${vendor.vendorImg}"
+						title="${not empty vendor.vendorImg and vendor.vendorImg != '' ? vendor.vendorImg : '선택된 파일 없음'}"
+						 placeholder="선택된 파일 없음" readonly>
+				<div style="display: flex; gap: 10px;">
+					<label type="button" class="btn btn-main" for="venImgFile"
+							style="color: white; font-size: 14px;">이미지 선택</label>
+					<button type="button" class="btn btn-red" id="delImgBtn" onclick="delImg()">삭제</button>
+				</div>
+	   		</div>
+			
+			<div id="imgPreviewBox"
+					style="${not empty vendor.vendorImg and vendor.vendorImg != null ? 'display:flex;' : 'display:none;'}">
+		        <img id="previewImg" src="${pageContext.request.contextPath}${vendor.vendorImg}" alt="이미지 미리보기
+		        		style="${not empty vendor.vendorImg or vendor.vendorImg != null ? 'display:block;' : 'display:none;'}"
+		        >
+			</div>
+			
+			<div id="noImg"
+			     style="font-size:12px; ${not empty vendor.vendorImg or vendor.vendorImg != null ? 'display:none;' : 'display:block;'} margin-top: 8px;">
+			    등록된 사진 없음
+			</div>
+		</div>
 
     </form>
 
@@ -192,11 +237,111 @@
         width: 100%;
         min-width: 0 !important;
     }
+    
+    #imgPreviewBox {
+	    width: 100%;
+	    
+	    align-items: center;
+	    justify-content: flex-start;
+	    overflow: hidden;
+	    margin-top: 8px;
+	}
+	
+	.file-status {
+		color: var(--dark-gray);
+	}
+	
+	#noImg {
+		padding: 0 15px;
+	}
+	
+	#imgPreviewBox img {
+	    width: 80%;
+	    height: 100%;
+	    object-fit: cover;
+	}
+    
 </style>
 
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 
 <script>
+window.addEventListener("load", () => {
+	init();
+})
+
+function init() {
+	bind();
+}
+
+function bind() {
+	addImg();
+}
+
+function addImg() {
+	const venImgFile = document.querySelector("#venImgFile");
+	const previewImg = document.querySelector("#previewImg");
+	const imgPreviewBox = document.querySelector("#imgPreviewBox");
+	const noImg = document.querySelector("#noImg");
+	const fileName = document.querySelector("#fileName");
+	const delImg = document.querySelector("#delImg");
+
+	venImgFile.addEventListener("change", function () {
+	    const file = this.files[0];
+
+	    if (!file) {
+	        previewImg.src = "";
+	        previewImg.style.display = "none";
+	        imgPreviewBox.style.display = "none";
+	        noImg.style.display = "block";
+	        return;
+	    }
+
+	    if (!file.type.startsWith("image/")) {
+	        alert("이미지 파일만 등록할 수 있습니다.");
+	        this.value = "";
+	        previewImg.src = "";
+	        previewImg.style.display = "none";
+	        imgPreviewBox.style.display = "none";
+	        noImg.style.display = "block";
+	        return;
+	    }
+	    
+	    delImg.value = "N";
+
+	    const reader = new FileReader();
+
+	    reader.onload = function (e) {
+	        previewImg.src = e.target.result;
+	        imgPreviewBox.style.display = "flex";
+	        previewImg.style.display = "block";
+	        noImg.style.display = "none";
+	        fileName.value = e.target.result;
+	        fileName.title = e.target.result;
+	    };
+
+	    reader.readAsDataURL(file);
+	});
+}
+
+function delImgFn() {
+	const venImgFile = document.querySelector("#venImgFile");
+	const previewImg = document.querySelector("#previewImg");
+	const imgPreviewBox = document.querySelector("#imgPreviewBox");
+	const noImg = document.querySelector("#noImg");
+	const fileName = document.querySelector("#fileName");
+	const delImg = document.querySelector("#delImg");
+	
+	previewImg.src = "";
+	previewImg.style.display = "none";
+	imgPreviewBox.style.display = "none";
+	venImgFile.value = "";
+	noImg.style.display = "block";
+	fileName.value = "";
+	fileName.title = "선택된 파일 없음";
+	delImg.value = "Y";
+}
+
 function execPostcode() {
     new daum.Postcode({
         oncomplete: function(data) {

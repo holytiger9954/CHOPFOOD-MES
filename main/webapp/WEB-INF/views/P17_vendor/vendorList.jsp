@@ -131,8 +131,8 @@
 
 				<thead>
 					<tr>
-						<th>거래처 코드</th>
-						<th>거래처명</th>
+						<th>거래처</th>
+						<th>사업자 번호</th>
 						<th>유형</th>
 						<th>연락처</th>
 						<th>주소</th>
@@ -142,11 +142,11 @@
 				<tbody>
 
 					<c:forEach var="vendor" items="${vendorList}">
-						<tr onclick="location.href='${pageContext.request.contextPath}/vendor/detail?vendorId=${vendor.vendorId}'">
+						<tr class="vendorTr" onclick="location.href='${pageContext.request.contextPath}/vendor/detail?vendorId=${vendor.vendorId}'">
 
-							<td>${vendor.vendorId}</td>
+							<td class="vendorId">${vendor.vendorName} (${vendor.vendorId})</td>
 
-							<td>${vendor.vendorName}</td>
+							<td>${vendor.vendorBRN}</td>
 
 							<td>
 								<c:choose>
@@ -240,6 +240,12 @@
 	.vendorCard .card.active div {
 		color: white !important;
 	}
+	
+	.vendorTr:hover .vendorId {
+		color: var(--main-green);
+		text-decoration: underline;
+	}
+	
 </style>
 
 <script>
