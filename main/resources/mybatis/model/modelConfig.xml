@@ -25,6 +25,8 @@
 		<typeAlias type="kr.or.chop.P11_item.dto.ItemDTO" alias="itemDTO" />
 		<typeAlias type="kr.or.chop.P12_rout.dto.RoutDTO" alias="routDTO" />
 		<typeAlias type="kr.or.chop.P12_rout.dto.RoutDetailDTO" alias="routDetailDTO" />
+		<typeAlias type="kr.or.chop.P12_rout.dto.ProcDetailDTO" alias="procDetailDTO" />
+		<typeAlias type="kr.or.chop.P12_rout.dto.ProcRefDTO" alias="procRefDTO" />
 		<typeAlias type="kr.or.chop.P13_bom.dto.BOMDTO" alias="bomDTO" />
 		<typeAlias type="kr.or.chop.P13_bom.dto.BOMDetailDTO" alias="bomDetailDTO" />
 		<typeAlias type="kr.or.chop.P14_warehouse.dto.WHDTO" alias="whDTO" />

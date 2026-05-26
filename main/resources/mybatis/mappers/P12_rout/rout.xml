@@ -381,5 +381,108 @@
         WHERE rout_id = #{routId}
 
     </update>
+    
+    
+    
+    
+	<select id="selectRoutingProcDetail"
+	        parameterType="map"
+	        resultType="procDetailDTO">
+	
+	    SELECT
+	        r.ROUT_ID AS routId,
+	        r.ROUT_NAME AS routName,
+	
+	        p.PROC_ID AS procId,
+	        p.PROC_NAME AS procName,
+	        p.PROC_CONTENT AS procContent,
+	
+	        p.PROC_WP_TYPE AS wpTypeNo,
+	
+	        CASE p.PROC_WP_TYPE
+	            WHEN 10 THEN '전처리 작업장'
+	            WHEN 20 THEN '배합 작업장'
+	            WHEN 30 THEN '반죽 작업장'
+	            WHEN 40 THEN '제피 작업장'
+	            WHEN 50 THEN '성형 작업장'
+	            WHEN 60 THEN '증숙 작업장'
+	            WHEN 70 THEN '냉각 작업장'
+	            WHEN 80 THEN '급속냉동 작업장'
+	            WHEN 90 THEN '포장 작업장'
+	            WHEN 100 THEN '검사 작업장'
+	            ELSE '-'
+	        END AS wpTypeName,
+	
+	        '-' AS eqTypeName
+	
+	    FROM ROUTING_DETAIL rd
+	        JOIN ROUTING r
+	            ON rd.ROUT_DTL_ROUT = r.ROUT_ID
+	
+	        JOIN PROCESS p
+	            ON rd.ROUT_DTL_PROC = p.PROC_ID
+	
+	    WHERE rd.ROUT_DTL_ROUT = #{routId}
+	      AND rd.ROUT_DTL_PROC = #{procId}
+	      AND rd.ROUT_DTL_USAGE = 'Y'
+	      AND r.ROUT_USAGE = 'Y'
+	      AND p.PROC_USAGE = 'Y'
+	
+	</select>
+	
+	<select id="selectRoutingProcWpList"
+	        parameterType="map"
+	        resultType="procRefDTO">
+	
+	    SELECT
+	        wp.WP_ID AS id,
+	        wp.WP_NAME AS name
+	
+	    FROM ROUTING_DETAIL rd
+	        JOIN PROCESS p
+	            ON rd.ROUT_DTL_PROC = p.PROC_ID
+	
+	        JOIN WORKPLACE wp
+	            ON p.PROC_WP_TYPE = wp.WP_TYPE
+	
+	    WHERE rd.ROUT_DTL_ROUT = #{routId}
+	      AND rd.ROUT_DTL_PROC = #{procId}
+	      AND rd.ROUT_DTL_USAGE = 'Y'
+	      AND p.PROC_USAGE = 'Y'
+	      AND wp.WP_USAGE = 'Y'
+	
+	    ORDER BY wp.WP_ID
+	
+	</select>
+	
+	<select id="selectRoutingProcEqList"
+	        parameterType="map"
+	        resultType="procRefDTO">
+	
+	    SELECT
+	        eq.EQ_ID AS id,
+	        eq.EQ_NAME AS name
+	
+	    FROM ROUTING_DETAIL rd
+	        JOIN PROCESS p
+	            ON rd.ROUT_DTL_PROC = p.PROC_ID
+	
+	        JOIN WORKPLACE wp
+	            ON p.PROC_WP_TYPE = wp.WP_TYPE
+	
+	        JOIN EQUIPMENT eq
+	            ON wp.WP_ID = eq.EQ_WPID
+	
+	    WHERE rd.ROUT_DTL_ROUT = #{routId}
+	      AND rd.ROUT_DTL_PROC = #{procId}
+	      AND rd.ROUT_DTL_USAGE = 'Y'
+	      AND p.PROC_USAGE = 'Y'
+	      AND wp.WP_USAGE = 'Y'
+	      AND eq.EQ_USAGE = 'Y'
+	
+	    ORDER BY eq.EQ_ID
+	
+	</select>
+
 
 </mapper>

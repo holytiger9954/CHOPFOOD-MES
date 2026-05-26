@@ -1,7 +1,9 @@
 package kr.or.chop.P12_rout.service;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.or.chop.P12_rout.dao.RoutDAO;
+import kr.or.chop.P12_rout.dto.ProcDetailDTO;
 import kr.or.chop.P12_rout.dto.RoutDTO;
 import kr.or.chop.P12_rout.dto.RoutDetailDTO;
 import kr.or.chop.common.pagination.PageInfo;
@@ -161,5 +164,24 @@ public class RoutServiceImpl implements RoutService {
 		}
 
 		return arr[index];
+	}
+
+	@Override
+	public ProcDetailDTO selectRoutingProcDetail(String routId, String procId) {
+
+		Map<String, Object> param = new HashMap();
+		param.put("routId", routId);
+		param.put("procId", procId);
+
+		ProcDetailDTO detail = routDAO.selectRoutingProcDetail(param);
+
+		if (detail == null) {
+			return null;
+		}
+
+		detail.setWpList(routDAO.selectRoutingProcWpList(param));
+		detail.setEqList(routDAO.selectRoutingProcEqList(param));
+
+		return detail;
 	}
 }

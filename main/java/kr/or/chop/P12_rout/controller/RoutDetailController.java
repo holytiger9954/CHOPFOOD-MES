@@ -6,7 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import kr.or.chop.P12_rout.dto.ProcDetailDTO;
 import kr.or.chop.P12_rout.dto.RoutDTO;
 import kr.or.chop.P12_rout.dto.RoutDetailDTO;
 import kr.or.chop.P12_rout.service.RoutService;
@@ -29,4 +32,14 @@ public class RoutDetailController {
 
 		return "P12_rout/routDetail.tiles";
 	}
+	
+	@RequestMapping("/proc/detail")
+	@ResponseBody
+	public ProcDetailDTO procDetail(
+			@RequestParam("routId") String routId,
+			@RequestParam("procId") String procId
+	) {
+		return routService.selectRoutingProcDetail(routId, procId);
+	}
+	
 }

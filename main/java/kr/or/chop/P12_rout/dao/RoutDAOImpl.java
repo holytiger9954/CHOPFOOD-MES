@@ -8,6 +8,8 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import kr.or.chop.P12_rout.dto.ProcDetailDTO;
+import kr.or.chop.P12_rout.dto.ProcRefDTO;
 import kr.or.chop.P12_rout.dto.RoutDTO;
 import kr.or.chop.P12_rout.dto.RoutDetailDTO;
 import kr.or.chop.common.pagination.PageInfo;
@@ -95,5 +97,20 @@ public class RoutDAOImpl implements RoutDAO {
 	@Override
 	public int softDeleteRoutDetail(String routId) {
 		return sqlSession.update("mapper.P12_rout.softDeleteRoutDetail", routId);
+	}
+
+	@Override
+	public ProcDetailDTO selectRoutingProcDetail(Map<String, Object> param) {
+		return sqlSession.selectOne("mapper.P12_rout.selectRoutingProcDetail", param);
+	}
+
+	@Override
+	public List<ProcRefDTO> selectRoutingProcWpList(Map<String, Object> param) {
+		return sqlSession.selectList("mapper.P12_rout.selectRoutingProcWpList", param);
+	}
+
+	@Override
+	public List<ProcRefDTO> selectRoutingProcEqList(Map<String, Object> param) {
+		return sqlSession.selectList("mapper.P12_rout.selectRoutingProcEqList", param);
 	}
 }

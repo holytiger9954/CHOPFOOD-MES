@@ -2,6 +2,7 @@ package kr.or.chop.P12_rout.service;
 
 import java.util.List;
 
+import kr.or.chop.P12_rout.dto.ProcDetailDTO;
 import kr.or.chop.P12_rout.dto.RoutDTO;
 import kr.or.chop.P12_rout.dto.RoutDetailDTO;
 import kr.or.chop.common.pagination.PageInfo;
@@ -25,4 +26,6 @@ public interface RoutService {
 	void updateRoutWithDetail(RoutDTO routDTO, RoutDetailDTO detailDTO);
 
 	void deleteRout(String routId);
+	
+	ProcDetailDTO selectRoutingProcDetail(String routId, String procId);
 }

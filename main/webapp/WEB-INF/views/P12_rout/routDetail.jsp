@@ -141,7 +141,9 @@
                                     </div>
                                 </c:if>
 
-                                <div class="flow-card">
+                                <div class="flow-card proc-detail-open"
+									 data-rout-id="${rout.routId}"
+									 data-proc-id="${detail.procId}">
                                     <div class="step-badge">
                                         ${status.count}
                                     </div>
@@ -209,15 +211,18 @@
                                            items="${routDetailList}"
                                            varStatus="status">
 
-                                    <tr>
+                                    <tr class="proc-detail-open"
+										data-rout-id="${rout.routId}"
+										data-proc-id="${detail.procId}">
+										
                                         <td>${status.count}</td>
 
-                                        <td>
-                                            ${detail.procName}
-                                            <span class="muted-text">
-                                                (${detail.procId})
-                                            </span>
-                                        </td>
+                                        <td class="proc-name-cell">
+										    ${detail.procName}
+										    <span class="muted-text">
+										        (${detail.procId})
+										    </span>
+										</td>
 
                                         <td>
                                             <c:choose>
@@ -269,6 +274,69 @@
     </div>
 
 </div>
+
+<div class="overlay" id="procDetailModal">
+	<div class="modal proc-detail-modal">
+
+		<div class="modal-header">
+			<div>
+				<h3 class="modal-title">공정 상세정보</h3>
+				<p class="modal-subTitle" id="procDetailModalSubTitle">
+					공정명(공정번호)의 상세 내용을 확인하세요.
+				</p>
+			</div>
+
+			<button type="button"
+					class="modal-close"
+					id="closeProcDetailModalBtn">
+				×
+			</button>
+		</div>
+
+		<div class="info-table-wrap proc-detail-info-wrap">
+			<table class="info-table proc-detail-info-table">
+				<tbody>
+					<tr>
+						<th>라우팅</th>
+						<td id="procDetailRouting">-</td>
+					</tr>
+
+					<tr>
+						<th>공정명</th>
+						<td id="procDetailProcName">-</td>
+					</tr>
+
+					<tr>
+						<th>작업장 유형</th>
+						<td id="procDetailWpType">-</td>
+					</tr>
+
+					<tr>
+						<th>작업장</th>
+						<td id="procDetailWpList">-</td>
+					</tr>
+
+					<tr>
+						<th>설비명</th>
+						<td id="procDetailEqList">-</td>
+					</tr>
+
+					<tr>
+						<th colspan="2" style="text-align:left;">공정 설명</th>
+					</tr>
+					<tr>
+						<td id="procDetailContent" colspan="2" style="text-align:left; vertical-align:top; padding-top:14px;">
+							내용 없음
+						</td>
+					</tr>
+					
+				</tbody>
+			</table>
+		</div>
+
+	</div>
+</div>
+
 
 <style>
     .rout-title-row {
@@ -380,4 +448,221 @@
         color: #777;
         font-size: 13px;
     }
+    
+    
+    /* =========== */
+    
+    .proc-detail-modal {
+		width: 760px;
+		max-width: calc(100vw - 40px);
+		max-height: calc(100vh - 80px);
+		overflow-y: auto;
+	}
+	
+	.modal-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		gap: 20px;
+		margin-bottom: 20px;
+	}
+	
+	.modal-close {
+		font-size: 20px;
+		cursor: pointer;
+		line-height: 1;
+	}
+	
+	.proc-detail-info-wrap {
+		margin-top: 0;
+		padding: 0;
+	}
+	
+	.proc-detail-info-table th {
+		width: 150px;
+	}
+	
+	.proc-detail-info-table td {
+		width: auto;
+		line-height: 1.6;
+		padding-top: 10px;
+		padding-bottom: 10px;
+	}
+	
+	a:hover {
+		color: var(--main-green);
+	}
+		
+	.modal-btn-row {
+		margin-top: 24px;
+		display: flex;
+		justify-content: flex-end;
+		gap: 8px;
+	}
+	
+	.proc-detail-open {
+		cursor: pointer;
+	}
+	
+	.proc-detail-open:hover .flow-card-title,
+	.proc-detail-open:hover .proc-name-cell {
+		color: var(--main-green);
+		text-decoration: underline;
+	}
+	
+	.proc-detail-open:hover .proc-name-cell .muted-text {
+		color: var(--main-green);
+	}
+	
 </style>
+
+
+<script>
+	document.addEventListener("DOMContentLoaded", function() {
+	
+		const procDetailModal = document.getElementById("procDetailModal");
+	
+		const closeProcDetailModalBtn = document.getElementById("closeProcDetailModalBtn");
+		const cancelProcDetailModalBtn = document.getElementById("cancelProcDetailModalBtn");
+	
+		const procDetailModalSubTitle = document.getElementById("procDetailModalSubTitle");
+		const procDetailRouting = document.getElementById("procDetailRouting");
+		const procDetailProcName = document.getElementById("procDetailProcName");
+		const procDetailWpType = document.getElementById("procDetailWpType");
+		const procDetailWpList = document.getElementById("procDetailWpList");
+		const procDetailEqList = document.getElementById("procDetailEqList");
+		const procDetailContent = document.getElementById("procDetailContent");
+	
+		const contextPath = "${pageContext.request.contextPath}";
+	
+		const procOpenItems = document.querySelectorAll(".proc-detail-open");
+	
+		procOpenItems.forEach(function(item) {
+			item.addEventListener("click", function() {
+				const routId = item.dataset.routId;
+				const procId = item.dataset.procId;
+	
+				loadProcDetail(routId, procId);
+			});
+		});
+	
+		closeProcDetailModalBtn.addEventListener("click", function() {
+			closeProcDetailModal();
+		});
+	
+		cancelProcDetailModalBtn.addEventListener("click", function() {
+			closeProcDetailModal();
+		});
+	
+		procDetailModal.addEventListener("click", function(e) {
+			if (e.target === procDetailModal) {
+				closeProcDetailModal();
+			}
+		});
+	
+		function loadProcDetail(routId, procId) {
+			fetch(contextPath + "/routing/proc/detail?routId=" + encodeURIComponent(routId)
+					+ "&procId=" + encodeURIComponent(procId))
+				.then(function(response) {
+					if (!response.ok) {
+						throw new Error("공정 상세 조회 실패");
+					}
+	
+					return response.json();
+				})
+				.then(function(data) {
+					if (!data) {
+						alert("공정 상세 정보를 찾을 수 없습니다.");
+						return;
+					}
+	
+					renderProcDetail(data);
+					openModal(procDetailModal);
+				})
+				.catch(function(error) {
+					console.error(error);
+					alert("공정 상세 정보를 불러오는 중 오류가 발생했습니다.");
+				});
+		}
+	
+		function renderProcDetail(data) {
+			const routText = safeText(data.routName) + " (" + safeText(data.routId) + ")";
+			const procText = safeText(data.procName) + " (" + safeText(data.procId) + ")";
+	
+			procDetailModalSubTitle.textContent =
+				procText + "의 상세 내용을 확인하세요.";
+	
+			procDetailRouting.textContent = routText;
+			procDetailProcName.textContent = safeText(data.procName);
+			procDetailWpType.textContent = emptyToDash(data.wpTypeName);
+			procDetailContent.textContent = emptyToDash(data.procContent);
+	
+			renderLinkList(
+				procDetailWpList,
+				data.wpList,
+				contextPath + "/workplace/detail?wpId="
+			);
+	
+			renderLinkList(
+				procDetailEqList,
+				data.eqList,
+				contextPath + "/equip/detail?eqId="
+			);
+		}
+	
+		function renderLinkList(target, list, baseUrl) {
+			target.innerHTML = "";
+	
+			if (!list || list.length === 0) {
+				target.textContent = "-";
+				return;
+			}
+	
+			list.forEach(function(item, index) {
+				const link = document.createElement("a");
+	
+				link.href = baseUrl + encodeURIComponent(item.id);
+				link.textContent = safeText(item.name) + " (" + safeText(item.id) + ")";
+	
+				target.appendChild(link);
+	
+				if (index < list.length - 1) {
+					target.appendChild(document.createTextNode(", "));
+				}
+			});
+		}
+	
+		function closeProcDetailModal() {
+			closeModal(procDetailModal);
+			clearProcDetailModal();
+		}
+	
+		function clearProcDetailModal() {
+			procDetailModalSubTitle.textContent =
+				"공정명(공정번호)의 상세 내용을 확인하세요.";
+	
+			procDetailRouting.textContent = "-";
+			procDetailProcName.textContent = "-";
+			procDetailWpType.textContent = "-";
+			procDetailWpList.textContent = "-";
+			procDetailEqList.textContent = "-";
+			procDetailContent.textContent = "내용 없음";
+		}
+	
+		function emptyToDash(value) {
+			if (value == null || String(value).trim() === "") {
+				return "-";
+			}
+	
+			return String(value);
+		}
+	
+		function safeText(value) {
+			if (value == null) {
+				return "";
+			}
+	
+			return String(value);
+		}
+	});
+</script>

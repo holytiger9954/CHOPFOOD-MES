@@ -91,17 +91,16 @@ function setSnbActiveMenu() {
 function openModal(overlay) {
 	if (!overlay) return;
 
-	overlay.style.display = "flex";
+	overlay.classList.add("active");
 	document.body.classList.add("modal-open");
 }
 
 function closeModal(overlay) {
 	if (!overlay) return;
 
-	overlay.style.display = "none";
+	overlay.classList.remove("active");
 
-	// 열려 있는 overlay가 더 없을 때만 body 스크롤 해제
-	const openedOverlay = document.querySelector(".overlay[style*='display: flex'], .overlay[style*='display: block']");
+	const openedOverlay = document.querySelector(".overlay.active");
 
 	if (!openedOverlay) {
 		document.body.classList.remove("modal-open");

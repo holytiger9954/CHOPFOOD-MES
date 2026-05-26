@@ -183,8 +183,8 @@
 
 </div>
 
-<div class="modal-bg" id="procModalBg">
-    <div class="modal-box proc-modal-box">
+<div class="overlay" id="procModalBg">
+    <div class="modal">
 
         <div class="modal-header">
             <h3 id="procModalTitle">공정 추가</h3>
@@ -341,7 +341,7 @@
         border-radius: 50%;
         background-color: #f1f3f5;
         color: #666;
-        font-size: 18px;
+        font-size: 12px;
         font-weight: 700;
         cursor: pointer;
         transition: 0.2s;
@@ -353,40 +353,40 @@
         transform: scale(1.05);
     }
 
-    .modal-bg {
-        display: none;
-        position: fixed;
-        inset: 0;
-        z-index: 9999;
-        background: rgba(0, 0, 0, 0.35);
-        align-items: center;
-        justify-content: center;
-    }
+/*     .modal-bg { */
+/*         display: none; */
+/*         position: fixed; */
+/*         inset: 0; */
+/*         z-index: 9999; */
+/*         background: rgba(0, 0, 0, 0.35); */
+/*         align-items: center; */
+/*         justify-content: center; */
+/*     } */
 
-    .modal-bg.active {
-        display: flex;
-    }
+/*     .modal-bg.active { */
+/*         display: flex; */
+/*     } */
 
-    .modal-box {
-        width: 520px;
-        padding: 24px;
-        background: #fff;
-        border-radius: 10px;
-    }
+     .modal { 
+         width: 520px; 
+         padding: 24px; 
+         background: #fff;
+         border-radius: 10px;
+     }
 
-    .modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-    }
+     .modal-header { 
+         display: flex; 
+         justify-content: space-between; 
+         align-items: center; 
+         margin-bottom: 20px; 
+     } 
 
-    .modal-header h3 {
-        margin: 0;
-    }
+/*     .modal-header h3 { */
+/*         margin: 0; */
+/*     } */
 
     .modal-close {
-        font-size: 28px;
+        font-size: 20px;
         cursor: pointer;
     }
 
@@ -537,38 +537,38 @@ window.addEventListener("load", function() {
     }
 
     function openProcModal(row) {
-        editingRow = row;
+    	editingRow = row;
 
-        if (editingRow) {
-            procModalTitle.textContent = "공정 수정";
-            addProcBtn.textContent = "수정";
+    	if (editingRow) {
+    		procModalTitle.textContent = "공정 수정";
+    		addProcBtn.textContent = "수정";
 
-            modalProcName.value =
-                editingRow.querySelector('input[name="procNameList"]').value;
+    		modalProcName.value =
+    			editingRow.querySelector('input[name="procNameList"]').value;
 
-            modalProcWpType.value =
-                editingRow.querySelector('input[name="procWpTypeList"]').value;
+    		modalProcWpType.value =
+    			editingRow.querySelector('input[name="procWpTypeList"]').value;
 
-            modalProcContent.value =
-                editingRow.querySelector('input[name="procContentList"]').value;
-        } else {
-            procModalTitle.textContent = "공정 추가";
-            addProcBtn.textContent = "추가";
+    		modalProcContent.value =
+    			editingRow.querySelector('input[name="procContentList"]').value;
+    	} else {
+    		procModalTitle.textContent = "공정 추가";
+    		addProcBtn.textContent = "추가";
 
-            clearProcModal();
-        }
+    		clearProcModal();
+    	}
 
-        procModalBg.classList.add("active");
-        modalProcName.focus();
+    	openModal(procModalBg);
+    	modalProcName.focus();
     }
 
     function closeProcModal() {
-        procModalBg.classList.remove("active");
-        clearProcModal();
+    	closeModal(procModalBg);
+    	clearProcModal();
 
-        editingRow = null;
-        procModalTitle.textContent = "공정 추가";
-        addProcBtn.textContent = "추가";
+    	editingRow = null;
+    	procModalTitle.textContent = "공정 추가";
+    	addProcBtn.textContent = "추가";
     }
 
     function clearProcModal() {

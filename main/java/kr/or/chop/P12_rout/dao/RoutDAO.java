@@ -1,7 +1,10 @@
 package kr.or.chop.P12_rout.dao;
 
 import java.util.List;
+import java.util.Map;
 
+import kr.or.chop.P12_rout.dto.ProcDetailDTO;
+import kr.or.chop.P12_rout.dto.ProcRefDTO;
 import kr.or.chop.P12_rout.dto.RoutDTO;
 import kr.or.chop.P12_rout.dto.RoutDetailDTO;
 import kr.or.chop.common.pagination.PageInfo;
@@ -37,4 +40,9 @@ public interface RoutDAO {
 	int deleteRout(String routId);
 
 	int softDeleteRoutDetail(String routId);
+	
+	public ProcDetailDTO selectRoutingProcDetail(Map<String, Object> param);
+	public List<ProcRefDTO> selectRoutingProcWpList(Map<String, Object> param);
+	public List<ProcRefDTO> selectRoutingProcEqList(Map<String, Object> param);
+	
 }
