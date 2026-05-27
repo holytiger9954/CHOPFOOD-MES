@@ -799,7 +799,7 @@
 	        use_type
 	    )
 	    VALUES (
-	        'USE' || lot_use_seq.NEXTVAL,
+	        'USE' || use_seq.NEXTVAL,
 	        #{workId},
 	        #{lotId},
 	        #{useQty},

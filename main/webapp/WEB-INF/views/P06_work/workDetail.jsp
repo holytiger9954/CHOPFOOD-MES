@@ -65,7 +65,7 @@
 						</c:otherwise>
 					</c:choose>
 					
-					<c:if test="${workDTO.workStatus == 20 and workDTO.workStatus == 40}">
+					<c:if test="${workDTO.workStatus == 20 or workDTO.workStatus == 40}">
 						<a class="btn btn-orange" href="${pageContext.request.contextPath}/work/result/edit?workId=${workDTO.workId}">
 							결과 수정
 						</a>
