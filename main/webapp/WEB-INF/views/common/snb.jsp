@@ -120,6 +120,7 @@
                 <a href="${ctx}/equip/list" class="snb-submenu-link ${uri.contains('/equip/') ? 'active' : ''}">설비 관리</a>
                 <a href="${ctx}/vendor/list" class="snb-submenu-link ${uri.contains('/vendor/') ? 'active' : ''}">거래처 관리</a>
                 <a href="${ctx}/defect/list" class="snb-submenu-link ${uri.contains('/defect/') ? 'active' : ''}">불량유형 관리</a>
+                <a href="${ctx}/ghp/list" class="snb-submenu-link ${uri.contains('/ghp/') ? 'active' : ''}">위생 관리</a>
             </div>
         </div>
 
@@ -142,9 +143,9 @@
 
             <div class="snb-submenu">
                 <a href="${ctx}/report/work" class="snb-submenu-link ${uri.contains('/report/work') ? 'active' : ''}">작업 실적</a>
-                <a href="${ctx}/report/quality" class="snb-submenu-link ${uri.contains('/report/quality') ? 'active' : ''}">품질 검사</a>
+                <a href="${ctx}/report/quality" class="snb-submenu-link ${uri.contains('/report/quality') ? 'active' : ''}">품질</a>
                 <a href="${ctx}/report/inout" class="snb-submenu-link ${uri.contains('/report/inout') ? 'active' : ''}">입출고</a>
-                <a href="${ctx}/report/facility" class="snb-submenu-link ${uri.contains('/report/facility') ? 'active' : ''}">설비 가동</a>
+                <a href="${ctx}/report/facility" class="snb-submenu-link ${uri.contains('/report/facility') ? 'active' : ''}">설비</a>
             </div>
         </div>
 

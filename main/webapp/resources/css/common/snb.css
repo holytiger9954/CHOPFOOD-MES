@@ -19,6 +19,10 @@
     border-right: 1px solid var(--gray);
 
     overflow-y: auto;
+    
+    /* 스크롤바 숨기기 */
+    -ms-overflow-style: none;  /* IE, Edge */
+    scrollbar-width: none;     /* Firefox */
 }
 
 .snb a {
