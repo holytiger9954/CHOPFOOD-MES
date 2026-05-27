@@ -93,23 +93,73 @@ public class VendorServiceImpl implements VendorService {
 	    
 	}
 
+//	@Override
+//	public void updateVendor(VendorDTO vendor, MultipartFile venImgFile, String uploadPath, String uploadUrl)
+//			throws IllegalStateException, IOException {
+//		
+//		vendorDAO.updateVendor(vendor);
+//		
+//		if ("Y".equals(vendor.getDelImg()) && (venImgFile == null || venImgFile.isEmpty())) {
+//	        vendor.setVendorImg(null);
+//	        vendorDAO.updateVenImg(vendor);
+//	        return;
+//	    }
+//		
+//		File uploadDir = new File(uploadPath);
+//	    if (!uploadDir.exists()) {
+//	        uploadDir.mkdirs();
+//	    }
+//		
+//	    if (vendor.getVendorImg() != null && !vendor.getVendorImg().trim().equals("")) {
+//	        String oldImgUrl = vendor.getVendorImg();
+//	        String oldFileName = oldImgUrl.substring(oldImgUrl.lastIndexOf("/") + 1);
+//
+//	        File oldFile = new File(uploadPath, oldFileName);
+//	        if (oldFile.exists()) {
+//	            oldFile.delete();
+//	        }
+//	    }
+//	    
+//	    String originalName = venImgFile.getOriginalFilename();
+//	    String ext = originalName.substring(originalName.lastIndexOf("."));
+//
+//	    String savedName = vendor.getVendorId() + "_" + System.currentTimeMillis() + ext;
+//
+//	    File saveFile = new File(uploadPath, savedName);
+//	    venImgFile.transferTo(saveFile);
+//	    
+//	    String imgUrl = uploadUrl + "/" + savedName;
+//	    
+//	    vendor.setVendorImg(imgUrl);
+//	    
+//	    vendorDAO.updateVenImg(vendor);
+//	    
+//	}
+	
 	@Override
 	public void updateVendor(VendorDTO vendor, MultipartFile venImgFile, String uploadPath, String uploadUrl)
-			throws IllegalStateException, IOException {
-		
-		vendorDAO.updateVendor(vendor);
-		
-		if ("Y".equals(vendor.getDelImg()) && (venImgFile == null || venImgFile.isEmpty())) {
+	        throws IllegalStateException, IOException {
+
+	    vendorDAO.updateVendor(vendor);
+
+	    // 이미지 삭제 체크 + 새 파일 없음
+	    if ("Y".equals(vendor.getDelImg()) && (venImgFile == null || venImgFile.isEmpty())) {
 	        vendor.setVendorImg(null);
 	        vendorDAO.updateVenImg(vendor);
 	        return;
 	    }
-		
-		File uploadDir = new File(uploadPath);
+
+	    // 새 파일 업로드 안 했으면 여기서 끝
+	    if (venImgFile == null || venImgFile.isEmpty()) {
+	        return;
+	    }
+
+	    File uploadDir = new File(uploadPath);
 	    if (!uploadDir.exists()) {
 	        uploadDir.mkdirs();
 	    }
-		
+
+	    // 기존 이미지 삭제
 	    if (vendor.getVendorImg() != null && !vendor.getVendorImg().trim().equals("")) {
 	        String oldImgUrl = vendor.getVendorImg();
 	        String oldFileName = oldImgUrl.substring(oldImgUrl.lastIndexOf("/") + 1);
@@ -119,20 +169,24 @@ public class VendorServiceImpl implements VendorService {
 	            oldFile.delete();
 	        }
 	    }
-	    
+
 	    String originalName = venImgFile.getOriginalFilename();
-	    String ext = originalName.substring(originalName.lastIndexOf("."));
+
+	    String ext = "";
+	    if (originalName != null && originalName.contains(".")) {
+	        ext = originalName.substring(originalName.lastIndexOf("."));
+	    }
 
 	    String savedName = vendor.getVendorId() + "_" + System.currentTimeMillis() + ext;
 
 	    File saveFile = new File(uploadPath, savedName);
 	    venImgFile.transferTo(saveFile);
-	    
+
 	    String imgUrl = uploadUrl + "/" + savedName;
-	    
+
 	    vendor.setVendorImg(imgUrl);
-	    
+
 	    vendorDAO.updateVenImg(vendor);
-	    
 	}
+	
 }

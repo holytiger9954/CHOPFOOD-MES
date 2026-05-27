@@ -22,98 +22,85 @@
         </div>
 
         <form class="search-box"
-              action="${pageContext.request.contextPath}/report/quality"
-              method="get">
+		      action="${pageContext.request.contextPath}/report/quality"
+		      method="get">
+		
+		    <div class="search-item">
+		        <label>조회기간</label>
+		
+		        <div class="date-range">
+		            <input type="date"
+		                   name="startDate"
+		                   value="${searchDTO.startDate}">
+		
+		            <span>~</span>
+		
+		            <input type="date"
+		                   name="endDate"
+		                   value="${searchDTO.endDate}">
+		        </div>
+		    </div>
+		
+		    <div class="search-item">
+		        <label>품목</label>
+		
+		        <select name="itemId">
+		            <option value="">전체</option>
+		
+		            <c:forEach var="item" items="${itemList}">
+		                <option value="${item.code}"
+		                    <c:if test="${searchDTO.itemId == item.code}">
+		                        selected
+		                    </c:if>>
+		                    ${item.name}
+		                </option>
+		            </c:forEach>
+		        </select>
+		    </div>
+		
+		    <div class="search-item">
+		        <label>위험도</label>
+		
+		        <select name="riskLevel">
+		            <option value="">전체</option>
+		
+		            <option value="LOW"
+		                <c:if test="${searchDTO.riskLevel == 'LOW'}">
+		                    selected
+		                </c:if>>
+		                LOW
+		            </option>
+		
+		            <option value="MEDIUM"
+		                <c:if test="${searchDTO.riskLevel == 'MEDIUM'}">
+		                    selected
+		                </c:if>>
+		                MEDIUM
+		            </option>
+		
+		            <option value="HIGH"
+		                <c:if test="${searchDTO.riskLevel == 'HIGH'}">
+		                    selected
+		                </c:if>>
+		                HIGH
+		            </option>
+		        </select>
+		    </div>
+		
+		    <div class="search-btn-area">
+		        <button type="submit" class="btn btn-main">
+		            조회
+		        </button>
+		
+		        <a class="btn btn-white"
+		           href="${pageContext.request.contextPath}/report/quality">
+		            초기화
+		        </a>
+		    </div>
+		
+		</form>
 
-            <div class="search-item">
-	            <label>기간</label>
-	
-	            <div style="display: flex; align-items: center; gap: 8px;">
-	                <input type="date"
-	                    name="startDate"
-	                    value="${search.startDate}">
-	
-	                <span>~</span>
-	
-	                <input type="date"
-	                    name="endDate"
-	                    value="${search.endDate}">
-	            </div>
-	        </div>
-
-            <div class="search-item">
-                <label>품목</label>
-                <select name="itemId">
-                    <option value="">전체</option>
-
-                    <c:forEach var="item" items="${itemList}">
-                        <option value="${item.code}"
-                            <c:if test="${searchDTO.itemId == item.code}">
-                                selected
-                            </c:if>>
-                            ${item.name}
-                        </option>
-                    </c:forEach>
-                </select>
-            </div>
-
-            <div class="search-item">
-                <label>설비</label>
-                <select name="equipmentId">
-                    <option value="">전체</option>
-
-                    <c:forEach var="equipment" items="${equipmentList}">
-                        <option value="${equipment.code}"
-                            <c:if test="${searchDTO.equipmentId == equipment.code}">
-                                selected
-                            </c:if>>
-                            ${equipment.name}
-                        </option>
-                    </c:forEach>
-                </select>
-            </div>
-
-            <div class="search-item">
-                <label>위험도</label>
-                <select name="riskLevel">
-                    <option value="">전체</option>
-
-                    <option value="LOW"
-                        <c:if test="${searchDTO.riskLevel == 'LOW'}">
-                            selected
-                        </c:if>>
-                        LOW
-                    </option>
-
-                    <option value="MEDIUM"
-                        <c:if test="${searchDTO.riskLevel == 'MEDIUM'}">
-                            selected
-                        </c:if>>
-                        MEDIUM
-                    </option>
-
-                    <option value="HIGH"
-                        <c:if test="${searchDTO.riskLevel == 'HIGH'}">
-                            selected
-                        </c:if>>
-                        HIGH
-                    </option>
-                </select>
-            </div>
-
-            <div class="search-btn-area"
-                 style="width:100%; justify-content:flex-end;">
-                <button type="submit" class="btn btn-main">
-                    조회
-                </button>
-                
-                <a class="btn btn-white"
-                   href="${pageContext.request.contextPath}/report/quality">
-                    초기화
-                </a>
-            </div>
-
-        </form>
+        <h3 class="report-block-title">주요 지표</h3>
 
         <div class="report-card-grid">
 
@@ -145,47 +132,23 @@
 
         <div class="report-chart-grid">
 
-            <div class="report-section">
+            <div class="report-section chart-section">
                 <div class="section-title-row">
                     <h3>날짜별 평균 불량률 추이</h3>
                 </div>
 
-                <canvas id="defectTrendChart" height="110"></canvas>
+                <div class="chart-canvas-box">
+                    <canvas id="defectTrendChart"></canvas>
+                </div>
             </div>
 
-            <div class="report-section">
+            <div class="report-section chart-section">
                 <div class="section-title-row">
                     <h3>AI 위험도 현황</h3>
                 </div>
 
-                <div class="risk-summary-grid">
-
-                    <c:forEach var="risk" items="${riskChartList}">
-
-                        <c:set var="riskClass" value="" />
-
-                        <c:choose>
-                            <c:when test="${risk.riskLevel == 'LOW'}">
-                                <c:set var="riskClass" value="low" />
-                            </c:when>
-                            <c:when test="${risk.riskLevel == 'MEDIUM'}">
-                                <c:set var="riskClass" value="medium" />
-                            </c:when>
-                            <c:when test="${risk.riskLevel == 'HIGH'}">
-                                <c:set var="riskClass" value="high" />
-                            </c:when>
-                        </c:choose>
-
-                        <div class="risk-summary-card ${riskClass}">
-                            <div>
-                                <p>${risk.riskLevel}</p>
-                                <strong>${risk.count}</strong>
-                                <span>건</span>
-                            </div>
-                        </div>
-
-                    </c:forEach>
-
+                <div class="chart-canvas-box small">
+                    <canvas id="riskStatusChart"></canvas>
                 </div>
             </div>
 
@@ -261,22 +224,22 @@
                                 </td>
 
                                 <td>
-								    <div class="condition-grid">
-								
-								        <span class="condition-chip <c:if test='${q.temperature >= 30}'>danger</c:if>">
-								            온도 ${q.temperature}℃
-								        </span>
-								
-								        <span class="condition-chip <c:if test='${q.humidity >= 75}'>danger</c:if>">
-								            습도 ${q.humidity}%
-								        </span>
-								
-								        <span class="condition-chip <c:if test='${q.equipmentRuntime >= 10}'>danger</c:if>">
-								            가동 ${q.equipmentRuntime}h
-								        </span>
-								
-								    </div>
-								</td>
+                                    <div class="condition-grid">
+
+                                        <span class="condition-chip <c:if test='${q.temperature >= 30}'>danger</c:if>">
+                                            온도 ${q.temperature}℃
+                                        </span>
+
+                                        <span class="condition-chip <c:if test='${q.humidity >= 75}'>danger</c:if>">
+                                            습도 ${q.humidity}%
+                                        </span>
+
+                                        <span class="condition-chip <c:if test='${q.equipmentRuntime >= 10}'>danger</c:if>">
+                                            가동 ${q.equipmentRuntime}h
+                                        </span>
+
+                                    </div>
+                                </td>
                             </tr>
                         </c:forEach>
 
@@ -314,12 +277,40 @@
         </c:forEach>
     ];
 
+    const riskLabels = [
+        <c:forEach var="r" items="${riskChartList}" varStatus="status">
+            '${r.riskLevel}'<c:if test="${!status.last}">,</c:if>
+        </c:forEach>
+    ];
+
+    const riskValues = [
+        <c:forEach var="r" items="${riskChartList}" varStatus="status">
+            ${r.count}<c:if test="${!status.last}">,</c:if>
+        </c:forEach>
+    ];
+
+    const riskColors = riskLabels.map(function(label) {
+        if (label === 'LOW') {
+            return '#2f7a4f';
+        }
+
+        if (label === 'MEDIUM') {
+            return '#f59e0b';
+        }
+
+        if (label === 'HIGH') {
+            return '#dc2626';
+        }
+
+        return '#9ca3af';
+    });
+
     new Chart(document.getElementById('defectTrendChart'), {
         type: 'line',
         data: {
             labels: defectLabels,
             datasets: [{
-                label: '평균 불량률',
+                label: '평균 불량률(%)',
                 data: defectValues,
                 borderColor: '#2f7a4f',
                 backgroundColor: 'rgba(47, 122, 79, 0.12)',
@@ -331,14 +322,49 @@
         },
         options: {
             responsive: true,
-            maintainAspectRatio: true,
+            maintainAspectRatio: false,
+
             plugins: {
                 legend: {
-                    display: true
+                    display: true,
+                    labels: {
+                        boxWidth: 12
+                    }
                 }
             },
+
             scales: {
                 y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    new Chart(document.getElementById('riskStatusChart'), {
+        type: 'bar',
+        data: {
+            labels: riskLabels,
+            datasets: [{
+                label: '위험도 건수',
+                data: riskValues,
+                backgroundColor: riskColors,
+                borderRadius: 8,
+                barThickness: 28
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+
+            scales: {
+                x: {
                     beginAtZero: true
                 }
             }
@@ -352,32 +378,49 @@
         max-width: 1040px;
         margin: 0 auto;
     }
+    
+    .date-range {
+	    display: flex;
+	    align-items: center;
+	    gap: 8px;
+	}
+	
+	.date-range input {
+	    width: 150px;
+	}
+
+    .report-block-title {
+        margin: 0 0 18px 0;
+        font-size: 19px;
+        color: #111;
+        font-weight: 800;
+    }
 
     .report-card-grid {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 16px;
-        margin-bottom: 24px;
+        margin-bottom: 30px;
         max-width: 100%;
     }
 
     .report-card {
         min-width: 0;
         padding: 20px;
-        border: 1px solid #d8d8d8;
+        border: 1px solid #bdbdbd;
         border-radius: 10px;
         background-color: #fff;
     }
 
     .report-card p {
-        margin: 0 0 12px 0;
+        margin: 0 0 16px 0;
         font-size: 14px;
         color: #222;
-        font-weight: 700;
+        font-weight: 800;
     }
 
     .report-card strong {
-        font-size: 28px;
+        font-size: 29px;
         color: #111;
         letter-spacing: -0.5px;
     }
@@ -394,27 +437,32 @@
     }
 
     .report-chart-grid {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) 280px;
-        gap: 20px;
-        margin-bottom: 24px;
-        max-width: 100%;
-    }
+	    display: grid;
+	    grid-template-columns: 1fr 1fr;
+	    gap: 24px;
+	    margin-bottom: 30px;
+	    align-items: stretch;
+	}
 
     .report-section {
         min-width: 0;
         max-width: 100%;
         margin-bottom: 24px;
         padding: 22px;
-        border: 1px solid #d8d8d8;
+        border: 1px solid #bdbdbd;
         border-radius: 10px;
         background-color: #fff;
         overflow: hidden;
     }
 
-    .report-section canvas {
-        display: block;
-        max-width: 100%;
+    .chart-section {
+        margin-bottom: 0;
+    }
+
+    .chart-canvas-box {
+        position: relative;
+        width: 100%;
+        height: 260px;
     }
 
     .section-title-row {
@@ -430,54 +478,6 @@
         font-size: 18px;
         color: #111;
         font-weight: 800;
-    }
-
-    .risk-summary-grid {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .risk-summary-card {
-        padding: 16px 18px;
-        border-radius: 10px;
-        border: 1px solid #e5e7eb;
-    }
-
-    .risk-summary-card p {
-        margin: 0 0 8px 0;
-        font-size: 13px;
-        font-weight: 800;
-    }
-
-    .risk-summary-card strong {
-        font-size: 26px;
-        font-weight: 800;
-    }
-
-    .risk-summary-card span {
-        margin-left: 4px;
-        font-size: 13px;
-        color: #666;
-        font-weight: 700;
-    }
-
-    .risk-summary-card.low {
-        background-color: #f0fdf4;
-        border-color: #bbf7d0;
-        color: #166534;
-    }
-
-    .risk-summary-card.medium {
-        background-color: #fffbeb;
-        border-color: #fde68a;
-        color: #92400e;
-    }
-
-    .risk-summary-card.high {
-        background-color: #fef2f2;
-        border-color: #fecaca;
-        color: #991b1b;
     }
 
     .ai-comment-box {
@@ -566,50 +566,57 @@
     }
 
     .condition-grid {
-	    display: grid;
-	    grid-template-columns: 92px 92px 92px;
-	    align-items: center;
-	    gap: 6px;
-	}
-	
-	.condition-chip {
-	    display: inline-flex;
-	    align-items: center;
-	    justify-content: center;
-	    height: 26px;
-	    padding: 0 8px;
-	    border-radius: 999px;
-	    font-size: 13px;
-	    font-weight: 600;
-	    color: #333;
-	    background-color: transparent;
-	    white-space: nowrap;
-	}
-	
-	.condition-chip.danger {
-	    color: #b91c1c;
-	    background-color: #fee2e2;
-	    font-weight: 800;
-	}
+        display: grid;
+        grid-template-columns: 92px 92px 92px;
+        align-items: center;
+        gap: 6px;
+    }
 
-    @media (max-width: 1400px) {
+    .condition-chip {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 26px;
+        padding: 0 8px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #333;
+        background-color: transparent;
+        white-space: nowrap;
+    }
+
+    .condition-chip.danger {
+        color: #b91c1c;
+        background-color: #fee2e2;
+        font-weight: 800;
+    }
+
+    @media (max-width: 900px) {
         .report-inner {
             max-width: 960px;
         }
 
         .report-chart-grid {
             grid-template-columns: 1fr;
-        }
-
-        .risk-summary-grid {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 20px;
         }
     }
 
     @media (max-width: 1100px) {
         .report-card-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .report-search-top,
+        .report-select-row {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .report-select-controls {
+            justify-content: flex-start;
+            flex-wrap: wrap;
         }
     }
 </style>
