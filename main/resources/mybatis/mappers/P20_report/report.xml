@@ -5,179 +5,219 @@
 
 <mapper namespace="mapper.P20_report">
 
-    <!-- 품질 리포트 요약 카드 -->
+    <!-- AI 품질 리포트 요약 카드 -->
     <select id="selectQualitySummary"
             parameterType="qualityReportSearchDTO"
             resultType="qualityReportSummaryDTO">
 
         SELECT
-            NVL(SUM(q.qc_qty), 0) AS totalQcQty,
+            NVL(SUM(prod_qty), 0) AS totalQcQty,
+            NVL(SUM(prod_qty - defect_qty), 0) AS totalPassQty,
+            NVL(SUM(defect_qty), 0) AS totalDefectQty,
 
-            NVL(SUM(q.qc_pass_qty), 0) AS totalPassQty,
+            ROUND(
+                NVL(SUM(defect_qty) / NULLIF(SUM(prod_qty), 0) * 100, 0),
+                1
+            ) AS defectRate,
 
-            NVL(
-                SUM(
-                    q.qc_qty - NVL(q.qc_pass_qty, 0)
-                ),
-                0
-            ) AS totalDefectQty,
+            NVL(SUM(CASE WHEN risk_level = 'HIGH' THEN 1 ELSE 0 END), 0)
+                AS highRiskCount,
 
             ROUND(
                 NVL(
-                    NVL(
-                        SUM(
-                            q.qc_qty - NVL(q.qc_pass_qty, 0)
-                        ),
-                        0
-                    )
-                    / NULLIF(SUM(q.qc_qty), 0)
-                    * 100,
+                    SUM(CASE WHEN risk_level = 'HIGH' THEN 1 ELSE 0 END)
+                    / NULLIF(COUNT(*), 0) * 100,
                     0
                 ),
                 1
-            ) AS defectRate
+            ) AS highRiskRate
 
-        FROM qc q
+        FROM ai_quality_data
+        WHERE 1 = 1
 
-            JOIN lot l
-                ON q.qc_lot = l.lot_id
+        <include refid="qualitySearchCondition" />
 
-        WHERE q.qc_usage = 'Y'
+    </select>
+
+    <!-- 상세 리스트 전체 개수 -->
+    <select id="selectQualityReportCount"
+            parameterType="qualityReportSearchDTO"
+            resultType="int">
+
+        SELECT COUNT(*)
+        FROM ai_quality_data
+        WHERE 1 = 1
+
+        <include refid="qualitySearchCondition" />
+
+    </select>
+
+    <!-- AI 품질 리포트 상세 리스트: 공통 페이지네이션 적용 -->
+    <select id="selectQualityReportList"
+            resultType="qualityReportListDTO">
+
+        SELECT *
+        FROM (
+            SELECT
+                ROWNUM AS rn,
+                A.*
+            FROM (
+                SELECT
+                    ai_data_id AS lotId,
+                    item_id AS itemName,
+
+                    prod_qty AS qcQty,
+                    prod_qty - defect_qty AS qcPassQty,
+                    defect_qty AS defectQty,
+                    defect_rate AS defectRate,
+
+                    equipment_id AS equipmentId,
+                    temperature AS temperature,
+                    humidity AS humidity,
+                    equipment_runtime AS equipmentRuntime,
+                    work_shift AS workShift,
+                    risk_level AS riskLevel,
+
+                    CASE
+                        WHEN result_yn = 'Y' THEN '정상'
+                        WHEN result_yn = 'N' THEN '불량'
+                        ELSE result_yn
+                    END AS qcResult,
+
+                    TO_CHAR(created_at, 'YYYY-MM-DD HH24:MI') AS qcDate
+
+                FROM ai_quality_data
+                WHERE 1 = 1
+
+                <include refid="qualitySearchConditionForMap" />
+
+                ORDER BY created_at DESC, ai_data_id DESC
+            ) A
+            WHERE ROWNUM <![CDATA[ <= ]]> #{page.endRow}
+        )
+        WHERE rn <![CDATA[ >= ]]> #{page.startRow}
+
+    </select>
+
+    <!-- 품목 목록 -->
+    <select id="selectItemList"
+            resultType="reportSelectDTO">
+
+        SELECT DISTINCT
+            item_id AS code,
+            item_id AS name
+        FROM ai_quality_data
+        ORDER BY item_id
+
+    </select>
+
+    <!-- 설비 목록 -->
+    <select id="selectEquipmentList"
+            resultType="reportSelectDTO">
+
+        SELECT DISTINCT
+            equipment_id AS code,
+            equipment_id AS name
+        FROM ai_quality_data
+        ORDER BY equipment_id
+
+    </select>
+
+    <!-- 날짜별 평균 불량률 추이 -->
+    <select id="selectDefectTrendList"
+            parameterType="qualityReportSearchDTO"
+            resultType="map">
+
+        SELECT
+            TO_CHAR(created_at, 'YYYY-MM-DD') AS "reportDate",
+            ROUND(AVG(defect_rate), 2) AS "avgDefectRate"
+        FROM ai_quality_data
+        WHERE 1 = 1
+
+        <include refid="qualitySearchCondition" />
+
+        GROUP BY TO_CHAR(created_at, 'YYYY-MM-DD')
+        ORDER BY "reportDate"
+
+    </select>
+
+    <!-- 위험도 분포 -->
+    <select id="selectRiskChartList"
+            parameterType="qualityReportSearchDTO"
+            resultType="map">
+
+        SELECT
+            risk_level AS "riskLevel",
+            COUNT(*) AS "count"
+        FROM ai_quality_data
+        WHERE 1 = 1
+
+        <include refid="qualitySearchCondition" />
+
+        GROUP BY risk_level
+
+        ORDER BY
+            CASE risk_level
+                WHEN 'LOW' THEN 1
+                WHEN 'MEDIUM' THEN 2
+                WHEN 'HIGH' THEN 3
+                ELSE 4
+            END
+
+    </select>
+
+    <!-- 검색 조건: parameterType이 QualityReportSearchDTO일 때 -->
+    <sql id="qualitySearchCondition">
 
         <if test="startDate != null and startDate != ''">
-            AND q.qc_date <![CDATA[ >= ]]>
+            AND created_at <![CDATA[ >= ]]>
                 TO_DATE(#{startDate}, 'YYYY-MM-DD')
         </if>
 
         <if test="endDate != null and endDate != ''">
-            AND q.qc_date <![CDATA[ < ]]>
+            AND created_at <![CDATA[ < ]]>
                 TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
         </if>
 
         <if test="itemId != null and itemId != ''">
-            AND l.lot_item = #{itemId}
+            AND item_id = #{itemId}
         </if>
 
-        <if test="defTypeId != null and defTypeId != ''">
-
-            AND EXISTS (
-
-                SELECT 1
-                FROM def_log dl
-
-                WHERE dl.dlog_qcid = q.qc_id
-                  AND dl.dlog_def = #{defTypeId}
-
-            )
-
+        <if test="equipmentId != null and equipmentId != ''">
+            AND equipment_id = #{equipmentId}
         </if>
 
-    </select>
-    
-    <!-- LOT별 검사 현황 리스트 -->
-	<select id="selectQualityReportList"
-	        parameterType="qualityReportSearchDTO"
-	        resultType="qualityReportListDTO">
-	
-	    SELECT
-	        q.qc_lot AS lotId,
-	        i.item_name AS itemName,
-	
-	        q.qc_qty AS qcQty,
-	        q.qc_pass_qty AS qcPassQty,
-	
-	        (q.qc_qty - NVL(q.qc_pass_qty, 0)) AS defectQty,
-	
-	        ROUND(
-	            NVL(
-	                (q.qc_qty - NVL(q.qc_pass_qty, 0))
-	                / NULLIF(q.qc_qty, 0)
-	                * 100,
-	                0
-	            ),
-	            1
-	        ) AS defectRate,
-	
-	        CASE
-			    WHEN q.qc_pass_qty = q.qc_qty THEN '합격'
-			    WHEN q.qc_pass_qty = 0 THEN '불합격'
-			    ELSE '부분합격'
-			END AS qcResult,
-	
-	        TO_CHAR(q.qc_date, 'YYYY-MM-DD') AS qcDate
-	
-	    FROM qc q
-	
-	        JOIN lot l
-	            ON q.qc_lot = l.lot_id
-	
-	        JOIN item i
-	            ON l.lot_item = i.item_id
-	
-	    WHERE q.qc_usage = 'Y'
-	
-	    <if test="startDate != null and startDate != ''">
-	        AND q.qc_date <![CDATA[ >= ]]>
-	            TO_DATE(#{startDate}, 'YYYY-MM-DD')
-	    </if>
-	
-	    <if test="endDate != null and endDate != ''">
-	        AND q.qc_date <![CDATA[ < ]]>
-	            TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
-	    </if>
-	
-	    <if test="itemId != null and itemId != ''">
-	        AND l.lot_item = #{itemId}
-	    </if>
-	
-	    <if test="defTypeId != null and defTypeId != ''">
-	
-	        AND EXISTS (
-	
-	            SELECT 1
-	            FROM def_log dl
-	
-	            WHERE dl.dlog_qcid = q.qc_id
-	              AND dl.dlog_def = #{defTypeId}
-	
-	        )
-	
-	    </if>
-	
-	    ORDER BY q.qc_date DESC, q.qc_id DESC
-	
-	</select>
-	
-	<!-- 품목 목록 -->
-	<select id="selectItemList"
-	        resultType="reportSelectDTO">
-	
-	    SELECT
-	        item_id AS code,
-	        item_name AS name
-	
-	    FROM item
-	
-	    WHERE item_usage = 'Y'
-	
-	    ORDER BY item_name
-	
-	</select>
-	
-	<!-- 불량유형 목록 -->
-	<select id="selectDefectTypeList"
-	        resultType="reportSelectDTO">
-	
-	    SELECT
-	        def_type_id AS code,
-	        def_type_name AS name
-	
-	    FROM defect
-	
-	    WHERE def_usage = 'Y'
-	
-	    ORDER BY def_type_name
-	
-	</select>
+        <if test="riskLevel != null and riskLevel != ''">
+            AND risk_level = #{riskLevel}
+        </if>
+
+    </sql>
+
+    <!-- 검색 조건: paramMap 안에 searchDTO가 search로 들어갔을 때 -->
+    <sql id="qualitySearchConditionForMap">
+
+        <if test="search.startDate != null and search.startDate != ''">
+            AND created_at <![CDATA[ >= ]]>
+                TO_DATE(#{search.startDate}, 'YYYY-MM-DD')
+        </if>
+
+        <if test="search.endDate != null and search.endDate != ''">
+            AND created_at <![CDATA[ < ]]>
+                TO_DATE(#{search.endDate}, 'YYYY-MM-DD') + 1
+        </if>
+
+        <if test="search.itemId != null and search.itemId != ''">
+            AND item_id = #{search.itemId}
+        </if>
+
+        <if test="search.equipmentId != null and search.equipmentId != ''">
+            AND equipment_id = #{search.equipmentId}
+        </if>
+
+        <if test="search.riskLevel != null and search.riskLevel != ''">
+            AND risk_level = #{search.riskLevel}
+        </if>
+
+    </sql>
 
 </mapper>

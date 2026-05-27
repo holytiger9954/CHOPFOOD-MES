@@ -7,6 +7,8 @@ public class QualityReportSearchDTO {
 
     private String startDate;
     private String endDate;
+
     private String itemId;
-    private String defTypeId;
+    private String equipmentId;
+    private String riskLevel;
 }

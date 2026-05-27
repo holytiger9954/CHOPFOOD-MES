@@ -13,6 +13,13 @@ public class QualityReportListDTO {
     private int defectQty;
     private double defectRate;
 
+    private String equipmentId;
+    private double temperature;
+    private double humidity;
+    private int equipmentRuntime;
+    private String workShift;
+    private String riskLevel;
+
     private String qcResult;
     private String qcDate;
 }

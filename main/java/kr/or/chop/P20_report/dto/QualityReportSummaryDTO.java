@@ -9,4 +9,7 @@ public class QualityReportSummaryDTO {
     private int totalPassQty;
     private int totalDefectQty;
     private double defectRate;
+
+    private int highRiskCount;
+    private double highRiskRate;
 }
