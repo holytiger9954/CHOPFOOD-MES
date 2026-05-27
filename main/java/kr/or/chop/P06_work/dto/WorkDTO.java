@@ -37,6 +37,7 @@ public class WorkDTO {
 	
 	// 검색 조건
     private String workSearchSdate;
+    
     private String workSearchEdate;
     private Integer searchType;
     private String searchKeyword;
@@ -81,6 +82,9 @@ public class WorkDTO {
     	if (workOrderQty <= 0) {
     		return 0;
     	}
+    	
+    	int prevQty = (workPrevQty == null) ? 0 : workPrevQty;
+    	
     	return (int) Math.round((workPrevQty * 100.0) / workOrderQty);
     }
     
@@ -92,5 +96,11 @@ public class WorkDTO {
     
     private Date planSdate;
     private Date planEdate;
+    
+    // LOT 위치
+    private String lotBwhsec;
+    
+    // BOM
+    private List<WorkBomDTO> bomList;
     
 }

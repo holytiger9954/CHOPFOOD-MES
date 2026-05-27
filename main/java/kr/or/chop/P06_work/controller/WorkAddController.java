@@ -52,7 +52,7 @@ public class WorkAddController {
 	    System.out.println("workWorker = " + workDTO.getWorkWorker());
 	    System.out.println("workDmsg = " + workDTO.getWorkDmsg());
 		
-		int result = workService.insertWork(workDTO);
+		workService.insertWork(workDTO);
 
 		return "redirect:/work/list";
 	}

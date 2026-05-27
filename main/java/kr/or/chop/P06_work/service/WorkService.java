@@ -3,6 +3,7 @@ package kr.or.chop.P06_work.service;
 import java.util.List;
 
 import kr.or.chop.P05_plan.dto.PlanDTO;
+import kr.or.chop.P06_work.dto.WorkBomDTO;
 import kr.or.chop.P06_work.dto.WorkDTO;
 import kr.or.chop.common.pagination.PageInfo;
 
@@ -19,13 +20,14 @@ public interface WorkService {
 	
 	public List<PlanDTO> selectWorkPlanList();
 	public List<WorkDTO> selectWorkerList(WorkDTO workDTO);
-	public int insertWork(WorkDTO workDTO);
+	
+	public void insertWork(WorkDTO workDTO);
 	
 	public WorkDTO selectWorkModify(WorkDTO workDTO);
-	public int updateWork(WorkDTO workDTO);
+	public void updateWork(WorkDTO workDTO);
 	
-	public int deleteWork(WorkDTO workDTO);
+	public void deleteWork(WorkDTO workDTO);
 	
-	public int updateWorkResult(WorkDTO workDTO);
+	public void updateWorkResult(WorkDTO workDTO);
 
 }

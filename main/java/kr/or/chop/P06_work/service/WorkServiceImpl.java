@@ -1,12 +1,15 @@
 package kr.or.chop.P06_work.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import kr.or.chop.P05_plan.dto.PlanDTO;
 import kr.or.chop.P06_work.dao.WorkDAO;
+import kr.or.chop.P06_work.dto.WorkBomDTO;
 import kr.or.chop.P06_work.dto.WorkDTO;
 import kr.or.chop.common.pagination.PageInfo;
 
@@ -33,19 +36,46 @@ public class WorkServiceImpl implements WorkService {
 
 	@Override
 	public WorkDTO selectWorkDetail(WorkDTO workDTO) {
-		return workDAO.selectWorkDetail(workDTO);
+		workDTO = workDAO.selectWorkDetail(workDTO);
+		
+		List<WorkBomDTO> bomList = workDAO.selectBomListForWork(workDTO);
+		
+		workDTO.setBomList(bomList);
+		
+		return workDTO;
 	}
 
 	@Override
 	public List<WorkDTO> selectWorkProcList(WorkDTO workDTO) {
-		List<WorkDTO> procList = workDAO.selectWorkProcList(workDTO);
 
-		for (WorkDTO proc : procList) {
-			proc.setWpList(workDAO.selectProcWpList(proc));
-			proc.setEqList(workDAO.selectProcEqList(proc));
-		}
+	    List<WorkDTO> procList = workDAO.selectWorkProcList(workDTO);
 
-		return procList;
+	    if (procList == null || procList.isEmpty()) {
+	        return new ArrayList<WorkDTO>();
+	    }
+
+	    for (WorkDTO proc : procList) {
+
+	        if (proc == null) {
+	            continue;
+	        }
+
+	        List<WorkDTO> wpList = workDAO.selectProcWpList(proc);
+	        List<WorkDTO> eqList = workDAO.selectProcEqList(proc);
+
+	        if (wpList == null) {
+	            wpList = new ArrayList<WorkDTO>();
+	        }
+
+	        if (eqList == null) {
+	            eqList = new ArrayList<WorkDTO>();
+	        }
+
+	        proc.setWpList(wpList);
+	        proc.setEqList(eqList);
+	    }
+
+	    return procList;
 	}
 	
 	@Override
@@ -68,9 +98,54 @@ public class WorkServiceImpl implements WorkService {
 		return workDAO.selectWorkerList(workDTO);
 	}
 
+	@Transactional
 	@Override
-	public int insertWork(WorkDTO workDTO) {
-		return workDAO.insertWork(workDTO);
+	public void insertWork(WorkDTO workDTO) {
+		// 작업에 필요한 bomList 가져오기
+		List<WorkBomDTO> bomList = workDAO.selectBomListForWork(workDTO);
+		
+		if (bomList == null || bomList.isEmpty()) {
+	        throw new RuntimeException("해당 작업 품목에 사용 가능한 BOM이 없습니다.");
+	    }
+		
+		workDTO.setBomList(bomList);
+		
+		// 재고 확인
+		for (WorkBomDTO bom : bomList) {
+
+	        if (bom.getStockId() == null || bom.getStockId().equals("")) {
+	            throw new RuntimeException(
+	                "재고 정보가 없는 자재입니다: " + bom.getItemName()
+	            );
+	        }
+
+	        if (bom.getStockAvailQty() < bom.getReqQty()) {
+	            throw new RuntimeException(
+	                bom.getItemName()
+	                + " 재고 부족 / 필요: " + bom.getReqQty()
+	                + ", 가용: " + bom.getStockAvailQty()
+	            );
+	        }
+	    }
+		
+		// 자재 예약
+		for (WorkBomDTO bom : bomList) {
+	        int result = workDAO.reserveStock(bom);
+
+	        if (result == 0) {
+	            throw new RuntimeException(
+	                bom.getItemName() + " 재고 예약 실패. 다른 작업에서 먼저 예약했을 수 있습니다."
+	            );
+	        }
+	    }
+		
+		// 작업 지시
+		int insertResult = workDAO.insertWork(workDTO);
+
+	    if (insertResult == 0) {
+	        throw new RuntimeException("작업지시 등록 실패");
+	    }
+	    
 	}
 
 	@Override
@@ -78,19 +153,159 @@ public class WorkServiceImpl implements WorkService {
 		return workDAO.selectWorkModify(workDTO);
 	}
 
+	@Transactional
 	@Override
-	public int updateWork(WorkDTO workDTO) {
-		return workDAO.updateWork(workDTO);
+	public void updateWork(WorkDTO workDTO) {
+		// 상태 변경
+		workDAO.updateWork(workDTO);
 	}
 
+	@Transactional
 	@Override
-	public int deleteWork(WorkDTO workDTO) {
-		return workDAO.deleteWork(workDTO);
+	public void deleteWork(WorkDTO workDTO) {
+
+	    WorkDTO origin = workDAO.selectWorkDetail(workDTO);
+
+	    if (origin == null) {
+	        throw new RuntimeException("삭제할 작업지시 정보를 찾을 수 없습니다.");
+	    }
+
+	    int oldStatus = origin.getWorkStatus();
+
+	    if (oldStatus != 10) {
+	        throw new RuntimeException("대기 상태의 작업지시만 삭제할 수 있습니다.");
+	    }
+
+	    List<WorkBomDTO> bomList = workDAO.selectBomListForWorkResult(origin);
+
+	    if (bomList == null || bomList.isEmpty()) {
+	        throw new RuntimeException("정산할 BOM 정보가 없습니다.");
+	    }
+
+	    for (WorkBomDTO bom : bomList) {
+
+	        if (bom.getStockId() == null || bom.getStockId().equals("")) {
+	            throw new RuntimeException("재고 정보가 없는 자재입니다: " + bom.getItemName());
+	        }
+
+	        int result = workDAO.settleReservedStock(bom);
+
+	        if (result == 0) {
+	            throw new RuntimeException(
+	                bom.getItemName() + " 예약 재고 해제 실패"
+	            );
+	        }
+	    }
+
+	    int deleteResult = workDAO.deleteWork(origin);
+
+	    if (deleteResult == 0) {
+	        throw new RuntimeException("작업지시 삭제 실패");
+	    }
 	}
 
+	@Transactional
 	@Override
-	public int updateWorkResult(WorkDTO workDTO) {
-		return workDAO.updateWorkResult(workDTO);
+	public void updateWorkResult(WorkDTO workDTO) {
+
+	    // 1. 기존 작업 조회
+	    WorkDTO origin = workDAO.selectWorkDetail(workDTO);
+
+	    if (origin == null) {
+	        throw new RuntimeException("작업지시 정보를 찾을 수 없습니다.");
+	    }
+
+	    int oldStatus = origin.getWorkStatus();
+	    int newStatus = workDTO.getWorkStatus();
+
+	    // 2. 이미 정산된 작업 재처리 방지
+	    if (oldStatus == 30 || oldStatus == 50) {
+	        throw new RuntimeException("이미 결과 처리된 작업지시입니다.");
+	    }
+
+	    // 3. 화면 입력값 반영
+	    origin.setWorkPrevQty(workDTO.getWorkPrevQty());
+	    origin.setWorkStatus(newStatus);
+	    origin.setWorkWmsg(workDTO.getWorkWmsg());
+
+	    // 4. 완료수량 검증
+	    if (origin.getWorkPrevQty() < 0) {
+	        throw new RuntimeException("완료수량은 0보다 작을 수 없습니다.");
+	    }
+
+	    if (origin.getWorkPrevQty() > origin.getWorkOrderQty()) {
+	        throw new RuntimeException("완료수량은 작업지시수량보다 클 수 없습니다.");
+	    }
+
+	    // 5. 작업중 처리: 재고 건드리지 않음
+	    if (newStatus == 20) {
+
+	        int updateResult = workDAO.updateWorkResult(origin);
+
+	        if (updateResult == 0) {
+	            throw new RuntimeException("작업 진행 상태 변경 실패");
+	        }
+
+	        return;
+	    }
+
+	    // 6. 완료/보류 외 상태는 차단
+	    if (newStatus != 30 && newStatus != 50) {
+	        throw new RuntimeException("처리할 수 없는 작업 상태입니다.");
+	    }
+
+	    // 7. 완료/보류일 때만 BOM 기준 원자재 정산
+	    List<WorkBomDTO> bomList = workDAO.selectBomListForWorkResult(origin);
+
+	    if (bomList == null || bomList.isEmpty()) {
+	        throw new RuntimeException("정산할 BOM 정보가 없습니다.");
+	    }
+
+	    for (WorkBomDTO bom : bomList) {
+
+	        if (bom.getStockId() == null || bom.getStockId().equals("")) {
+	            throw new RuntimeException("재고 정보가 없는 자재입니다: " + bom.getItemName());
+	        }
+
+	        int result = workDAO.settleReservedStock(bom);
+
+	        if (result == 0) {
+	            throw new RuntimeException(
+	                bom.getItemName() + " 재고 정산 실패. 예약수량 또는 전체수량을 확인하세요."
+	            );
+	        }
+	    }
+
+	    // 8. 작업 결과 업데이트
+	    int updateResult = workDAO.updateWorkResult(origin);
+
+	    if (updateResult == 0) {
+	        throw new RuntimeException("작업 결과 업데이트 실패");
+	    }
+
+	    // 9. 완료일 때만 완제품 LOT 생성 + 완제품 stock 증가
+	    if (newStatus == 30) {
+
+	        String lotBwhsec = workDAO.selectAvailableSecId(origin);
+
+	        if (lotBwhsec == null || lotBwhsec.equals("")) {
+	            throw new RuntimeException("완제품 LOT을 배치할 창고 섹션이 없습니다.");
+	        }
+
+	        origin.setLotBwhsec(lotBwhsec);
+
+	        int lotResult = workDAO.insertLot(origin);
+
+	        if (lotResult == 0) {
+	            throw new RuntimeException("완제품 LOT 생성 실패");
+	        }
+
+	        int stockResult = workDAO.updateStock(origin);
+
+	        if (stockResult == 0) {
+	            throw new RuntimeException("완제품 재고 업데이트 실패");
+	        }
+	    }
 	}
 	
 }

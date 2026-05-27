@@ -25,11 +25,10 @@
 			</a>
 		</div>
 		<div>
-			<c:if test="${(workDTO.workPrevQty <= 0 or workDTO.workPrevQty == null) and workDTO.workStatus != 30}">
+			<c:if test="${workDTO.workStatus == 10}">
 				<a class="btn btn-main" href="${pageContext.request.contextPath}/work/order/edit?workId=${workDTO.workId}">
 					수정
 				</a>
-
 				<a class="btn btn-red"
 					href="${pageContext.request.contextPath}/work/delete?workId=${workDTO.workId}"
 					onclick="return confirm('작업 지시를 삭제하시겠습니까?');">
@@ -66,8 +65,7 @@
 						</c:otherwise>
 					</c:choose>
 					
-					<c:if test="${(workDTo.workPrevQty == null or workDTO.workPrevQty < workDTo.workOrderQty)
-									and (workDTO.workStatus != 30) and (workDTO.workStatus != 10)}">
+					<c:if test="${workDTO.workStatus == 20 and workDTO.workStatus == 40}">
 						<a class="btn btn-orange" href="${pageContext.request.contextPath}/work/result/edit?workId=${workDTO.workId}">
 							결과 수정
 						</a>
@@ -217,7 +215,65 @@
 				</div>
 			</div>
 		</div>
+		
+		<div class="content-content-content">
+			<div class="content-content-content-title">BOM 목록</div>
+			
+			<div class="table-wrap">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>품목</th>
+							<th>유형</th>
+							<th>소요수량</th>
+							<th>규격</th>
+							<th>단가(원)</th>
+							<th>소요금액(원)</th>
+						</tr>
+					</thead>
 
+					<tbody>
+						<c:forEach var="bom" items="${workDTO.bomList}">
+							<tr>
+								<td>${bom.itemName} (${bom.itemId})</td>
+								<td>
+									<c:choose>
+										<c:when test="${bom.itemType == 10}">
+											<span class="status-back stauts-back-success">• 원자재</span>
+										</c:when>
+										<c:when test="${bom.itemType == 20}">
+											<span class="status-back stauts-back-success">• 반제품</span>
+										</c:when>
+										<c:when test="${bom.itemType == 30}">
+											<span class="status-back stauts-back-success">• 완제품</span>
+										</c:when>
+										<c:otherwise>
+											<span class="status-back stauts-back-info">• 기타자재</span>
+										</c:otherwise>
+									</c:choose>
+								</td>
+								<td>
+									<fmt:formatNumber value="${bom.bomQty}" pattern="#,###"/>
+									 ${bom.itemUnit}
+							 	</td>
+								<td>${bom.itemSpec}</td>
+								<td>
+									<fmt:formatNumber value="${bom.itemUnitPrice}" pattern="#,###"/>
+								</td>
+								<td>
+									<fmt:formatNumber value="${bom.itemUnitPrice * bom.bomQty * bom.reqQty}" pattern="#,###"/>
+								</td>
+							</tr>
+						</c:forEach>
+						<c:if test="${empty workDTO.bomList}">
+							<tr>
+								<td colspan="6">BOM 정보 없음</td>
+							</tr>
+						</c:if>
+					</tbody>
+				</table>
+			</div>
+		</div>
 
 		<div class="content-content-content">
 			<div class="content-content-content-title">공정 정보</div>

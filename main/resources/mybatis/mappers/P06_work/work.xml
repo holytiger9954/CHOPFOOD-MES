@@ -402,6 +402,74 @@
 		ORDER BY e.emp_id
 	</select>
 	
+	<!-- BOM 조회: workPlan 기준 -->
+	<select id="selectBomListForWork" parameterType="workDTO" resultType="kr.or.chop.P06_work.dto.WorkBomDTO">
+	    SELECT
+	        b.bom_id AS bomId,
+	        b.bom_item AS pItemId,
+	        pitem.item_name AS pItemName,
+	
+	        bd.bom_dtl_item AS itemId,
+	        i.item_name AS itemName,
+	        i.item_type AS itemType,
+	        i.item_unit AS itemUnit,
+	        i.item_spec AS itemSpec,
+	        i.item_unit_price AS itemUnitPrice,
+	
+	        SUM(bd.bom_dtl_qty) AS bomQty,
+	        #{workOrderQty} AS workOrderQty,
+	        SUM(bd.bom_dtl_qty) * #{workOrderQty} AS reqQty,
+	
+	        s.stock_id AS stockId,
+	        NVL(s.stock_prev_qty, 0) AS stockPrevQty,
+	        NVL(s.stock_avail_qty, 0) AS stockAvailQty,
+	        NVL(s.stock_reserve_qty, 0) AS stockReserveQty
+	
+	    FROM plan p
+	    JOIN bom b
+	        ON b.bom_item = p.plan_item
+	    JOIN item pitem
+	        ON pitem.item_id = b.bom_item
+	    JOIN bom_detail bd
+	        ON bd.bom_dtl_bom = b.bom_id
+	    JOIN item i
+	        ON i.item_id = bd.bom_dtl_item
+	    LEFT OUTER JOIN stock s
+	        ON s.stock_item = bd.bom_dtl_item
+	
+	    WHERE p.plan_id = #{workPlan}
+	      AND b.bom_usage = 'Y'
+	      AND bd.bom_dtl_usage = 'Y'
+	
+	    GROUP BY
+	        b.bom_id,
+	        b.bom_item,
+	        pitem.item_name,
+	        bd.bom_dtl_item,
+	        i.item_name,
+	        i.item_type,
+	        i.item_unit,
+	        i.item_spec,
+	        i.item_unit_price,
+	        s.stock_id,
+	        s.stock_prev_qty,
+	        s.stock_avail_qty,
+	        s.stock_reserve_qty
+	
+	    ORDER BY
+	        bd.bom_dtl_item
+	</select>
+	
+	<!-- 재고 예약 -->
+	<update id="reserveStock" parameterType="kr.or.chop.P06_work.dto.WorkBomDTO">
+		UPDATE stock
+	    SET
+	        stock_avail_qty = stock_avail_qty - #{reqQty},
+	        stock_reserve_qty = stock_reserve_qty + #{reqQty}
+	    WHERE stock_id = #{stockId}
+	      AND stock_avail_qty >= #{reqQty}
+	</update>
+	
 	<insert id="insertWork" parameterType="workDTO">
 		INSERT INTO work (
 			work_id,
@@ -497,34 +565,195 @@
 			AND w.work_id = #{workId}
 	</select>
 	
+	<!-- 작업 결과 처리용 BOM 조회 -->
+	<select id="selectBomListForWorkResult" parameterType="workDTO" resultType="kr.or.chop.P06_work.dto.WorkBomDTO">
+	    SELECT
+	        b.bom_id AS bomId,
+	        b.bom_item AS pItemId,
+	        pitem.item_name AS pItemName,
+	
+	        bd.bom_dtl_item AS itemId,
+	        i.item_name AS itemName,
+	
+	        SUM(bd.bom_dtl_qty) AS bomQty,
+	        w.work_order_qty AS workOrderQty,
+	        #{workPrevQty} AS workPrevQty,
+	
+	        SUM(bd.bom_dtl_qty) * w.work_order_qty AS reqQty,
+	        SUM(bd.bom_dtl_qty) * #{workPrevQty} AS usedQty,
+	        GREATEST(
+	            SUM(bd.bom_dtl_qty) * w.work_order_qty
+	            - SUM(bd.bom_dtl_qty) * #{workPrevQty},
+	            0
+	        ) AS returnQty,
+	
+	        s.stock_id AS stockId,
+	        NVL(s.stock_prev_qty, 0) AS stockPrevQty,
+	        NVL(s.stock_avail_qty, 0) AS stockAvailQty,
+	        NVL(s.stock_reserve_qty, 0) AS stockReserveQty
+	
+	    FROM work w
+	    JOIN plan p
+	        ON p.plan_id = w.work_plan
+	    JOIN bom b
+	        ON b.bom_item = p.plan_item
+	    JOIN item pitem
+	        ON pitem.item_id = b.bom_item
+	    JOIN bom_detail bd
+	        ON bd.bom_dtl_bom = b.bom_id
+	    JOIN item i
+	        ON i.item_id = bd.bom_dtl_item
+	    LEFT OUTER JOIN stock s
+	        ON s.stock_item = bd.bom_dtl_item
+	
+	    WHERE w.work_id = #{workId}
+	      AND w.work_usage = 'Y'
+	      AND b.bom_usage = 'Y'
+	      AND bd.bom_dtl_usage = 'Y'
+	
+	    GROUP BY
+	        b.bom_id,
+	        b.bom_item,
+	        pitem.item_name,
+	        bd.bom_dtl_item,
+	        i.item_name,
+	        w.work_order_qty,
+	        s.stock_id,
+	        s.stock_prev_qty,
+	        s.stock_avail_qty,
+	        s.stock_reserve_qty
+	
+	    ORDER BY
+	        bd.bom_dtl_item
+	</select>
+	
+	<!-- 예약된 원자재 재고 정산 -->
+	<update id="settleReservedStock" parameterType="kr.or.chop.P06_work.dto.WorkBomDTO">
+	    UPDATE stock
+	    SET
+	        stock_prev_qty = stock_prev_qty - #{usedQty},
+	        stock_reserve_qty = stock_reserve_qty - #{reqQty},
+	        stock_avail_qty = stock_avail_qty + #{returnQty}
+	    WHERE stock_id = #{stockId}
+	      AND stock_prev_qty <![CDATA[>=]]> #{usedQty}
+	      AND stock_reserve_qty <![CDATA[>=]]> #{reqQty}
+	</update>
+	
 	<update id="updateWork" parameterType="workDTO">
-		UPDATE work
-		SET
-			work_order_qty = #{workOrderQty},
-			work_worker = #{workWorker},
-			work_dmsg = #{workDmsg},
-			work_date = #{workDate},
-			work_mdate = SYSDATE + (9/24)
-		WHERE work_id = #{workId}
-			AND work_usage = 'Y'
-			AND work_status IN (10, 20, 50)
+	    UPDATE work
+	    SET
+	        work_worker = #{workWorker},
+	        work_dmsg = #{workDmsg},
+	        work_date = #{workDate},
+	        work_mdate = SYSDATE + (9/24)
+	    WHERE work_id = #{workId}
+	      AND work_usage = 'Y'
+	      AND work_status = 10
 	</update>
 	
 	<update id="deleteWork" parameterType="workDTO">
-		UPDATE work
-		SET work_usage = 'N'
-		WHERE work_id = #{workId}
+	    UPDATE work
+	    SET
+	        work_usage = 'N',
+	        work_mdate = SYSDATE + (9/24)
+	    WHERE work_id = #{workId}
+	      AND work_usage = 'Y'
+	      AND work_status = 10
 	</update>
 	
 	<update id="updateWorkResult" parameterType="workDTO">
-		UPDATE work
-		SET
-			work_prev_qty = #{workPrevQty},
-			<if test="workStatus != '' and workStatus != null">
-				work_status = #{workStatus},
-			</if>
-			work_Wmsg = #{workWmsg}
-		WHERE work_id = #{workId}
+	    UPDATE work
+	    SET
+	        work_prev_qty = #{workPrevQty},
+	        <if test="workStatus != '' and workStatus != null">
+	            work_status = #{workStatus},
+	        </if>
+	        work_wmsg = #{workWmsg},
+	        work_mdate = SYSDATE + (9/24)
+	    WHERE work_id = #{workId}
+	      AND work_usage = 'Y'
+	      AND work_status IN (10, 20)
+	</update>
+	
+	<select id="selectAvailableSecId" parameterType="workDTO" resultType="string">
+	    SELECT wh_sec_id
+	    FROM (
+	        SELECT
+	            sec.wh_sec_id
+	        FROM item i
+	        JOIN warehouse wh
+	            ON wh.wh_type = i.item_whtype
+	        JOIN wh_sec sec
+	            ON sec.wh_sec_whid = wh.wh_id
+	
+	        LEFT JOIN (
+	            SELECT
+	                lot_bwhsec,
+	                COUNT(*) AS lot_cnt
+	            FROM lot
+	            WHERE lot_fqty > 0
+	            GROUP BY lot_bwhsec
+	        ) lsec
+	            ON lsec.lot_bwhsec = sec.wh_sec_id
+	
+	        LEFT JOIN (
+	            SELECT
+	                sec2.wh_sec_whid,
+	                COUNT(*) AS lot_cnt
+	            FROM lot l
+	            JOIN wh_sec sec2
+	                ON sec2.wh_sec_id = l.lot_bwhsec
+	            WHERE l.lot_fqty > 0
+	            GROUP BY sec2.wh_sec_whid
+	        ) lwh
+	            ON lwh.wh_sec_whid = wh.wh_id
+	
+	        WHERE i.item_id = #{workItem}
+	          AND wh.wh_usage = 'Y'
+	          AND sec.wh_sec_usage = 'Y'
+	          AND NVL(lsec.lot_cnt, 0) + 1 <![CDATA[<=]]> sec.wh_sec_qty
+	          AND NVL(lwh.lot_cnt, 0) + 1 <![CDATA[<=]]> wh.wh_qty
+	
+	        ORDER BY
+	            wh.wh_id ASC,
+	            sec.wh_sec_order ASC
+	    )
+	    WHERE ROWNUM = 1
+	</select>
+	
+	<insert id="insertLot" parameterType="workDTO">
+	    INSERT INTO lot (
+	        lot_id,
+	        lot_item,
+	        lot_work,
+	        lot_qty,
+	        lot_fqty,
+	        lot_etw,
+	        lot_exp,
+	        lot_qc,
+	        lot_status,
+	        lot_bwhsec
+	    )
+	    SELECT
+	        'LOT' || lot_seq.NEXTVAL,
+	        #{workItem},
+	        #{workId},
+	        #{workPrevQty},
+	        #{workPrevQty},
+	        SYSDATE + (9/24),
+	        SYSDATE + (9/24) + NVL(i.item_usedate, 0),
+	        'N',
+	        40,
+	        #{lotBwhsec}
+	    FROM item i
+	    WHERE i.item_id = #{workItem}
+	</insert>
+	
+	<!-- 작업 완료 시 stock 증가 -->
+	<update id="updateStock" parameterType="workDTO">
+		UPDATE STOCK
+		SET STOCK_PREV_QTY = STOCK_PREV_QTY + #{workPrevQty}
+		WHERE STOCK_ITEM = #{workItem}
 	</update>
 
 </mapper>

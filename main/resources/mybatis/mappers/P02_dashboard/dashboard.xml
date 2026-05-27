@@ -8,7 +8,7 @@
 		SET
 			w.work_status =
 				CASE
-					WHEN NVL(w.work_prev_qty, 0) >= w.work_order_qty THEN 30
+<!-- 					WHEN NVL(w.work_prev_qty, 0) >= w.work_order_qty THEN 30 -->
 					WHEN TRUNC(w.work_date) <![CDATA[<]]> TRUNC(SYSDATE + (9/24))
 						AND NVL(w.work_prev_qty, 0) <![CDATA[<]]> w.work_order_qty THEN 40
 					WHEN TRUNC(w.work_date) <![CDATA[=]]> TRUNC(SYSDATE + (9/24)) THEN 20

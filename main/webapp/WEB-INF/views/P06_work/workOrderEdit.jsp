@@ -48,7 +48,7 @@
 
 		<div class="grid-wrap">
 			<div class="grid search-item">
-				<label>지시 수량 <span class="red">*</span></label>
+				<label>지시 수량</label>
 				<input type="number"
 					name="workOrderQty"
 					id="workOrderQty"
@@ -58,7 +58,7 @@
 					onkeydown="blockNumberText(event)"
 					oninput="cleanQty(this)"
 					value="${workDTO.workOrderQty}"
-					required>
+					required readonly>
 			</div>
 
 			<div class="grid search-item">
