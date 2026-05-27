@@ -130,10 +130,10 @@
                                 </c:choose>
                             </td>
                             <td>
-                            	<fmt:formatNumber value="${qc.qcQty}" pattern="#,###" />
+                            	<fmt:formatNumber value="${qc.qcQty}" pattern="#,###" /> EA
                             </td>
                             <td>
-                            	<fmt:formatNumber value="${qc.qcPassQty}" pattern="#,###" />
+                            	<fmt:formatNumber value="${qc.qcPassQty}" pattern="#,###" /> EA
                             </td>
 
                             <td>

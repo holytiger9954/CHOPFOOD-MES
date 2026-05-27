@@ -38,7 +38,7 @@ public class QcAddController {
 
 		qcService.insertQc(qcDTO);
 
-		return "redirect:/quailty/list";
+		return "redirect:/quality/list";
 	}
 
 }

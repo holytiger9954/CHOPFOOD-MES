@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.or.chop.P19_ghp">
+
+	<select id="selectGhpCount" parameterType="ghpDTO"
+		resultType="int">
+		
+		select count(*)
+		from ghp
+		<where>
+			GHP_USAGE = 'Y'
+
+			<if test="ghpCategorySearch != null and ghpCategorySearch != ''">
+				AND GHP_CATEGORY = #{ghpCategorySearch}
+			</if>
+
+			<if test="searchKeyword != null and searchKeyword != ''">
+				AND (
+					UPPER(GHP_ID) LIKE UPPER('%' || #{searchKeyword} || '%')
+					OR UPPER(GHP_NAME) LIKE UPPER('%' || #{searchKeyword} || '%')
+					OR UPPER(GHP_CATEGORY) LIKE UPPER('%' || #{searchKeyword} || '%')
+					OR UPPER(GHP_STANDARD) LIKE UPPER('%' || #{searchKeyword} || '%')
+				)
+			</if>
+		</where>
+		
+	</select>
+
+	<select id="selectGhpList"
+		parameterType="kr.or.chop.P19_ghp.dto.GhpDTO"
+		resultType="kr.or.chop.P19_ghp.dto.GhpDTO">
+
+		select *
+		from
+		(
+		select rownum rn,
+		I.*
+		from
+		(
+		SELECT
+			G.GHP_ID AS ghpId,
+			G.GHP_NAME AS ghpName,
+			G.GHP_CATEGORY AS ghpCategory,
+			G.GHP_STANDARD AS ghpStandard,
+			G.GHP_CHECK_METHOD AS ghpCheckMethod,
+			G.GHP_CYCLE AS ghpCycle,
+			NVL(G.GHP_WH_TYPE, 0) AS ghpWhType,
+			NVL(G.GHP_WP_TYPE, 0) AS ghpWpType,
+			WP.WP_TYPE_NAME AS wpTypeName,
+			G.GHP_MIN_VALUE AS ghpMinValue,
+			G.GHP_MAX_VALUE AS ghpMaxValue,
+			G.GHP_UNIT AS ghpUnit,
+			G.GHP_USAGE AS ghpUsage
+		FROM GHP G
+		LEFT JOIN WP_TYPE WP
+			ON G.GHP_WP_TYPE = WP.WP_TYPE_NO
+		<where>
+			G.GHP_USAGE = 'Y'
+		
+			<if test="ghpCategorySearch != null and ghpCategorySearch != ''">
+				AND G.GHP_CATEGORY = #{ghpCategorySearch}
+			</if>
+		
+			<if test="searchKeyword != null and searchKeyword != ''">
+				AND (
+					UPPER(G.GHP_ID) LIKE UPPER('%' || #{searchKeyword} || '%')
+					OR UPPER(G.GHP_NAME) LIKE UPPER('%' || #{searchKeyword} || '%')
+					OR UPPER(G.GHP_STANDARD) LIKE UPPER('%' || #{searchKeyword} || '%')
+					OR UPPER(WP.WP_TYPE_NAME) LIKE UPPER('%' || #{searchKeyword} || '%')
+				)
+			</if>
+		</where>
+		ORDER BY G.GHP_ID DESC
+		) I
+		)
+		where rn between #{page.startRow}
+		and
+		#{page.endRow}
+
+	</select>
+
+	<select id="selectGhpDetail"
+		parameterType="string"
+		resultType="kr.or.chop.P19_ghp.dto.GhpDTO">
+
+		SELECT
+			G.GHP_ID AS ghpId,
+			G.GHP_NAME AS ghpName,
+			G.GHP_CATEGORY AS ghpCategory,
+			G.GHP_STANDARD AS ghpStandard,
+			G.GHP_CHECK_METHOD AS ghpCheckMethod,
+			G.GHP_CYCLE AS ghpCycle,
+			NVL(G.GHP_WH_TYPE, 0) AS ghpWhType,
+			NVL(G.GHP_WP_TYPE, 0) AS ghpWpType,
+			WP.WP_TYPE_NAME AS wpTypeName,
+			G.GHP_MIN_VALUE AS ghpMinValue,
+			G.GHP_MAX_VALUE AS ghpMaxValue,
+			G.GHP_UNIT AS ghpUnit,
+			G.GHP_USAGE AS ghpUsage
+		FROM GHP G
+		LEFT JOIN WP_TYPE WP
+			ON G.GHP_WP_TYPE = WP.WP_TYPE_NO
+		WHERE G.GHP_ID = #{ghpId}
+
+	</select>
+
+	<insert id="insertGhp"
+		parameterType="kr.or.chop.P19_ghp.dto.GhpDTO">
+
+		INSERT INTO GHP (
+			GHP_ID,
+			GHP_NAME,
+			GHP_CATEGORY,
+			GHP_STANDARD,
+			GHP_CHECK_METHOD,
+			GHP_CYCLE,
+			GHP_WH_TYPE,
+			GHP_WP_TYPE,
+			GHP_MIN_VALUE,
+			GHP_MAX_VALUE,
+			GHP_UNIT,
+			GHP_USAGE
+		)
+		VALUES (
+			'GHP' || GHP_SEQ.NEXTVAL,
+			#{ghpName},
+			#{ghpCategory},
+			#{ghpStandard},
+			#{ghpCheckMethod},
+			#{ghpCycle},
+			CASE WHEN #{ghpWhType} = 0 THEN NULL ELSE #{ghpWhType} END,
+			CASE WHEN #{ghpWpType} = 0 THEN NULL ELSE #{ghpWpType} END,
+			#{ghpMinValue},
+			#{ghpMaxValue},
+			#{ghpUnit},
+			'Y'
+		)
+
+	</insert>
+
+	<update id="updateGhp"
+		parameterType="kr.or.chop.P19_ghp.dto.GhpDTO">
+
+		UPDATE GHP
+		SET
+			GHP_NAME = #{ghpName},
+			GHP_CATEGORY = #{ghpCategory},
+			GHP_STANDARD = #{ghpStandard},
+			GHP_CHECK_METHOD = #{ghpCheckMethod},
+			GHP_CYCLE = #{ghpCycle},
+			GHP_WH_TYPE =
+				CASE WHEN #{ghpWhType} = 0 THEN NULL ELSE #{ghpWhType} END,
+			GHP_WP_TYPE =
+				CASE WHEN #{ghpWpType} = 0 THEN NULL ELSE #{ghpWpType} END,
+			GHP_MIN_VALUE = #{ghpMinValue},
+			GHP_MAX_VALUE = #{ghpMaxValue},
+			GHP_UNIT = #{ghpUnit}
+		WHERE GHP_ID = #{ghpId}
+
+	</update>
+
+	<update id="deleteGhp" parameterType="string">
+
+		UPDATE GHP
+		SET GHP_USAGE = 'N'
+		WHERE GHP_ID = #{ghpId}
+
+	</update>
+	
+</mapper>

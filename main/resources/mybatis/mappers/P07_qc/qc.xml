@@ -278,15 +278,21 @@
         resultType="kr.or.chop.P07_qc.dto.QcDTO">
 
 	    SELECT
-	        L.LOT_ID AS lotId,
-	        L.LOT_QTY AS lotQty,
-	        L.LOT_ITEM AS itemId,
-	        I.ITEM_NAME AS itemName
-	    FROM LOT L
-	    LEFT JOIN ITEM I
-	        ON L.LOT_ITEM = I.ITEM_ID
-	    WHERE L.LOT_qc = 'N'
-	    ORDER BY L.LOT_ID DESC
+			L.LOT_ID AS lotId,
+			L.LOT_QTY AS lotQty,
+			L.LOT_ITEM AS itemId,
+			I.ITEM_NAME AS itemName
+		FROM LOT L
+		LEFT JOIN ITEM I
+			ON L.LOT_ITEM = I.ITEM_ID
+		WHERE L.LOT_QC = 'N'
+		AND NOT EXISTS (
+			SELECT 1
+			FROM QC Q
+			WHERE Q.QC_LOT = L.LOT_ID
+			AND Q.QC_USAGE = 'Y'
+		)
+		ORDER BY L.LOT_ID DESC
 	
 	</select>
 	
@@ -294,12 +300,12 @@
         parameterType="kr.or.chop.P07_qc.dto.QcDTO">
 
 	    UPDATE QC
-    SET
-        QC_STATUS = #{qcStatus},
-        QC_PASS_QTY = #{qcPassQty},
-        QC_WMSG = #{qcWmsg},
-        QC_DATE = sysdate + (9/24)
-    WHERE QC_ID = #{qcId}
+	    SET
+	        QC_STATUS = #{qcStatus},
+	        QC_PASS_QTY = #{qcPassQty},
+	        QC_WMSG = #{qcWmsg},
+	        QC_DATE = sysdate + (9/24)
+	    WHERE QC_ID = #{qcId}
 	
 	</update>
 	
@@ -311,7 +317,8 @@
 	        LOT_CQTY = #{qcQty},
 	        LOT_FQTY = #{qcPassQty},
 	        LOT_AWHSEC = #{awhsec},
-	        LOT_STATUS = 10
+	        LOT_STATUS = 10,
+	        LOT_QC = 'Y'
 	    WHERE LOT_ID = #{qcLot}
 	
 	</update>
