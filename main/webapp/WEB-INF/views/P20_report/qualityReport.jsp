@@ -4,257 +4,290 @@
 
 <div class="content">
 
-    <div class="report-inner">
+    <div class="report-inner" id="reportPdfArea">
 
-        <div class="header-row">
-            <div>
-                <h2 class="page-title">품질 리포트</h2>
-                <p class="page-subtitle">
-                    생산 조건과 설비 데이터를 기반으로 품질 위험도를 분석합니다.
-                </p>
+        <div class="pdf-page-area" id="pdfPage1">
+
+            <div class="header-row">
+                <div>
+                    <h2 class="page-title">품질 리포트</h2>
+                    <p class="page-subtitle">
+                        생산 조건과 설비 데이터를 기반으로 품질 위험도를 분석합니다.
+                    </p>
+                </div>
+
+                <div>
+                    <p class="page-route">
+                        홈 &gt; 리포트 &gt; 품질
+                    </p>
+
+                    <button type="button"
+                            class="btn btn-main pdf-exclude"
+                            id="qualityPdfBtn"
+                            onclick="downloadQualityReportPdf()">
+                        PDF 저장
+                    </button>
+                </div>
             </div>
 
-            <div>
-                <p class="page-route">
-                    홈 &gt; 리포트 &gt; 품질
-                </p>
+            <form class="search-box"
+                  action="${pageContext.request.contextPath}/report/quality"
+                  method="get">
+
+                <div class="search-item">
+                    <label>조회기간</label>
+
+                    <div class="date-range">
+                        <input type="date"
+                               name="startDate"
+                               value="${searchDTO.startDate}">
+
+                        <span>~</span>
+
+                        <input type="date"
+                               name="endDate"
+                               value="${searchDTO.endDate}">
+                    </div>
+                </div>
+
+                <div class="search-item">
+                    <label>품목유형</label>
+
+                    <select name="itemType">
+                        <option value="">전체</option>
+
+                        <option value="10"
+                            <c:if test="${searchDTO.itemType == '10'}">selected</c:if>>
+                            원자재
+                        </option>
+
+                        <option value="20"
+                            <c:if test="${searchDTO.itemType == '20'}">selected</c:if>>
+                            반제품
+                        </option>
+
+                        <option value="30"
+                            <c:if test="${searchDTO.itemType == '30'}">selected</c:if>>
+                            완제품
+                        </option>
+
+                        <option value="40"
+                            <c:if test="${searchDTO.itemType == '40'}">selected</c:if>>
+                            기타 자재
+                        </option>
+                    </select>
+                </div>
+
+                <div class="search-item">
+                    <label>품목 검색</label>
+
+                    <input type="text"
+                           name="itemKeyword"
+                           value="${searchDTO.itemKeyword}"
+                           placeholder="품목명 또는 품목코드 입력"
+                           style="min-width:240px">
+                </div>
+
+                <input type="hidden"
+                       name="riskLevel"
+                       value="${searchDTO.riskLevel}">
+
+                <div class="search-btn-area">
+                    <button type="submit" class="btn btn-main">
+                        조회
+                    </button>
+
+                    <a class="btn btn-white"
+                       href="${pageContext.request.contextPath}/report/quality">
+                        초기화
+                    </a>
+                </div>
+
+            </form>
+
+            <h3 class="report-block-title">주요 지표</h3>
+
+            <div class="report-card-grid">
+
+                <div class="report-card">
+                    <p>총 생산 수량</p>
+                    <strong>${summary.totalQcQty}</strong>
+                    <span>EA</span>
+                </div>
+
+                <div class="report-card">
+                    <p>평균 불량률</p>
+                    <strong class="danger">${summary.defectRate}</strong>
+                    <span>%</span>
+                </div>
+
+                <div class="report-card">
+                    <p>HIGH 위험 건수</p>
+                    <strong class="danger">${summary.highRiskCount}</strong>
+                    <span>건</span>
+                </div>
+
+                <div class="report-card">
+                    <p>AI 위험 비율</p>
+                    <strong class="danger">${summary.highRiskRate}</strong>
+                    <span>%</span>
+                </div>
+
             </div>
+
+            <div class="report-chart-grid">
+
+                <div class="report-section chart-section">
+                    <div class="section-title-row">
+                        <h3>날짜별 평균 불량률 추이</h3>
+                    </div>
+
+                    <div class="chart-canvas-box">
+                        <canvas id="defectTrendChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="report-section chart-section">
+                    <div class="section-title-row">
+                        <h3>AI 위험도 현황</h3>
+
+                        <div class="risk-filter-tabs">
+                            <a class="<c:if test='${empty searchDTO.riskLevel}'>active</c:if>"
+                               href="${pageContext.request.contextPath}/report/quality?startDate=${searchDTO.startDate}&endDate=${searchDTO.endDate}&itemType=${searchDTO.itemType}&itemKeyword=${searchDTO.itemKeyword}">
+                                전체
+                            </a>
+
+                            <a class="<c:if test='${searchDTO.riskLevel == "LOW"}'>active</c:if>"
+                               href="${pageContext.request.contextPath}/report/quality?startDate=${searchDTO.startDate}&endDate=${searchDTO.endDate}&itemType=${searchDTO.itemType}&itemKeyword=${searchDTO.itemKeyword}&riskLevel=LOW">
+                                LOW
+                            </a>
+
+                            <a class="<c:if test='${searchDTO.riskLevel == "MEDIUM"}'>active</c:if>"
+                               href="${pageContext.request.contextPath}/report/quality?startDate=${searchDTO.startDate}&endDate=${searchDTO.endDate}&itemType=${searchDTO.itemType}&itemKeyword=${searchDTO.itemKeyword}&riskLevel=MEDIUM">
+                                MEDIUM
+                            </a>
+
+                            <a class="<c:if test='${searchDTO.riskLevel == "HIGH"}'>active</c:if>"
+                               href="${pageContext.request.contextPath}/report/quality?startDate=${searchDTO.startDate}&endDate=${searchDTO.endDate}&itemType=${searchDTO.itemType}&itemKeyword=${searchDTO.itemKeyword}&riskLevel=HIGH">
+                                HIGH
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="chart-canvas-box">
+                        <canvas id="riskStatusChart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+
         </div>
 
-        <form class="search-box"
-		      action="${pageContext.request.contextPath}/report/quality"
-		      method="get">
-		
-		    <div class="search-item">
-		        <label>조회기간</label>
-		
-		        <div class="date-range">
-		            <input type="date"
-		                   name="startDate"
-		                   value="${searchDTO.startDate}">
-		
-		            <span>~</span>
-		
-		            <input type="date"
-		                   name="endDate"
-		                   value="${searchDTO.endDate}">
-		        </div>
-		    </div>
-		
-		    <div class="search-item">
-		        <label>품목</label>
-		
-		        <select name="itemId">
-		            <option value="">전체</option>
-		
-		            <c:forEach var="item" items="${itemList}">
-		                <option value="${item.code}"
-		                    <c:if test="${searchDTO.itemId == item.code}">
-		                        selected
-		                    </c:if>>
-		                    ${item.name}
-		                </option>
-		            </c:forEach>
-		        </select>
-		    </div>
-		
-		    <div class="search-item">
-		        <label>위험도</label>
-		
-		        <select name="riskLevel">
-		            <option value="">전체</option>
-		
-		            <option value="LOW"
-		                <c:if test="${searchDTO.riskLevel == 'LOW'}">
-		                    selected
-		                </c:if>>
-		                LOW
-		            </option>
-		
-		            <option value="MEDIUM"
-		                <c:if test="${searchDTO.riskLevel == 'MEDIUM'}">
-		                    selected
-		                </c:if>>
-		                MEDIUM
-		            </option>
-		
-		            <option value="HIGH"
-		                <c:if test="${searchDTO.riskLevel == 'HIGH'}">
-		                    selected
-		                </c:if>>
-		                HIGH
-		            </option>
-		        </select>
-		    </div>
-		
-		    <div class="search-btn-area">
-		        <button type="submit" class="btn btn-main">
-		            조회
-		        </button>
-		
-		        <a class="btn btn-white"
-		           href="${pageContext.request.contextPath}/report/quality">
-		            초기화
-		        </a>
-		    </div>
-		
-		</form>
+        <div class="pdf-page-area" id="pdfPage2">
 
-        <h3 class="report-block-title">주요 지표</h3>
+            <div class="ai-comment-box">
 
-        <div class="report-card-grid">
+                <div class="ai-comment-header">
+                    <strong>AI 품질 분석 결과</strong>
+                    <span>Machine Learning Analysis</span>
+                </div>
 
-            <div class="report-card">
-                <p>총 생산 수량</p>
-                <strong>${summary.totalQcQty}</strong>
-                <span>EA</span>
+                <ul>
+                    <c:choose>
+                        <c:when test="${summary.highRiskRate >= 30}">
+                            <li>HIGH 위험 비율이 ${summary.highRiskRate}%로 높게 나타났습니다.</li>
+                            <li>고온·고습 및 장시간 설비 가동 조건에서 불량률 상승 패턴이 확인됩니다.</li>
+                            <li>특정 설비군의 점검 주기 단축이 필요할 수 있습니다.</li>
+                        </c:when>
+
+                        <c:when test="${summary.highRiskRate >= 10}">
+                            <li>일부 생산 구간에서 위험도 증가 패턴이 감지되었습니다.</li>
+                            <li>온도, 습도, 설비 가동시간 조건을 우선 확인하세요.</li>
+                        </c:when>
+
+                        <c:otherwise>
+                            <li>현재 AI 위험 비율은 안정적인 수준입니다.</li>
+                            <li>생산 조건과 품질 지표가 정상 범위 내에서 유지되고 있습니다.</li>
+                        </c:otherwise>
+                    </c:choose>
+                </ul>
+
             </div>
 
-            <div class="report-card">
-                <p>평균 불량률</p>
-                <strong class="danger">${summary.defectRate}</strong>
-                <span>%</span>
-            </div>
+            <div class="report-section">
 
-            <div class="report-card">
-                <p>HIGH 위험 건수</p>
-                <strong class="danger">${summary.highRiskCount}</strong>
-                <span>건</span>
-            </div>
-
-            <div class="report-card">
-                <p>AI 위험 비율</p>
-                <strong class="danger">${summary.highRiskRate}</strong>
-                <span>%</span>
-            </div>
-
-        </div>
-
-        <div class="report-chart-grid">
-
-            <div class="report-section chart-section">
                 <div class="section-title-row">
-                    <h3>날짜별 평균 불량률 추이</h3>
+                    <h3>AI 품질 데이터 상세</h3>
                 </div>
 
-                <div class="chart-canvas-box">
-                    <canvas id="defectTrendChart"></canvas>
-                </div>
-            </div>
-
-            <div class="report-section chart-section">
-                <div class="section-title-row">
-                    <h3>AI 위험도 현황</h3>
-                </div>
-
-                <div class="chart-canvas-box small">
-                    <canvas id="riskStatusChart"></canvas>
-                </div>
-            </div>
-
-        </div>
-
-        <div class="ai-comment-box">
-
-            <div class="ai-comment-header">
-                <strong>AI 품질 분석 결과</strong>
-                <span>Machine Learning Analysis</span>
-            </div>
-
-            <ul>
-                <c:choose>
-                    <c:when test="${summary.highRiskRate >= 30}">
-                        <li>HIGH 위험 비율이 ${summary.highRiskRate}%로 높게 나타났습니다.</li>
-                        <li>고온·고습 및 장시간 설비 가동 조건에서 불량률 상승 패턴이 확인됩니다.</li>
-                        <li>특정 설비군의 점검 주기 단축이 필요할 수 있습니다.</li>
-                    </c:when>
-
-                    <c:when test="${summary.highRiskRate >= 10}">
-                        <li>일부 생산 구간에서 위험도 증가 패턴이 감지되었습니다.</li>
-                        <li>온도, 습도, 설비 가동시간 조건을 우선 확인하세요.</li>
-                    </c:when>
-
-                    <c:otherwise>
-                        <li>현재 AI 위험 비율은 안정적인 수준입니다.</li>
-                        <li>생산 조건과 품질 지표가 정상 범위 내에서 유지되고 있습니다.</li>
-                    </c:otherwise>
-                </c:choose>
-            </ul>
-
-        </div>
-
-        <div class="report-section">
-
-            <div class="section-title-row">
-                <h3>AI 품질 데이터 상세</h3>
-            </div>
-
-            <div class="table-wrap">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>등록일시</th>
-                            <th>품목</th>
-                            <th>설비</th>
-                            <th>생산수량</th>
-                            <th>불량률</th>
-                            <th>AI 위험도</th>
-                            <th>AI 판단 근거</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        <c:forEach var="q" items="${qualityList}">
+                <div class="table-wrap">
+                    <table class="table">
+                        <thead>
                             <tr>
-                                <td>${q.qcDate}</td>
-                                <td>${q.itemName}</td>
-                                <td>${q.equipmentId}</td>
-                                <td>${q.qcQty}</td>
-
-                                <td>
-                                    <strong class="danger-text">
-                                        ${q.defectRate}%
-                                    </strong>
-                                </td>
-
-                                <td>
-                                    <span class="risk-badge ${q.riskLevel}">
-                                        ${q.riskLevel}
-                                    </span>
-                                </td>
-
-                                <td>
-                                    <div class="condition-grid">
-
-                                        <span class="condition-chip <c:if test='${q.temperature >= 30}'>danger</c:if>">
-                                            온도 ${q.temperature}℃
-                                        </span>
-
-                                        <span class="condition-chip <c:if test='${q.humidity >= 75}'>danger</c:if>">
-                                            습도 ${q.humidity}%
-                                        </span>
-
-                                        <span class="condition-chip <c:if test='${q.equipmentRuntime >= 10}'>danger</c:if>">
-                                            가동 ${q.equipmentRuntime}h
-                                        </span>
-
-                                    </div>
-                                </td>
+                                <th>등록일시</th>
+                                <th>품목</th>
+                                <th>설비</th>
+                                <th>생산수량</th>
+                                <th>불량률</th>
+                                <th>AI 위험도</th>
+                                <th>AI 판단 근거</th>
                             </tr>
-                        </c:forEach>
+                        </thead>
 
-                        <c:if test="${empty qualityList}">
-                            <tr>
-                                <td colspan="7" style="text-align:center;">
-                                    조회된 AI 품질 데이터가 없습니다.
-                                </td>
-                            </tr>
-                        </c:if>
-                    </tbody>
-                </table>
+                        <tbody>
+                            <c:forEach var="q" items="${qualityList}">
+                                <tr>
+                                    <td>${q.qcDate}</td>
+                                    <td>${q.itemName}</td>
+                                    <td>${q.equipmentId}</td>
+                                    <td>${q.qcQty}</td>
+
+                                    <td>
+                                        <strong class="danger-text">
+                                            ${q.defectRate}%
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        <span class="risk-badge ${q.riskLevel}">
+                                            ${q.riskLevel}
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <div class="condition-grid">
+
+                                            <span class="condition-chip <c:if test='${q.temperature >= 30}'>danger</c:if>">
+                                                온도 ${q.temperature}℃
+                                            </span>
+
+                                            <span class="condition-chip <c:if test='${q.humidity >= 75}'>danger</c:if>">
+                                                습도 ${q.humidity}%
+                                            </span>
+
+                                            <span class="condition-chip <c:if test='${q.equipmentRuntime >= 10}'>danger</c:if>">
+                                                가동 ${q.equipmentRuntime}h
+                                            </span>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+
+                            <c:if test="${empty qualityList}">
+                                <tr>
+                                    <td colspan="7" style="text-align:center;">
+                                        조회된 AI 품질 데이터가 없습니다.
+                                    </td>
+                                </tr>
+                            </c:if>
+                        </tbody>
+                    </table>
+                </div>
+
+                <jsp:include page="/WEB-INF/views/common/paging.jsp" />
+
             </div>
-
-            <jsp:include page="/WEB-INF/views/common/paging.jsp" />
 
         </div>
 
@@ -263,6 +296,8 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script>
     const defectLabels = [
@@ -334,6 +369,11 @@
             },
 
             scales: {
+                x: {
+                    ticks: {
+                        maxTicksLimit: 10
+                    }
+                },
                 y: {
                     beginAtZero: true
                 }
@@ -372,22 +412,134 @@
     });
 </script>
 
+<script>
+async function downloadQualityReportPdf() {
+
+    const page1 = document.getElementById('pdfPage1');
+    const page2 = document.getElementById('pdfPage2');
+    const pdfBtn = document.getElementById('qualityPdfBtn');
+
+    if (!page1 || !page2) {
+        alert('PDF 저장 영역을 찾을 수 없습니다.');
+        return;
+    }
+
+    const { jsPDF } = window.jspdf;
+
+    const pdf = new jsPDF('l', 'mm', 'a4');
+
+    const pageWidth = 297;
+    const pageHeight = 210;
+    const margin = 3;
+    const captureWidth = 1024;
+
+    async function addPageImage(element, isFirstPage) {
+
+        if (!isFirstPage) {
+            pdf.addPage();
+        }
+
+        const elementId = element.id;
+
+        const canvas = await html2canvas(element, {
+            scale: 2,
+            backgroundColor: '#ffffff',
+            useCORS: true,
+            scrollX: 0,
+            scrollY: 0,
+            windowWidth: captureWidth,
+            windowHeight: element.scrollHeight,
+
+            ignoreElements: function(el) {
+                return el.classList && el.classList.contains('pdf-exclude');
+            },
+
+            onclone: function(clonedDoc) {
+                const clonedElement = clonedDoc.getElementById(elementId);
+
+                if (clonedElement) {
+                    clonedElement.style.width = captureWidth + 'px';
+                    clonedElement.style.maxWidth = captureWidth + 'px';
+                    clonedElement.style.overflow = 'visible';
+                    clonedElement.style.backgroundColor = '#ffffff';
+                }
+
+                const clonedTableWraps = clonedDoc.querySelectorAll('.table-wrap');
+                clonedTableWraps.forEach(function(wrap) {
+                    wrap.style.overflow = 'visible';
+                });
+            }
+        });
+
+        const imgData = canvas.toDataURL('image/png');
+
+        const maxWidth = pageWidth - (margin * 2);
+        const maxHeight = pageHeight - (margin * 2);
+
+        let imgWidth = maxWidth;
+        let imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        if (imgHeight > maxHeight) {
+            imgHeight = maxHeight;
+            imgWidth = (canvas.width * imgHeight) / canvas.height;
+        }
+
+        const x = (pageWidth - imgWidth) / 2;
+        const y = margin;
+
+        pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight);
+    }
+
+    try {
+        if (pdfBtn) {
+            pdfBtn.disabled = true;
+            pdfBtn.innerText = '저장 중...';
+            pdfBtn.style.visibility = 'hidden';
+        }
+
+        await addPageImage(page1, true);
+        await addPageImage(page2, false);
+
+        const today = new Date().toISOString().slice(0, 10);
+        pdf.save('quality-report-' + today + '.pdf');
+
+    } catch (e) {
+        console.error(e);
+        alert('PDF 저장 중 오류가 발생했습니다.');
+
+    } finally {
+        if (pdfBtn) {
+            pdfBtn.disabled = false;
+            pdfBtn.innerText = 'PDF 저장';
+            pdfBtn.style.visibility = 'visible';
+        }
+    }
+}
+</script>
+
 <style>
     .report-inner {
         width: 100%;
         max-width: 1040px;
         margin: 0 auto;
     }
-    
+
+    .pdf-page-area {
+        width: 100%;
+        max-width: 1040px;
+        margin: 0 auto;
+        background-color: #fff;
+    }
+
     .date-range {
-	    display: flex;
-	    align-items: center;
-	    gap: 8px;
-	}
-	
-	.date-range input {
-	    width: 150px;
-	}
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .date-range input {
+        width: 150px;
+    }
 
     .report-block-title {
         margin: 0 0 18px 0;
@@ -437,12 +589,12 @@
     }
 
     .report-chart-grid {
-	    display: grid;
-	    grid-template-columns: 1fr 1fr;
-	    gap: 24px;
-	    margin-bottom: 30px;
-	    align-items: stretch;
-	}
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-bottom: 30px;
+        align-items: stretch;
+    }
 
     .report-section {
         min-width: 0;
@@ -478,6 +630,38 @@
         font-size: 18px;
         color: #111;
         font-weight: 800;
+    }
+
+    .risk-filter-tabs {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .risk-filter-tabs a {
+        min-width: 48px;
+        height: 28px;
+        padding: 0 10px;
+        border: 1px solid #d1d5db;
+        border-radius: 999px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        color: #555;
+        background-color: #fff;
+
+        font-size: 12px;
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    .risk-filter-tabs a.active {
+        color: #fff;
+        border-color: #2f7a4f;
+        background-color: #2f7a4f;
     }
 
     .ai-comment-box {
@@ -592,6 +776,10 @@
         font-weight: 800;
     }
 
+    .pdf-exclude {
+        white-space: nowrap;
+    }
+
     @media (max-width: 900px) {
         .report-inner {
             max-width: 960px;
@@ -606,17 +794,6 @@
     @media (max-width: 1100px) {
         .report-card-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-        .report-search-top,
-        .report-select-row {
-            align-items: stretch;
-            flex-direction: column;
-        }
-
-        .report-select-controls {
-            justify-content: flex-start;
-            flex-wrap: wrap;
         }
     }
 </style>
