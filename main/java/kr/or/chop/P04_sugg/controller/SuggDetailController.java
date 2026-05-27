@@ -35,26 +35,11 @@ public class SuggDetailController {
 
         System.out.println("/sugg/detail 실행");
 
-        // 로그인 사용자 확인
         EmpDTO loginUser =
                 (EmpDTO) session.getAttribute("loginUser");
 
-        // 관리자 이상인지 확인
-        boolean isAdmin = false;
-
-        if (loginUser != null && loginUser.getEmpAuth() >= 20) {
-            isAdmin = true;
-        }
-
-        // 비밀번호 인증 여부 확인
-        Boolean auth =
-                (Boolean) session.getAttribute(
-                        "suggAuth_" + sugg_no
-                );
-
-        // 관리자가 아니고, 비밀번호 인증도 안 됐으면 목록으로
-        if (!isAdmin && (auth == null || !auth)) {
-            return "redirect:/sugg/list";
+        if (loginUser == null) {
+            return "redirect:/login";
         }
 
         SuggDTO dto =
@@ -67,13 +52,37 @@ public class SuggDetailController {
             return "redirect:/sugg/list";
         }
 
-        // 댓글 목록 가져오기
+        boolean isAdmin = false;
+
+        if (loginUser.getEmpAuth() >= 20) {
+            isAdmin = true;
+        }
+
+        boolean isWriter = false;
+
+        if (loginUser.getEmpId().equals(dto.getSugg_writer())) {
+            isWriter = true;
+        }
+
+        Boolean auth =
+                (Boolean) session.getAttribute(
+                        "suggAuth_" + sugg_no
+                );
+
+        // 관리자 아니면 작성자여도 비밀번호 인증 필요
+        if (!isAdmin && (auth == null || !auth)) {
+            return "redirect:/sugg/list";
+        }
+
         List<CommentDTO> commList =
                 commentService.selectCommentList(sugg_no);
 
-        // jsp 전달
         model.addAttribute("dto", dto);
         model.addAttribute("commList", commList);
+
+        // 상세페이지에서 수정 버튼 제어용
+        model.addAttribute("isWriter", isWriter);
+        model.addAttribute("isAdmin", isAdmin);
 
         return "P04_sugg/suggDetail.tiles";
     }

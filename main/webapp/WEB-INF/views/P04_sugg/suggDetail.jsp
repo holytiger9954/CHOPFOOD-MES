@@ -23,26 +23,29 @@
         </div>
 
         <div class="right">
-            <a class="btn btn-main"
-               href="${pageContext.request.contextPath}/sugg/edit?sugg_no=${dto.sugg_no}">
-                수정
-            </a>
-
-            <form action="${pageContext.request.contextPath}/sugg/delete"
-                  method="post"
-                  style="display:inline;">
-
-                <input type="hidden"
-                       name="sugg_no"
-                       value="${dto.sugg_no}">
-
-                <button type="submit"
-                        class="btn btn-red"
-                        onclick="return confirm('삭제하시겠습니까?');">
-                    삭제
-                </button>
-
-            </form>
+		<c:if test="${isWriter}">
+		    <a class="btn btn-main"
+		       href="${pageContext.request.contextPath}/sugg/edit?sugg_no=${dto.sugg_no}">
+		        수정
+		    </a>
+		</c:if>
+		
+		<c:if test="${isWriter or isAdmin}">
+		    <form action="${pageContext.request.contextPath}/sugg/delete"
+		          method="post"
+		          style="display:inline;">
+		
+		        <input type="hidden"
+		               name="sugg_no"
+		               value="${dto.sugg_no}">
+		
+		        <button type="submit"
+		                class="btn btn-red"
+		                onclick="return confirm('삭제하시겠습니까?');">
+		            삭제
+		        </button>
+		    </form>
+		</c:if>
         </div>
     </div>
 

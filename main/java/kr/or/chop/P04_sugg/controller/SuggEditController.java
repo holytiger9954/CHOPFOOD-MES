@@ -12,10 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 
+import kr.or.chop.P01_login.dto.EmpDTO;
 import kr.or.chop.P04_sugg.dto.SuggDTO;
 import kr.or.chop.P04_sugg.service.SuggService;
-
-import kr.or.chop.P01_login.dto.EmpDTO;
 
 @Controller
 @RequestMapping("/sugg")
@@ -23,16 +22,27 @@ public class SuggEditController {
 
     @Autowired
     SuggService suggService;
-    
+
     @GetMapping("/edit")
-    public String editForm(Integer sugg_no, Model model) {
-        System.out.println("/sugg/edit 화면 실행");
-        System.out.println("sugg_no : " + sugg_no);
+    public String editForm(Integer sugg_no,
+                           Model model,
+                           HttpSession session) {
+
+        EmpDTO loginUser = (EmpDTO) session.getAttribute("loginUser");
+
+        if (loginUser == null) {
+            return "redirect:/login";
+        }
 
         SuggDTO dto = suggService.selectSuggDetail(sugg_no);
 
         if (dto == null) {
             return "redirect:/sugg/list";
+        }
+
+        // 작성자만 수정 페이지 접근 가능
+        if (!loginUser.getEmpId().equals(dto.getSugg_writer())) {
+            return "redirect:/sugg/detail?sugg_no=" + sugg_no;
         }
 
         model.addAttribute("dto", dto);
@@ -45,8 +55,25 @@ public class SuggEditController {
                        MultipartFile uploadFile,
                        HttpSession session) throws Exception {
 
-        System.out.println("/sugg/edit 실행");
-        System.out.println("dto" + dto);
+        EmpDTO loginUser = (EmpDTO) session.getAttribute("loginUser");
+
+        if (loginUser == null) {
+            return "redirect:/login";
+        }
+
+        SuggDTO origin = suggService.selectSuggDetail(dto.getSugg_no());
+
+        if (origin == null) {
+            return "redirect:/sugg/list";
+        }
+
+        // 작성자만 수정 가능
+        if (!loginUser.getEmpId().equals(origin.getSugg_writer())) {
+            return "redirect:/sugg/detail?sugg_no=" + dto.getSugg_no();
+        }
+
+        // 비밀번호는 수정 못 하게 기존 비밀번호 유지
+        dto.setSugg_pw(origin.getSugg_pw());
 
         if (uploadFile != null && !uploadFile.isEmpty()) {
 
@@ -56,7 +83,8 @@ public class SuggEditController {
                     System.currentTimeMillis() + "_" + originName;
 
             String uploadPath =
-                    session.getServletContext().getRealPath("/resources/upload/sugg");
+                    session.getServletContext()
+                           .getRealPath("/resources/upload/sugg");
 
             File folder = new File(uploadPath);
 
@@ -79,13 +107,33 @@ public class SuggEditController {
     }
 
     @PostMapping("/delete")
-    public String delete(int sugg_no) {
-    	
+    public String delete(int sugg_no,
+                         HttpSession session) {
+
+        EmpDTO loginUser = (EmpDTO) session.getAttribute("loginUser");
+
+        if (loginUser == null) {
+            return "redirect:/login";
+        }
+
+        SuggDTO dto = suggService.selectSuggDetail(sugg_no);
+
+        if (dto == null) {
+            return "redirect:/sugg/list";
+        }
+
+        // 작성자 또는 관리자만 삭제 가능
+        if (!loginUser.getEmpId().equals(dto.getSugg_writer())
+                && loginUser.getEmpAuth() < 20) {
+
+            return "redirect:/sugg/detail?sugg_no=" + sugg_no;
+        }
+
         suggService.deleteSugg(sugg_no);
 
         return "redirect:/sugg/list";
     }
-    
+
     @PostMapping("/answer")
     public String updateAnswer(SuggDTO dto,
                                HttpSession session) {
@@ -97,8 +145,6 @@ public class SuggEditController {
             return "redirect:/login";
         }
 
-        // 관리자 이상만 가능
-        // AUTH 테이블 기준: 20 = 관리자, 30 = 최고관리자
         if (loginUser.getEmpAuth() < 20) {
             return "redirect:/sugg/detail?sugg_no="
                     + dto.getSugg_no();
@@ -106,7 +152,6 @@ public class SuggEditController {
 
         suggService.updateSuggAnswer(dto);
 
-        return "redirect:/sugg/detail?sugg_no="
-                + dto.getSugg_no();
+        return "redirect:/sugg/list";
     }
 }

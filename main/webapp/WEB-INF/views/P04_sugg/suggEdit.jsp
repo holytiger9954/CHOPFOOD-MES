@@ -107,10 +107,8 @@
                             </label>
 
                             <input type="password"
-                                   name="sugg_pw"
-                                   value="${dto.sugg_pw}"
-                                   placeholder="숫자 4자리"
-                                   required
+                                   value="****"
+                                   readonly
                                    style="
                                         width:100%;
                                         height:36px;

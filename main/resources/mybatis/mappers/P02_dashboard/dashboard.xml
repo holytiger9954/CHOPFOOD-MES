@@ -3,12 +3,13 @@
 	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="mapper.P02_dashboard">
+
 	<update id="updateWorkStatusAuto">
 		UPDATE work w
 		SET
 			w.work_status =
 				CASE
-<!-- 					WHEN NVL(w.work_prev_qty, 0) >= w.work_order_qty THEN 30 -->
+					WHEN NVL(w.work_prev_qty, 0) >= w.work_order_qty THEN 30
 					WHEN TRUNC(w.work_date) <![CDATA[<]]> TRUNC(SYSDATE + (9/24))
 						AND NVL(w.work_prev_qty, 0) <![CDATA[<]]> w.work_order_qty THEN 40
 					WHEN TRUNC(w.work_date) <![CDATA[=]]> TRUNC(SYSDATE + (9/24)) THEN 20
@@ -19,58 +20,521 @@
 		WHERE w.work_usage = 'Y' AND w.work_status != 0 AND w.work_status != 30
 	</update>
 
-	<update id="updatePlanWpQty">
-		UPDATE plan p
-		SET p.plan_wp_qty = (
+
+<!-- 오늘 요약 카드 -->
+<select id="selectTodaySummary" resultType="hashmap">
+	SELECT
+		(
 			SELECT NVL(SUM(NVL(w.work_prev_qty, 0)), 0)
 			FROM work w
-			WHERE w.work_plan = p.plan_id
-				AND w.work_status = 30
-		)
+			WHERE w.work_usage = 'Y'
+			  AND TRUNC(w.work_date) = TRUNC(SYSDATE + (9/24))
+		) AS "todayProdQty",
+
+		(
+			SELECT COUNT(*)
+			FROM work w
+			WHERE w.work_usage = 'Y'
+			  AND w.work_status = 30
+			  AND TRUNC(w.work_date) = TRUNC(SYSDATE + (9/24))
+		) AS "todayDoneCnt",
+
+		(
+			SELECT NVL(SUM(NVL(q.qc_qty, 0)), 0)
+			FROM qc q
+			WHERE q.qc_usage = 'Y'
+			  AND TRUNC(q.qc_date) = TRUNC(SYSDATE + (9/24))
+		) AS "todayQcQty",
+
+		(
+			SELECT NVL(SUM(NVL(q.qc_qty, 0) - NVL(q.qc_pass_qty, 0)), 0)
+			FROM qc q
+			WHERE q.qc_usage = 'Y'
+			  AND TRUNC(q.qc_date) = TRUNC(SYSDATE + (9/24))
+		) AS "todayFailQty"
+	FROM dual
+</select>
+
+
+<!-- 창고 적재율 TOP 5 -->
+<!-- 창고 적재율 TOP 5 -->
+<select id="selectWarehouseTopList" resultType="hashmap">
+
+	SELECT *
+	FROM (
+	
+		SELECT
+			wh.wh_id AS "whId",
+			wh.wh_name AS "whName",
+			wt.wh_type_name AS "whTypeName",
+			wh.wh_qty AS "whQty",
+			NVL(lot_sum.whPrevQty, 0) AS "whPrevQty",
+
+			CASE
+				WHEN wh.wh_qty > 0 THEN
+					ROUND(
+						NVL(lot_sum.whPrevQty, 0)
+						/ wh.wh_qty
+						* 100,
+						2
+					)
+				ELSE 0
+			END AS "whUsageRate"
+
+		FROM warehouse wh
+
+			LEFT OUTER JOIN wh_type wt
+				ON wh.wh_type = wt.wh_type_no
+
+			LEFT OUTER JOIN (
+				SELECT
+					ws.wh_sec_whid AS whId,
+					COUNT(lot.lot_id) AS whPrevQty
+
+				FROM lot lot
+
+					LEFT OUTER JOIN (
+						SELECT
+							lu.use_lot AS lotId,
+							SUM(NVL(lu.use_qty, 0)) AS totalUseQty
+						FROM lot_use lu
+						GROUP BY lu.use_lot
+					) use_sum
+						ON lot.lot_id = use_sum.lotId
+
+					INNER JOIN wh_sec ws
+						ON ws.wh_sec_id =
+							CASE
+								WHEN lot.lot_qc = 'N' THEN lot.lot_bwhsec
+								WHEN lot.lot_qc = 'Y' THEN lot.lot_awhsec
+							END
+
+				WHERE lot.lot_status NOT IN (0, 30)
+
+				  AND (
+						CASE
+							WHEN lot.lot_qc = 'N'
+								THEN NVL(lot.lot_qty, 0)
+
+							WHEN lot.lot_qc = 'Y'
+								THEN NVL(lot.lot_fqty, 0)
+
+							ELSE 0
+						END
+						- NVL(use_sum.totalUseQty, 0)
+				  ) > 0
+
+				GROUP BY ws.wh_sec_whid
+
+			) lot_sum
+				ON wh.wh_id = lot_sum.whId
+
+		WHERE wh.wh_usage = 'Y'
+
+		ORDER BY "whUsageRate" DESC
+
+	)
+
+	WHERE ROWNUM <![CDATA[<=]]> 5
+
+</select>
+
+
+<!-- 설비 가동 현황 -->
+<select id="selectEqStatusSummary" resultType="hashmap">
+	SELECT
+		COUNT(*) AS "totalEqCnt",
+
+		SUM(CASE WHEN eq_status = 10 THEN 1 ELSE 0 END) AS "runCnt",
+		SUM(CASE WHEN eq_status = 20 THEN 1 ELSE 0 END) AS "stopCnt",
+		SUM(CASE WHEN eq_status = 30 THEN 1 ELSE 0 END) AS "checkCnt",
+		SUM(CASE WHEN eq_status = 40 THEN 1 ELSE 0 END) AS "breakCnt",
+		SUM(CASE WHEN eq_status = 0 THEN 1 ELSE 0 END) AS "offCnt",
+
+		ROUND(
+			SUM(CASE WHEN eq_status = 10 THEN 1 ELSE 0 END)
+			/ NULLIF(COUNT(*), 0)
+			* 100,
+			1
+		) AS "runRate"
+	FROM equipment
+	WHERE eq_usage = 'Y'
+</select>
+
+
+<!-- 주간 작업 현황 : 최근 7일 -->
+<select id="selectWeeklyWorkChart" resultType="hashmap">
+	SELECT
+		TO_CHAR(d.base_day, 'MM/DD') AS "dayLabel",
+		NVL(w.work_qty, 0) AS "value"
+	FROM (
+		SELECT TRUNC(SYSDATE + (9/24)) - 6 + LEVEL - 1 AS base_day
+		FROM dual
+		CONNECT BY LEVEL <![CDATA[<=]]> 7
+	) d
+	LEFT JOIN (
+		SELECT
+			TRUNC(work_date) AS work_day,
+			SUM(NVL(work_prev_qty, 0)) AS work_qty
+		FROM work
+		WHERE work_usage = 'Y'
+		  AND work_date <![CDATA[>=]]> TRUNC(SYSDATE + (9/24)) - 6
+		  AND work_date <![CDATA[<]]> TRUNC(SYSDATE + (9/24)) + 1
+		GROUP BY TRUNC(work_date)
+	) w
+		ON d.base_day = w.work_day
+	ORDER BY d.base_day
+</select>
+
+
+<!-- 주간 불량률 현황 : 최근 7일 -->
+<select id="selectWeeklyDefectChart" resultType="hashmap">
+	SELECT
+		TO_CHAR(d.base_day, 'MM/DD') AS "dayLabel",
+		NVL(q.fail_rate, 0) AS "value"
+	FROM (
+		SELECT TRUNC(SYSDATE + (9/24)) - 6 + LEVEL - 1 AS base_day
+		FROM dual
+		CONNECT BY LEVEL <![CDATA[<=]]> 7
+	) d
+	LEFT JOIN (
+		SELECT
+			TRUNC(qc_date) AS qc_day,
+			ROUND(
+				SUM(NVL(qc_qty, 0) - NVL(qc_pass_qty, 0))
+				/ NULLIF(SUM(NVL(qc_qty, 0)), 0)
+				* 100,
+				2
+			) AS fail_rate
+		FROM qc
+		WHERE qc_usage = 'Y'
+		  AND qc_date <![CDATA[>=]]> TRUNC(SYSDATE + (9/24)) - 6
+		  AND qc_date <![CDATA[<]]> TRUNC(SYSDATE + (9/24)) + 1
+		GROUP BY TRUNC(qc_date)
+	) q
+		ON d.base_day = q.qc_day
+	ORDER BY d.base_day
+</select>
+
+
+<!-- 금일 예정 작업 -->
+<select id="selectTodayWorkList" resultType="hashmap">
+	SELECT *
+	FROM (
+		SELECT
+			TO_CHAR(w.work_date, 'MM-DD') AS "workDate",
+			w.work_id AS "workId",
+			w.work_status AS "workStatus",
+			ws.work_status_name AS "workStatusName"
+		FROM work w
+		LEFT JOIN work_status ws
+			ON w.work_status = ws.work_status_no
+		WHERE w.work_usage = 'Y'
+		  AND TRUNC(w.work_date) = TRUNC(SYSDATE + (9/24))
+		ORDER BY w.work_id
+	)
+	WHERE ROWNUM <![CDATA[<=]]> 5
+</select>
+
+
+<!-- KPI 지표 -->
+<select id="selectKpiList" resultType="hashmap">
+	WITH today AS (
+		SELECT TRUNC(SYSDATE + (9/24)) AS dt FROM dual
+	),
+	plan_kpi AS (
+		SELECT
+			'생산계획 달성률' AS kpi_name,
+
+			ROUND(
+				SUM(CASE
+					WHEN p.plan_sdate <![CDATA[>=]]> TRUNC((SELECT dt FROM today), 'IW')
+					 AND p.plan_sdate <![CDATA[<]]> (SELECT dt FROM today) + 1
+					THEN NVL(p.plan_wp_qty, 0)
+					ELSE 0
+				END)
+				/
+				NULLIF(SUM(CASE
+					WHEN p.plan_sdate <![CDATA[>=]]> TRUNC((SELECT dt FROM today), 'IW')
+					 AND p.plan_sdate <![CDATA[<]]> (SELECT dt FROM today) + 1
+					THEN NVL(p.plan_fin_qty, 0)
+					ELSE 0
+				END), 0)
+				* 100,
+				1
+			) AS this_week,
+
+			ROUND(
+				SUM(CASE
+					WHEN p.plan_sdate <![CDATA[>=]]> TRUNC((SELECT dt FROM today), 'MM')
+					 AND p.plan_sdate <![CDATA[<]]> ADD_MONTHS(TRUNC((SELECT dt FROM today), 'MM'), 1)
+					THEN NVL(p.plan_wp_qty, 0)
+					ELSE 0
+				END)
+				/
+				NULLIF(SUM(CASE
+					WHEN p.plan_sdate <![CDATA[>=]]> TRUNC((SELECT dt FROM today), 'MM')
+					 AND p.plan_sdate <![CDATA[<]]> ADD_MONTHS(TRUNC((SELECT dt FROM today), 'MM'), 1)
+					THEN NVL(p.plan_fin_qty, 0)
+					ELSE 0
+				END), 0)
+				* 100,
+				1
+			) AS this_month,
+
+			ROUND(
+				SUM(CASE
+					WHEN p.plan_sdate <![CDATA[>=]]> ADD_MONTHS(TRUNC((SELECT dt FROM today), 'MM'), -1)
+					 AND p.plan_sdate <![CDATA[<]]> TRUNC((SELECT dt FROM today), 'MM')
+					THEN NVL(p.plan_wp_qty, 0)
+					ELSE 0
+				END)
+				/
+				NULLIF(SUM(CASE
+					WHEN p.plan_sdate <![CDATA[>=]]> ADD_MONTHS(TRUNC((SELECT dt FROM today), 'MM'), -1)
+					 AND p.plan_sdate <![CDATA[<]]> TRUNC((SELECT dt FROM today), 'MM')
+					THEN NVL(p.plan_fin_qty, 0)
+					ELSE 0
+				END), 0)
+				* 100,
+				1
+			) AS last_month
+		FROM plan p
 		WHERE p.plan_usage = 'Y'
-	</update>
+	),
+	defect_kpi AS (
+		SELECT
+			'불량률' AS kpi_name,
 
-	<update id="updatePlanStatusAuto">
-		UPDATE plan p
-		SET
-			p.plan_status =
-				CASE
-					WHEN NVL(p.plan_wp_qty, 0) >= p.plan_fin_qty THEN 30
-					WHEN TRUNC(p.plan_edate) <![CDATA[<]]> TRUNC(SYSDATE + (9/24))
-						AND NVL(p.plan_wp_qty, 0) <![CDATA[<]]> p.plan_fin_qty THEN 40
-					WHEN TRUNC(p.plan_sdate) <![CDATA[<=]]> TRUNC(SYSDATE + (9/24))
-						AND TRUNC(p.plan_edate) <![CDATA[>=]]> TRUNC(SYSDATE + (9/24))
-						AND NVL(p.plan_wp_qty, 0) <![CDATA[<]]> p.plan_fin_qty THEN 20
-					WHEN TRUNC(p.plan_sdate) <![CDATA[>]]> TRUNC(SYSDATE + (9/24)) THEN 10
-					ELSE 10
-				END,
-			p.plan_mdate = SYSDATE + (9/24)
-		WHERE p.plan_usage = 'Y' AND p.plan_status != 0 AND p.plan_status != 30
-	</update>
-	
-	<update id="updateQcStatusAuto">
+			ROUND(
+				SUM(CASE
+					WHEN q.qc_date <![CDATA[>=]]> TRUNC((SELECT dt FROM today), 'IW')
+					 AND q.qc_date <![CDATA[<]]> (SELECT dt FROM today) + 1
+					THEN NVL(q.qc_qty, 0) - NVL(q.qc_pass_qty, 0)
+					ELSE 0
+				END)
+				/
+				NULLIF(SUM(CASE
+					WHEN q.qc_date <![CDATA[>=]]> TRUNC((SELECT dt FROM today), 'IW')
+					 AND q.qc_date <![CDATA[<]]> (SELECT dt FROM today) + 1
+					THEN NVL(q.qc_qty, 0)
+					ELSE 0
+				END), 0)
+				* 100,
+				1
+			) AS this_week,
 
-	    UPDATE QC Q
-	    SET
-	        Q.QC_STATUS =
-	            CASE
-	                WHEN NVL(Q.QC_PASS_QTY, 0) >= NVL(Q.QC_QTY, 0)
-	                    AND NVL(Q.QC_QTY, 0) > 0 THEN 30
-	
-	                WHEN TRUNC(Q.QC_DATE) <![CDATA[<]]> TRUNC(SYSDATE + (9/24))
-	                    AND NVL(Q.QC_PASS_QTY, 0) <![CDATA[<]]> NVL(Q.QC_QTY, 0) THEN 40
-	
-	                WHEN TRUNC(Q.QC_DATE) = TRUNC(SYSDATE + (9/24))
-	                    AND NVL(Q.QC_PASS_QTY, 0) <![CDATA[<]]> NVL(Q.QC_QTY, 0) THEN 20
-	
-	                WHEN TRUNC(Q.QC_DATE) <![CDATA[>]]> TRUNC(SYSDATE + (9/24)) THEN 10
-	
-	                ELSE 10
-	            END
-	    WHERE Q.QC_USAGE = 'Y'
-	      AND Q.QC_STATUS != 0
-	      AND Q.QC_STATUS != 30
-	
-	</update>	
+			ROUND(
+				SUM(CASE
+					WHEN q.qc_date <![CDATA[>=]]> TRUNC((SELECT dt FROM today), 'MM')
+					 AND q.qc_date <![CDATA[<]]> ADD_MONTHS(TRUNC((SELECT dt FROM today), 'MM'), 1)
+					THEN NVL(q.qc_qty, 0) - NVL(q.qc_pass_qty, 0)
+					ELSE 0
+				END)
+				/
+				NULLIF(SUM(CASE
+					WHEN q.qc_date <![CDATA[>=]]> TRUNC((SELECT dt FROM today), 'MM')
+					 AND q.qc_date <![CDATA[<]]> ADD_MONTHS(TRUNC((SELECT dt FROM today), 'MM'), 1)
+					THEN NVL(q.qc_qty, 0)
+					ELSE 0
+				END), 0)
+				* 100,
+				1
+			) AS this_month,
+
+			ROUND(
+				SUM(CASE
+					WHEN q.qc_date <![CDATA[>=]]> ADD_MONTHS(TRUNC((SELECT dt FROM today), 'MM'), -1)
+					 AND q.qc_date <![CDATA[<]]> TRUNC((SELECT dt FROM today), 'MM')
+					THEN NVL(q.qc_qty, 0) - NVL(q.qc_pass_qty, 0)
+					ELSE 0
+				END)
+				/
+				NULLIF(SUM(CASE
+					WHEN q.qc_date <![CDATA[>=]]> ADD_MONTHS(TRUNC((SELECT dt FROM today), 'MM'), -1)
+					 AND q.qc_date <![CDATA[<]]> TRUNC((SELECT dt FROM today), 'MM')
+					THEN NVL(q.qc_qty, 0)
+					ELSE 0
+				END), 0)
+				* 100,
+				1
+			) AS last_month
+		FROM qc q
+		WHERE q.qc_usage = 'Y'
+	),
+	eq_kpi AS (
+		SELECT
+			'설비 가동률' AS kpi_name,
+			ROUND(SUM(CASE WHEN eq_status = 10 THEN 1 ELSE 0 END) / NULLIF(COUNT(*), 0) * 100, 1) AS this_week,
+			ROUND(SUM(CASE WHEN eq_status = 10 THEN 1 ELSE 0 END) / NULLIF(COUNT(*), 0) * 100, 1) AS this_month,
+			ROUND(SUM(CASE WHEN eq_status = 10 THEN 1 ELSE 0 END) / NULLIF(COUNT(*), 0) * 100, 1) AS last_month
+		FROM equipment
+		WHERE eq_usage = 'Y'
+	),
+	work_kpi AS (
+		SELECT
+			'작업 완료율' AS kpi_name,
+
+			ROUND(
+				SUM(CASE
+					WHEN work_date <![CDATA[>=]]> TRUNC((SELECT dt FROM today), 'IW')
+					 AND work_date <![CDATA[<]]> (SELECT dt FROM today) + 1
+					 AND work_status = 30
+					THEN 1 ELSE 0
+				END)
+				/
+				NULLIF(SUM(CASE
+					WHEN work_date <![CDATA[>=]]> TRUNC((SELECT dt FROM today), 'IW')
+					 AND work_date <![CDATA[<]]> (SELECT dt FROM today) + 1
+					THEN 1 ELSE 0
+				END), 0)
+				* 100,
+				1
+			) AS this_week,
+
+			ROUND(
+				SUM(CASE
+					WHEN work_date <![CDATA[>=]]> TRUNC((SELECT dt FROM today), 'MM')
+					 AND work_date <![CDATA[<]]> ADD_MONTHS(TRUNC((SELECT dt FROM today), 'MM'), 1)
+					 AND work_status = 30
+					THEN 1 ELSE 0
+				END)
+				/
+				NULLIF(SUM(CASE
+					WHEN work_date <![CDATA[>=]]> TRUNC((SELECT dt FROM today), 'MM')
+					 AND work_date <![CDATA[<]]> ADD_MONTHS(TRUNC((SELECT dt FROM today), 'MM'), 1)
+					THEN 1 ELSE 0
+				END), 0)
+				* 100,
+				1
+			) AS this_month,
+
+			ROUND(
+				SUM(CASE
+					WHEN work_date <![CDATA[>=]]> ADD_MONTHS(TRUNC((SELECT dt FROM today), 'MM'), -1)
+					 AND work_date <![CDATA[<]]> TRUNC((SELECT dt FROM today), 'MM')
+					 AND work_status = 30
+					THEN 1 ELSE 0
+				END)
+				/
+				NULLIF(SUM(CASE
+					WHEN work_date <![CDATA[>=]]> ADD_MONTHS(TRUNC((SELECT dt FROM today), 'MM'), -1)
+					 AND work_date <![CDATA[<]]> TRUNC((SELECT dt FROM today), 'MM')
+					THEN 1 ELSE 0
+				END), 0)
+				* 100,
+				1
+			) AS last_month
+		FROM work
+		WHERE work_usage = 'Y'
+	)
+	SELECT
+		kpi_name AS "kpiName",
+		NVL(this_week, 0) AS "thisWeek",
+		NVL(this_month, 0) AS "thisMonth",
+		NVL(last_month, 0) AS "lastMonth",
+		ROUND(NVL(this_month, 0) - NVL(last_month, 0), 1) AS "compareValue"
+	FROM plan_kpi
+
+	UNION ALL
+
+	SELECT
+		kpi_name,
+		NVL(this_week, 0),
+		NVL(this_month, 0),
+		NVL(last_month, 0),
+		ROUND(NVL(this_month, 0) - NVL(last_month, 0), 1)
+	FROM defect_kpi
+
+	UNION ALL
+
+	SELECT
+		kpi_name,
+		NVL(this_week, 0),
+		NVL(this_month, 0),
+		NVL(last_month, 0),
+		ROUND(NVL(this_month, 0) - NVL(last_month, 0), 1)
+	FROM eq_kpi
+
+	UNION ALL
+
+	SELECT
+		kpi_name,
+		NVL(this_week, 0),
+		NVL(this_month, 0),
+		NVL(last_month, 0),
+		ROUND(NVL(this_month, 0) - NVL(last_month, 0), 1)
+	FROM work_kpi
+</select>
+
+<update id="updateWorkStatusAuto">
+	UPDATE work w
+	SET
+		w.work_status =
+			CASE
+				WHEN NVL(w.work_prev_qty, 0) >= w.work_order_qty THEN 30
+				WHEN TRUNC(w.work_date) <![CDATA[<]]> TRUNC(SYSDATE + (9/24))
+					AND NVL(w.work_prev_qty, 0) <![CDATA[<]]> w.work_order_qty THEN 40
+				WHEN TRUNC(w.work_date) <![CDATA[=]]> TRUNC(SYSDATE + (9/24)) THEN 20
+				WHEN TRUNC(w.work_date) <![CDATA[>]]> TRUNC(SYSDATE + (9/24)) THEN 10
+				ELSE 10
+			END,
+		w.work_mdate = SYSDATE + (9/24)
+	WHERE w.work_usage = 'Y' AND w.work_status != 0 AND w.work_status != 30
+</update>
+
+<update id="updatePlanWpQty">
+	UPDATE plan p
+	SET p.plan_wp_qty = (
+		SELECT NVL(SUM(NVL(w.work_prev_qty, 0)), 0)
+		FROM work w
+		WHERE w.work_plan = p.plan_id
+			AND w.work_status = 30
+	)
+	WHERE p.plan_usage = 'Y'
+</update>
+
+<update id="updatePlanStatusAuto">
+	UPDATE plan p
+	SET
+		p.plan_status =
+			CASE
+				WHEN NVL(p.plan_wp_qty, 0) >= p.plan_fin_qty THEN 30
+				WHEN TRUNC(p.plan_edate) <![CDATA[<]]> TRUNC(SYSDATE + (9/24))
+					AND NVL(p.plan_wp_qty, 0) <![CDATA[<]]> p.plan_fin_qty THEN 40
+				WHEN TRUNC(p.plan_sdate) <![CDATA[<=]]> TRUNC(SYSDATE + (9/24))
+					AND TRUNC(p.plan_edate) <![CDATA[>=]]> TRUNC(SYSDATE + (9/24))
+					AND NVL(p.plan_wp_qty, 0) <![CDATA[<]]> p.plan_fin_qty THEN 20
+				WHEN TRUNC(p.plan_sdate) <![CDATA[>]]> TRUNC(SYSDATE + (9/24)) THEN 10
+				ELSE 10
+			END,
+		p.plan_mdate = SYSDATE + (9/24)
+	WHERE p.plan_usage = 'Y' AND p.plan_status != 0 AND p.plan_status != 30
+</update>
+
+<update id="updateQcStatusAuto">
+
+    UPDATE QC Q
+    SET
+        Q.QC_STATUS =
+            CASE
+                WHEN NVL(Q.QC_PASS_QTY, 0) >= NVL(Q.QC_QTY, 0)
+                    AND NVL(Q.QC_QTY, 0) > 0 THEN 30
+
+                WHEN TRUNC(Q.QC_DATE) <![CDATA[<]]> TRUNC(SYSDATE + (9/24))
+                    AND NVL(Q.QC_PASS_QTY, 0) <![CDATA[<]]> NVL(Q.QC_QTY, 0) THEN 40
+
+                WHEN TRUNC(Q.QC_DATE) = TRUNC(SYSDATE + (9/24))
+                    AND NVL(Q.QC_PASS_QTY, 0) <![CDATA[<]]> NVL(Q.QC_QTY, 0) THEN 20
+
+                WHEN TRUNC(Q.QC_DATE) <![CDATA[>]]> TRUNC(SYSDATE + (9/24)) THEN 10
+
+                ELSE 10
+            END
+    WHERE Q.QC_USAGE = 'Y'
+      AND Q.QC_STATUS != 0
+      AND Q.QC_STATUS != 30
+
+</update>	
 	
 </mapper>
