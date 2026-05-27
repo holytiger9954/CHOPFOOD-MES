@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.or.chop.P23_alarm">
+	
+	<select id="selectAlarmCount" parameterType="kr.or.chop.P23_alarm.dto.AlarmDTO"
+		resultType="int">
+		
+		select count(*)
+		FROM ALARM A
+		LEFT JOIN EMP E
+			ON A.ALARM_EMP = E.EMP_ID
+		LEFT JOIN DEPT D
+			ON A.ALARM_DEPT = D.DEPTNO
+		LEFT JOIN AUTH AU
+			ON A.ALARM_AUTH = AU.AUTH_NO
+		<where>
+			A.ALARM_VALID = 'Y'
+
+			<if test="searchKeyword != null and searchKeyword != ''">
+				AND (
+					UPPER(A.ALARM_TITLE) LIKE UPPER('%' || #{searchKeyword} || '%')
+					OR UPPER(A.ALARM_CONTENT) LIKE UPPER('%' || #{searchKeyword} || '%')
+					OR UPPER(A.ALARM_ID) LIKE UPPER('%' || #{searchKeyword} || '%')
+				)
+			</if>
+		</where>
+		
+	
+	</select>
+
+
+	<select id="selectAlarmList"
+		parameterType="map"
+		resultType="kr.or.chop.P23_alarm.dto.AlarmDTO">
+		
+		select *
+		from
+		(
+		select rownum rn,
+		I.*
+		from
+		(
+		SELECT
+			A.ALARM_ID AS alarmId,
+			A.ALARM_EMP AS alarmEmp,
+			A.ALARM_DEPT AS alarmDept,
+			A.ALARM_AUTH AS alarmAuth,
+			A.ALARM_TYPE_NO AS alarmTypeNo,
+			A.ALARM_TITLE AS alarmTitle,
+			A.ALARM_CONTENT AS alarmContent,
+			A.ALARM_DATE AS alarmDate,
+			A.ALARM_VALID AS alarmValid,
+			E.EMP_NAME AS empName,
+			D.DNAME AS deptName,
+			AU.AUTH_NAME AS authName
+		FROM ALARM A
+		LEFT JOIN EMP E
+			ON A.ALARM_EMP = E.EMP_ID
+		LEFT JOIN DEPT D
+			ON A.ALARM_DEPT = D.DEPTNO
+		LEFT JOIN AUTH AU
+			ON A.ALARM_AUTH = AU.AUTH_NO
+		<where>
+			A.ALARM_VALID = 'Y'
+
+			<if test="searchKeyword != null and searchKeyword != ''">
+				AND (
+					UPPER(A.ALARM_TITLE) LIKE UPPER('%' || #{searchKeyword} || '%')
+					OR UPPER(A.ALARM_CONTENT) LIKE UPPER('%' || #{searchKeyword} || '%')
+					OR UPPER(A.ALARM_ID) LIKE UPPER('%' || #{searchKeyword} || '%')
+				)
+			</if>
+		</where>
+		ORDER BY A.ALARM_DATE DESC
+		) I
+		)
+		where rn between #{page.startRow}
+		and
+		#{page.endRow}
+		
+
+	</select>
+	
+	<select id="selectAlarmTypeList"
+		resultType="kr.or.chop.P23_alarm.dto.AlarmDTO">
+	
+		SELECT
+			ALARM_TYPE_NO AS alarmTypeNo,
+			ALARM_TYPE_NAME AS alarmTypeName
+		FROM ALARM_TYPE
+		ORDER BY ALARM_TYPE_NO desc
+	
+	</select>
+
+	<select id="selectAlarmDetail"
+		parameterType="string"
+		resultType="kr.or.chop.P23_alarm.dto.AlarmDTO">
+
+		SELECT
+			A.ALARM_ID AS alarmId,
+			A.ALARM_EMP AS alarmEmp,
+			A.ALARM_DEPT AS alarmDept,
+			A.ALARM_AUTH AS alarmAuth,
+			A.ALARM_TYPE_NO AS alarmTypeNo,
+			A.ALARM_TITLE AS alarmTitle,
+			A.ALARM_CONTENT AS alarmContent,
+			A.ALARM_DATE AS alarmDate,
+			A.ALARM_VALID AS alarmValid,
+			E.EMP_NAME AS empName,
+			D.DNAME AS deptName,
+			AU.AUTH_NAME AS authName
+		FROM ALARM A
+		LEFT JOIN EMP E
+			ON A.ALARM_EMP = E.EMP_ID
+		LEFT JOIN DEPT D
+			ON A.ALARM_DEPT = D.DEPTNO
+		LEFT JOIN AUTH AU
+			ON A.ALARM_AUTH = AU.AUTH_NO
+		WHERE A.ALARM_ID = #{alarmId}
+
+	</select>
+
+	<insert id="insertAlarm"
+		parameterType="kr.or.chop.P23_alarm.dto.AlarmDTO">
+
+		INSERT INTO ALARM (
+			ALARM_ID,
+			ALARM_EMP,
+			ALARM_DEPT,
+			ALARM_AUTH,
+			ALARM_TYPE_NO,
+			ALARM_TITLE,
+			ALARM_CONTENT,
+			ALARM_DATE,
+			ALARM_VALID
+		)
+		VALUES (
+			'ALARM' || ALARM_SEQ.NEXTVAL,
+			#{alarmEmp},
+			#{alarmDept},
+			#{alarmAuth},
+			#{alarmTypeNo},
+			#{alarmTitle},
+			#{alarmContent},
+			SYSDATE + (9/24),
+			'Y'
+		)
+
+	</insert>
+
+	<update id="deleteAlarm" parameterType="string">
+
+		UPDATE ALARM
+		SET ALARM_VALID = 'N'
+		WHERE ALARM_ID = #{alarmId}
+
+	</update>
+
+	<select id="selectMyAlarmList"
+		parameterType="map"
+		resultType="kr.or.chop.P23_alarm.dto.AlarmDTO">
+
+		SELECT
+			A.ALARM_ID AS alarmId,
+			A.ALARM_EMP AS alarmEmp,
+			A.ALARM_DEPT AS alarmDept,
+			A.ALARM_AUTH AS alarmAuth,
+			A.ALARM_TYPE_NO AS alarmTypeNo,
+			A.ALARM_TITLE AS alarmTitle,
+			A.ALARM_CONTENT AS alarmContent,
+			A.ALARM_DATE AS alarmDate,
+			A.ALARM_VALID AS alarmValid
+		FROM ALARM A
+		WHERE A.ALARM_VALID = 'Y'
+		AND (
+			(A.ALARM_EMP IS NULL AND A.ALARM_DEPT IS NULL AND A.ALARM_AUTH IS NULL)
+			OR A.ALARM_EMP = #{empId}
+			OR A.ALARM_DEPT = #{deptNo}
+			OR A.ALARM_AUTH = #{authNo}
+		)
+		ORDER BY A.ALARM_DATE DESC
+
+	</select>
+
+	<select id="selectAlarmTargetList"
+		parameterType="map"
+		resultType="map">
+
+		<choose>
+			<when test="targetType == 'EMP'">
+				SELECT
+					EMP_ID AS "code",
+					EMP_NAME AS "name"
+				FROM EMP
+				WHERE 1 = 1
+
+				<if test="keyword != null and keyword != ''">
+					AND (
+						UPPER(EMP_ID) LIKE UPPER('%' || #{keyword} || '%')
+						OR UPPER(EMP_NAME) LIKE UPPER('%' || #{keyword} || '%')
+					)
+				</if>
+
+				ORDER BY EMP_ID
+			</when>
+
+			<when test="targetType == 'DEPT'">
+				SELECT
+					DEPTNO AS "code",
+					DNAME AS "name"
+				FROM DEPT
+				WHERE 1 = 1
+
+				<if test="keyword != null and keyword != ''">
+					AND (
+						TO_CHAR(DEPTNO) LIKE '%' || #{keyword} || '%'
+						OR UPPER(DNAME) LIKE UPPER('%' || #{keyword} || '%')
+					)
+				</if>
+
+				ORDER BY DEPTNO
+			</when>
+
+			<otherwise>
+				SELECT
+					AUTH_NO AS "code",
+					AUTH_NAME AS "name"
+				FROM AUTH
+				WHERE 1 = 1
+
+				<if test="keyword != null and keyword != ''">
+					AND (
+						TO_CHAR(AUTH_NO) LIKE '%' || #{keyword} || '%'
+						OR UPPER(AUTH_NAME) LIKE UPPER('%' || #{keyword} || '%')
+					)
+				</if>
+
+				ORDER BY AUTH_NO
+			</otherwise>
+		</choose>
+
+	</select>
+
+</mapper>

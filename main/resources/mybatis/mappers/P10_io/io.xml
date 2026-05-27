@@ -9,7 +9,7 @@
 		resultType="int">
 
 		select count(*)
-		from io
+		from io IO
 		<where>
 			<if test="ioType != null and ioType != ''">
 				AND IO.io_type = #{ioType}

@@ -126,6 +126,57 @@
         </div>
         
     </div>
+    
+    <div class="table-section">
+    	<h3 class="emp-section-title">알림 내역</h3>
+    	<div class="table-wrap">
+    		<table class="table">
+		        <thead>
+		            <tr>
+		                <th>유형</th>
+		                <th>제목</th>
+		                <th>내용</th>
+		                <th>등록일</th>
+		            </tr>
+		        </thead>
+		
+		        <tbody>
+		            <c:choose>
+		                <c:when test="${empty alarmList}">
+		                    <tr>
+		                        <td colspan="4" class="empty">
+		                            확인할 알림이 없습니다.
+		                        </td>
+		                    </tr>
+		                </c:when>
+		
+		                <c:otherwise>
+		                    <c:forEach var="alarm" items="${alarmList}">
+		                        <tr onclick="location.href='${pageContext.request.contextPath}/alarm/detail?alarmId=${alarm.alarmId}'">
+		                            <td>
+		                                <c:choose>
+		                                    <c:when test="${alarm.alarmTypeNo == 10}">작업</c:when>
+		                                    <c:when test="${alarm.alarmTypeNo == 20}">이상</c:when>
+		                                    <c:when test="${alarm.alarmTypeNo == 30}">점검</c:when>
+		                                    <c:when test="${alarm.alarmTypeNo == 40}">일반</c:when>
+		                                    <c:otherwise>알림</c:otherwise>
+		                                </c:choose>
+		                            </td>
+		
+		                            <td>${alarm.alarmTitle}</td>
+		                            <td>${alarm.alarmContent}</td>
+		
+		                            <td>
+		                                <fmt:formatDate value="${alarm.alarmDate}" pattern="yyyy-MM-dd HH:mm"/>
+		                            </td>
+		                        </tr>
+		                    </c:forEach>
+		                </c:otherwise>
+		            </c:choose>
+		        </tbody>
+		    </table>
+    	</div>
+    </div>
 
     <div class="table-section workOrder">
         <h3 class="emp-section-title">금일 작업 사항</h3>

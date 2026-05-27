@@ -1,13 +1,26 @@
 // 알림
 document.addEventListener("DOMContentLoaded", function () {
+
     const alarmBtn = document.getElementById("alarmBtn");
     const alarmPanel = document.getElementById("alarmPanel");
+    const alarmListBox = document.getElementById("alarmListBox");
 
-    if (!alarmBtn || !alarmPanel) return;
+    if (!alarmBtn || !alarmPanel || !alarmListBox) return;
 
     alarmBtn.addEventListener("click", function (e) {
+
         e.stopPropagation();
-        alarmPanel.classList.toggle("active");
+
+        const isOpen = alarmPanel.classList.contains("active");
+
+        if (isOpen) {
+            alarmPanel.classList.remove("active");
+            return;
+        }
+
+        alarmPanel.classList.add("active");
+
+        loadMyAlarmList();
     });
 
     alarmPanel.addEventListener("click", function (e) {
@@ -18,13 +31,125 @@ document.addEventListener("DOMContentLoaded", function () {
         alarmPanel.classList.remove("active");
     });
 
+    function loadMyAlarmList() {
+
+        alarmListBox.innerHTML =
+            "<div class='alarm-empty'>알림을 불러오는 중입니다.</div>";
+
+        fetch(contextPath + "/alarm/myListJson")
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (result) {
+
+                let html = "";
+
+                if (result.length === 0) {
+
+                    html += "<div class='alarm-empty'>";
+                    html += "확인할 알림이 없습니다.";
+                    html += "</div>";
+
+                    alarmListBox.innerHTML = html;
+
+                    return;
+                }
+
+                let showList = result.slice(0, 2);
+
+                for (let i = 0; i < showList.length; i++) {
+
+                    html += "<div class='alarm-item' ";
+                    html += "onclick=\"location.href='" + contextPath + "/alarm/detail?alarmId=" + showList[i].alarmId + "'\">";
+
+                    html += "<div class='alarm-content-wrap'>";
+
+                    html += "<p class='alarm-text'>";
+                    html += "[" + getAlarmTypeName(showList[i].alarmTypeNo) + "] ";
+                    html += showList[i].alarmTitle;
+                    html += "</p>";
+
+                    html += "<div class='alarm-time'>";
+                    html += formatAlarmDate(showList[i].alarmDate);
+                    html += "</div>";
+
+                    html += "</div>";
+
+                    html += "</div>";
+                }
+
+                if (result.length > 2) {
+                    html += "<div class='alarm-more' ";
+                    html += "onclick=\"location.href='" + contextPath + "/mypage/alarm'\">";
+                    html += "더보기";
+                    html += "</div>";
+                }
+
+                alarmListBox.innerHTML = html;
+                bindAlarmCloseButtons();
+            })
+            .catch(function () {
+
+                alarmListBox.innerHTML =
+                    "<div class='alarm-empty'>알림 조회 실패</div>";
+            });
+    }
+
+    function bindAlarmCloseButtons() {
     const closeButtons = alarmPanel.querySelectorAll(".alarm-close");
 
     closeButtons.forEach(function (btn) {
-        btn.addEventListener("click", function () {
+        btn.addEventListener("click", function (e) {
+            e.stopPropagation();
             btn.closest(".alarm-item").remove();
         });
     });
+}
+
+    function getAlarmTypeName(typeNo) {
+
+        switch (Number(typeNo)) {
+
+            case 10:
+                return "작업지연";
+
+            case 20:
+                return "재고부족";
+
+            case 30:
+                return "설비이상";
+
+            case 40:
+                return "품질이상";
+
+            case 50:
+                return "이상감지";
+
+            case 60:
+                return "일반";
+
+            default:
+                return "알림";
+        }
+    }
+
+    function formatAlarmDate(value) {
+
+        if (!value) {
+            return "";
+        }
+
+        const date = new Date(value);
+
+        const yyyy = date.getFullYear();
+        const mm = String(date.getMonth() + 1).padStart(2, "0");
+        const dd = String(date.getDate()).padStart(2, "0");
+
+        const hh = String(date.getHours()).padStart(2, "0");
+        const mi = String(date.getMinutes()).padStart(2, "0");
+
+        return yyyy + "-" + mm + "-" + dd + " " + hh + ":" + mi;
+    }
 });
 
 // 사이드바

@@ -1,5 +1,6 @@
 package kr.or.chop.P01_login.controller;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +19,8 @@ import kr.or.chop.P01_login.dto.UserWorkDTO;
 import kr.or.chop.P01_login.service.MyService;
 import kr.or.chop.P04_sugg.dto.SuggDTO;
 import kr.or.chop.P14_warehouse.dto.WHDTO;
+import kr.or.chop.P23_alarm.dto.AlarmDTO;
+import kr.or.chop.P23_alarm.service.AlarmService;
 
 @Controller
 @RequestMapping("/mypage")
@@ -29,6 +32,9 @@ public class MyController {
 	@Autowired
 	HttpSession session;
 	
+	@Autowired
+    private AlarmService alarmService;
+	
 	
 	@RequestMapping("")
 	public String mypage(
@@ -36,12 +42,24 @@ public class MyController {
 		) {
 		EmpDTO loginUser = (EmpDTO)session.getAttribute("loginUser");
 		
+		if (loginUser == null) {
+            model.addAttribute("alarmList", Collections.emptyList());
+            return "P01_login/myAlarm.tiles";
+        }
+
+        List<AlarmDTO> alarmList = alarmService.selectMyAlarmList(
+            loginUser.getEmpId(),
+            loginUser.getEmpDeptno(),
+            loginUser.getEmpAuth()
+        );
+		
 		List<UserWorkDTO> workList = myService.selectAllWork(loginUser); 
 		List<SuggDTO> suggList = myService.selectAllSugg(loginUser);
 		
 		model.addAttribute("user", loginUser);
 		model.addAttribute("workList", workList);
 		model.addAttribute("suggList", suggList);
+		model.addAttribute("alarmList", alarmList);
 		
 		return "P01_login/mypage.tiles";
 	}

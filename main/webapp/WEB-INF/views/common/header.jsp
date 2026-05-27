@@ -2,6 +2,9 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <header class="header">
+<script>
+	const contextPath = "${pageContext.request.contextPath}";
+</script>
 
     <div class="header-left">
         <a href="${pageContext.request.contextPath}/dashboard" class="header-logo">
@@ -63,17 +66,14 @@
 			<div class="alarm-panel" id="alarmPanel">
 		        <h3 class="alarm-title">알림 내역</h3>
 		
-		        <div class="alarm-list">
-		            <div class="alarm-item">
-		                <p>[작업지시] 새로운 작업 내용이 업로드 되었습니다.</p>
-		                <button type="button" class="alarm-close">×</button>
-		            </div>
-		
-		            <div class="alarm-item">
-		                <p>[재고] 부족한 재고가 발생하였습니다.</p>
-		                <button type="button" class="alarm-close">×</button>
-		            </div>
-		        </div>
+					<div id="alarmListBox">
+
+						<div class="alarm-empty">
+							알림이 없습니다.
+						</div>
+
+					</div>
+
 		    </div>
 		    
 		</div>
