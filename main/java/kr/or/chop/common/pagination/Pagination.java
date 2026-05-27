@@ -8,34 +8,45 @@ public class Pagination {
             int pageLimit,
             int boardLimit) {
 
-        // 전체 페이지 수
-    	int maxPage =
-    		    (int)Math.ceil((double)listCount / boardLimit);
+        int maxPage = (int)Math.ceil((double)listCount / boardLimit);
 
-    		if(maxPage == 0) {
-    		    maxPage = 1;
-    		}
-
-        // 시작 페이지
-        int startPage =
-                (currentPage - 1) / pageLimit * pageLimit + 1;
-
-        // 끝 페이지
-        int endPage =
-                startPage + pageLimit - 1;
-
-        // 끝 페이지 보정
-        if(endPage > maxPage) {
-            endPage = maxPage;
+        if (maxPage == 0) {
+            maxPage = 1;
         }
 
-        // 조회 시작 rownum
-        int startRow =
-                (currentPage - 1) * boardLimit + 1;
+        if (currentPage < 1) {
+            currentPage = 1;
+        }
 
-        // 조회 끝 rownum
-        int endRow =
-                startRow + boardLimit - 1;
+        if (currentPage > maxPage) {
+            currentPage = maxPage;
+        }
+
+        int half = pageLimit / 2;
+
+        int startPage = currentPage - half;
+        int endPage = currentPage + half;
+
+        if (pageLimit % 2 == 0) {
+            endPage = currentPage + half - 1;
+        }
+
+        if (startPage < 1) {
+            startPage = 1;
+            endPage = pageLimit;
+        }
+
+        if (endPage > maxPage) {
+            endPage = maxPage;
+            startPage = maxPage - pageLimit + 1;
+        }
+
+        if (startPage < 1) {
+            startPage = 1;
+        }
+
+        int startRow = (currentPage - 1) * boardLimit + 1;
+        int endRow = currentPage * boardLimit;
 
         return new PageInfo(
                 currentPage,

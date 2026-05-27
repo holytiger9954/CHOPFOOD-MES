@@ -106,3 +106,34 @@ function closeModal(overlay) {
 		document.body.classList.remove("modal-open");
 	}
 }
+
+/* ==============================
+   페이지 스크롤 위치 저장
+============================== */
+
+window.addEventListener('beforeunload', () => {
+    sessionStorage.setItem(
+        'scrollPosition',
+        window.scrollY
+    );
+});
+
+/* ==============================
+   페이지 로드 후 스크롤 복원
+============================== */
+
+window.addEventListener('load', () => {
+
+    const scrollPosition =
+        sessionStorage.getItem('scrollPosition');
+
+    if (scrollPosition !== null) {
+
+        window.scrollTo({
+            top: parseInt(scrollPosition),
+            behavior: 'instant'
+        });
+
+        sessionStorage.removeItem('scrollPosition');
+    }
+});
