@@ -114,6 +114,7 @@
 			glog.glog_memo glogMemo,
 			glog.glog_cdate glogCdate,
 			glog.glog_whid glogWhId,
+			wh.wh_name glogWhName,
 			glog.glog_wpid glogWpId,
 			wp.wp_name glogWpName,
 			ghp.ghp_id ghpId,
@@ -131,6 +132,7 @@
 			LEFT OUTER JOIN GHP ghp ON glog.GLOG_GHP = ghp.GHP_ID
 			LEFT OUTER JOIN EMP E ON glog.GLOG_WORKER = E.EMP_ID
 			LEFT OUTER JOIN WORKPLACE wp ON wp.wp_id = glog.glog_wpid
+			LEFT OUTER JOIN WAREHOUSE wh ON wh.wh_id = glog.glog_whid
 		WHERE upper(glog.glog_id) = upper(#{glogId}) and glog.glog_usage = 'Y'
 	</select>
 	

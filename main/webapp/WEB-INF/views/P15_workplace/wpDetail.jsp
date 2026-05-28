@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <div class="content">
 	
@@ -119,7 +120,9 @@
 								<c:if test="${glog.glogResult != 'fail' && glog.glogResult != 'pass'}">
 									<td>-</td>
 								</c:if>
-								<td>${glog.glogDate}</td>
+								<td>
+									<fmt:formatDate value="${glog.glogDate}" pattern="YYYY-MM-dd HH:mm" />
+								</td>
 							</tr>	
 						</c:forEach>
 						
