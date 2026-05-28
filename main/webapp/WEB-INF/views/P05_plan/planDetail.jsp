@@ -25,13 +25,17 @@
 			</a>
 		</div>
 		<div>
-			<a class="btn btn-main" href="${pageContext.request.contextPath}/plan/edit?planId=${planDTO.planId}">
-				수정
-			</a>
-			<a class="btn btn-red" href="${pageContext.request.contextPath}/plan/delete?planId=${planDTO.planId}"
-				onclick="return confirm('생산 계획을 삭제하시겠습니까?');">
-				삭제
-			</a>
+			<c:if test="${planDTO.planStatus != 30}">
+				<a class="btn btn-main" href="${pageContext.request.contextPath}/plan/edit?planId=${planDTO.planId}">
+					수정
+				</a>
+			</c:if>
+			<c:if test="${planDTO.planStatus == 10}">
+				<a class="btn btn-red" href="${pageContext.request.contextPath}/plan/delete?planId=${planDTO.planId}"
+					onclick="return confirm('생산 계획을 삭제하시겠습니까?');">
+					삭제
+				</a>
+			</c:if>
 		</div>
 	</div>
 
@@ -90,7 +94,7 @@
 						</td>
 						<th>등록일시</th>
 						<td>
-							<fmt:formatDate value="${planDTO.planCdate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+							<fmt:formatDate value="${planDTO.planCdate}" pattern="yyyy-MM-dd HH:mm"/>
 						</td>
 					</tr>
 					<tr>

@@ -1,5 +1,6 @@
 package kr.or.chop.P05_plan.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,14 @@ public class PlanListController {
 		) {
 		
 		refService.refreshStatus();
+
+		if (planDTO.getPlanSearchSdate() == null || planDTO.getPlanSearchSdate().isEmpty()) {
+			planDTO.setPlanSearchSdate(LocalDate.now().minusMonths(6).toString());
+		}
+		
+		if (planDTO.getPlanSearchEdate() == null || planDTO.getPlanSearchEdate().isEmpty()) {
+			planDTO.setPlanSearchEdate(LocalDate.now().toString());
+		}
 		
 		// 페이징
 		int listCount = planService.selectPlanCount(planDTO);

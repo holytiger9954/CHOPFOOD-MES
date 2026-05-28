@@ -9,11 +9,15 @@
 		FROM plan p
 			LEFT OUTER JOIN item i on p.plan_item = i.item_id
 		WHERE plan_usage = 'Y'
+			<if test="(planSearchSdate == null or planSearchSdate == '') 
+			       and (planSearchEdate == null or planSearchEdate == '')">
+			    AND p.plan_edate <![CDATA[>=]]> ADD_MONTHS(TRUNC(SYSDATE + (9/24)), -6)
+			</if>
 			<if test="(planSearchSdate != null and planSearchSdate != '')">
-				AND p.plan_edate <![CDATA[<]]>= TO_DATE(#{planSearchSdate}, 'YYYY-MM-DD')				
+				AND p.plan_edate <![CDATA[>=]]> TO_DATE(#{planSearchSdate}, 'YYYY-MM-DD')				
 			</if>
 			<if test="(planSearchEdate != null and planSearchEdate != '')">
-				AND p.plan_sdate <![CDATA[<]]>= TO_DATE(#{planSearchEdate}, 'YYYY-MM-DD')				
+				AND p.plan_sdate <![CDATA[<=]]> TO_DATE(#{planSearchEdate}, 'YYYY-MM-DD')				
 			</if>
 			<if test="searchType != null and searchType != ''">
 				AND p.plan_status = #{searchType}
@@ -77,6 +81,10 @@
 					LEFT OUTER JOIN item i ON p.plan_item = i.item_id
 					LEFT OUTER JOIN emp d ON d.emp_id = p.plan_director
 				WHERE p.plan_usage = 'Y'
+					<if test="(planDTO.planSearchSdate == null or planDTO.planSearchSdate == '') 
+					       and (planDTO.planSearchEdate == null or planDTO.planSearchEdate == '')">
+					    AND p.plan_edate <![CDATA[>=]]> ADD_MONTHS(TRUNC(SYSDATE + (9/24)), -6)
+					</if>
 					<if test="(planDTO.planSearchSdate != null and planDTO.planSearchSdate != '')">
 						AND p.plan_edate <![CDATA[>=]]> TO_DATE(#{planDTO.planSearchSdate}, 'YYYY-MM-DD')
 					</if>
@@ -182,7 +190,10 @@
 	    FROM plan p
 	        LEFT OUTER JOIN item i ON p.plan_item = i.item_id
 	    WHERE p.plan_usage = 'Y'
-	
+			<if test="(planSearchSdate == null or planSearchSdate == '') 
+			       and (planSearchEdate == null or planSearchEdate == '')">
+			    AND p.plan_edate <![CDATA[>=]]> ADD_MONTHS(TRUNC(SYSDATE + (9/24)), -6)
+			</if>
 	        <if test="planSearchSdate != null and planSearchSdate != ''">
 	            AND p.plan_edate <![CDATA[>=]]> TO_DATE(#{planSearchSdate}, 'YYYY-MM-DD')
 	        </if>

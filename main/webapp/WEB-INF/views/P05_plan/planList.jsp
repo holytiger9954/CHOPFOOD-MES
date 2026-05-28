@@ -25,37 +25,53 @@
 	    <div class="card info plan-all"
 	         data-card-type="all">
 	        <div class="card-title">전체 계획</div>
-	        <div class="card-value">${planCard.totalCnt}</div>
+	        <div class="card-value">
+	        	<fmt:formatNumber value="${planCard.totalCnt}" type="number" pattern="#,###" />
+        	</div>
+        	<div class="card-subtitle">조회 기간 내 전체 계획</div>
 	    </div>
 	
 	    <div class="card safe plan-card"
 	         data-card-type="fin">
 	        <div class="card-title">완료된 계획</div>
-	        <div class="card-value">${planCard.finCnt}</div>
+	        <div class="card-value">
+	        	<fmt:formatNumber value="${planCard.finCnt}" type="number" pattern="#,###" />
+        	</div>
+        	<div class="card-subtitle">완료된 계획</div>
 	    </div>
 	
 	    <div class="card success plan-card"
 	         data-card-type="ing">
 	        <div class="card-title">진행 중인 계획</div>
 	        <div class="card-value">${planCard.ingCnt}</div>
+	        <div class="card-subtitle">현재 진행 중인 계획</div>
 	    </div>
 	
 	    <div class="card warning plan-card"
 	         data-card-type="wait">
 	        <div class="card-title">대기 중인 계획</div>
-	        <div class="card-value">${planCard.waitCnt}</div>
+	        <div class="card-value">
+	        	<fmt:formatNumber value="${planCard.waitCnt}" type="number" pattern="#,###" />
+        	</div>
+        	<div class="card-subtitle">현재 대기 중인 계획</div>
 	    </div>
 	
 	    <div class="card danger plan-card"
 	         data-card-type="delay">
 	        <div class="card-title">지연된 계획</div>
-	        <div class="card-value">${planCard.delayCnt}</div>
+	        <div class="card-value">
+	        	<fmt:formatNumber value="${planCard.delayCnt}" type="number" pattern="#,###" />
+        	</div>
+        	<div class="card-subtitle">완료기간 초과 계획</div>
 	    </div>
 	
 	    <div class="card info plan-card"
 	         data-card-type="etc">
 	        <div class="card-title">보류된 계획</div>
-	        <div class="card-value">${planCard.etcCnt}</div>
+	        <div class="card-value">
+	        	<fmt:formatNumber value="${planCard.etcCnt}" type="number" pattern="#,###" />
+        	</div>
+        	<div class="card-subtitle">보류된 계획</div>
 	    </div>
 	</div>
 	
@@ -136,7 +152,7 @@
 							<th>계획수량</th>
 							<th>기간</th>
 							<th>상태</th>
-							<th>등록일</th>
+							<th>등록일시</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -176,7 +192,7 @@
 									</c:choose>
 								</td>
 								<td>
-									<fmt:formatDate value="${plan.planCdate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+									<fmt:formatDate value="${plan.planCdate}" pattern="yyyy-MM-dd HH:mm"/>
 								</td>
 								<td class="whId">${wh.whId}</td>
 							</tr>	
