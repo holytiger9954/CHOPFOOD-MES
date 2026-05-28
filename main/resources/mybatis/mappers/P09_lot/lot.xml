@@ -7,31 +7,127 @@
 	<select id="selectLotCount"
 		parameterType="lotDTO" resultType="int">
 		
-		select count(*)
-		from lot L
-		LEFT JOIN ITEM IT
-			ON L.LOT_ITEM = IT.ITEM_ID
-		<where>
-			<if test="lotStatus != null and lotStatus != ''">
-				AND lot_status = #{lotStatus}
-			</if>
-
-			<if test="searchKeyword != null and searchKeyword != ''">
-				AND (
-				UPPER(lot_id) LIKE UPPER('%' || #{searchKeyword} || '%')
-				OR UPPER(lot_item) LIKE UPPER('%' || #{searchKeyword} || '%')
-				OR UPPER(IT.item_name) LIKE UPPER('%' || #{searchKeyword} || '%')
-				)
-			</if>
-			
-			<if test="startDate != null and startDate != ''">
-				AND L.lot_exp <![CDATA[>=]]> TO_DATE(#{startDate}, 'YYYY-MM-DD')
-			</if>
-			
-			<if test="endDate != null and endDate != ''">
-				AND L.lot_exp <![CDATA[<]]> TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
-			</if>
-		</where>
+		 SELECT COUNT(*)
+	    FROM (
+	        SELECT *
+	            FROM (
+	                SELECT
+	                    L.lot_id AS lotId,
+	                    L.lot_item AS lotItem,
+	                    L.lot_vendor AS lotVendor,
+	                    L.lot_work AS lotWork,
+	                    L.lot_qty AS lotQty,
+	                    L.lot_fqty AS lotFqty,
+	                    L.lot_mfd AS lotMfd,
+	                    L.lot_etw AS lotEtw,
+	                    L.lot_exp AS lotExp,
+	                    L.lot_qc AS lotQc,
+	                    L.lot_status AS lotStatus,
+	                    L.lot_memo AS lotMemo,
+	                    L.lot_bwhsec AS lotBwhsec,
+	                    L.lot_awhsec AS lotAwhsec,
+	                    L.lot_cqty AS lotCqty,
+	
+	                    IT.item_name AS lotItemName,
+	                    IT.item_type AS itemType,
+	                    IT.item_usedate AS itemUseDate,
+	                    IT.item_whtype AS itemWhtype,
+	
+	                    CASE
+	                        WHEN L.lot_exp &lt; SYSDATE THEN '만료'
+	
+	                        WHEN TRUNC(L.lot_exp) - TRUNC(SYSDATE) &lt;=
+	                            CASE
+	                                WHEN IT.item_whtype IN (20, 40) THEN
+	                                    CASE
+	                                        WHEN IT.item_usedate &lt;= 9 THEN 1
+	                                        ELSE CEIL(IT.item_usedate * 0.3)
+	                                    END
+	
+	                                WHEN IT.item_whtype IN (10, 50, 60) THEN
+	                                    CASE
+	                                        WHEN IT.item_usedate &lt;= 9 THEN 1
+	                                        ELSE CEIL(IT.item_usedate * 0.15)
+	                                    END
+	
+	                                WHEN IT.item_whtype = 30 THEN
+	                                    CASE
+	                                        WHEN IT.item_usedate &lt;= 9 THEN 1
+	                                        ELSE CEIL(IT.item_usedate * 0.25)
+	                                    END
+	
+	                                ELSE
+	                                    CASE
+	                                        WHEN IT.item_usedate &lt;= 9 THEN 1
+	                                        ELSE CEIL(IT.item_usedate * 0.3)
+	                                    END
+	                            END
+	                        THEN '임박'
+	
+	                        ELSE '정상'
+	                    END AS expStatus
+	
+	                FROM lot L
+	                LEFT JOIN ITEM IT
+	                    ON L.LOT_ITEM = IT.ITEM_ID
+	            ) A
+	
+	            <where>
+	                <choose>
+					    <when test="expStatus != null and expStatus != ''">
+					        AND A.lotStatus IN (10, 20)
+					    </when>
+					
+					    <when test="lotStatus != null and lotStatus != ''">
+					        AND A.lotStatus = #{lotStatus}
+					    </when>
+					
+					    <when test="
+					        searchKeyword != null and searchKeyword != ''
+					        or startDate != null and startDate != ''
+					        or endDate != null and endDate != ''
+					        or itemTypeList != null and itemTypeList.size() > 0
+					    ">
+					        <!-- 일반 검색조건이면 상태 제한 없음 -->
+					    </when>
+					
+					    <otherwise>
+					        AND A.lotStatus IN (10, 20)
+					    </otherwise>
+					</choose>
+	
+	                <if test="itemTypeList != null and itemTypeList.size() > 0">
+	                    AND A.itemType IN
+	                    <foreach collection="itemTypeList"
+	                             item="type"
+	                             open="("
+	                             separator=","
+	                             close=")">
+	                        #{type}
+	                    </foreach>
+	                </if>
+	
+	                <if test="expStatus != null and expStatus != ''">
+	                    AND A.expStatus = #{expStatus}
+	                </if>
+	
+	                <if test="searchKeyword != null and searchKeyword != ''">
+	                    AND (
+	                        UPPER(A.lotId) LIKE UPPER('%' || #{searchKeyword} || '%')
+	                        OR UPPER(A.lotItem) LIKE UPPER('%' || #{searchKeyword} || '%')
+	                        OR UPPER(A.lotItemName) LIKE UPPER('%' || #{searchKeyword} || '%')
+	                    )
+	                </if>
+	
+	                <if test="startDate != null and startDate != ''">
+	                    AND A.lotExp <![CDATA[>=]]> TO_DATE(#{startDate}, 'YYYY-MM-DD')
+	                </if>
+	
+	                <if test="endDate != null and endDate != ''">
+	                    AND A.lotExp <![CDATA[<]]> TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+	                </if>
+	            </where>
+	    )
 		
 		
 		
@@ -40,63 +136,281 @@
 	<select id="selectlotList" parameterType="map"
 		resultType="lotDTO">
 
-		select *
-		from
-		(
-		select rownum rn,
-		I.*
-		from
-		(
-		select
-		L.lot_id as lotId,
-		L.lot_item
-		as lotItem,
-		L.lot_vendor as lotVendor,
-		L.lot_work as lotWork,
-		L.lot_qty as
-		lotQty,
-		L.lot_fqty as lotFqty,
-		L.lot_mfd as lotMfd,
-		L.lot_etw as lotEtw,
-		L.lot_exp as lotExp,
-		L.lot_qc as lotQc,
-		L.lot_status as lotStatus,
-		L.lot_memo as
-		lotMemo,
-		L.lot_bwhsec as lotBwhsec,
-		L.lot_awhsec as lotAwhsec,
-		L.lot_cqty as lotCqty,
-		IT.item_name as lotItemName
-		from lot L
-		LEFT JOIN ITEM IT
-			ON L.LOT_ITEM = IT.ITEM_ID
-		<where>
-			<if test="lotStatus != null and lotStatus != ''">
-				AND lot_status = #{lotStatus}
-			</if>
+		 SELECT *
+	    FROM (
+	        SELECT ROWNUM RN, I.*
+	        FROM (
+	            SELECT *
+	            FROM (
+	                SELECT
+	                    L.lot_id AS lotId,
+	                    L.lot_item AS lotItem,
+	                    L.lot_vendor AS lotVendor,
+	                    L.lot_work AS lotWork,
+	                    L.lot_qty AS lotQty,
+	                    L.lot_fqty AS lotFqty,
+	                    L.lot_mfd AS lotMfd,
+	                    L.lot_etw AS lotEtw,
+	                    L.lot_exp AS lotExp,
+	                    L.lot_qc AS lotQc,
+	                    L.lot_status AS lotStatus,
+	                    L.lot_memo AS lotMemo,
+	                    L.lot_bwhsec AS lotBwhsec,
+	                    L.lot_awhsec AS lotAwhsec,
+	                    L.lot_cqty AS lotCqty,
+	
+	                    IT.item_name AS lotItemName,
+	                    IT.item_type AS itemType,
+	                    IT.item_usedate AS itemUseDate,
+	                    IT.item_whtype AS itemWhtype,
+	
+	                    CASE
+	                        WHEN L.lot_exp &lt; SYSDATE THEN '만료'
+	
+	                        WHEN TRUNC(L.lot_exp) - TRUNC(SYSDATE) &lt;=
+	                            CASE
+	                                WHEN IT.item_whtype IN (20, 40) THEN
+	                                    CASE
+	                                        WHEN IT.item_usedate &lt;= 9 THEN 1
+	                                        ELSE CEIL(IT.item_usedate * 0.3)
+	                                    END
+	
+	                                WHEN IT.item_whtype IN (10, 50, 60) THEN
+	                                    CASE
+	                                        WHEN IT.item_usedate &lt;= 9 THEN 1
+	                                        ELSE CEIL(IT.item_usedate * 0.15)
+	                                    END
+	
+	                                WHEN IT.item_whtype = 30 THEN
+	                                    CASE
+	                                        WHEN IT.item_usedate &lt;= 9 THEN 1
+	                                        ELSE CEIL(IT.item_usedate * 0.25)
+	                                    END
+	
+	                                ELSE
+	                                    CASE
+	                                        WHEN IT.item_usedate &lt;= 9 THEN 1
+	                                        ELSE CEIL(IT.item_usedate * 0.3)
+	                                    END
+	                            END
+	                        THEN '임박'
+	
+	                        ELSE '정상'
+	                    END AS expStatus
+	
+	                FROM lot L
+	                LEFT JOIN ITEM IT
+	                    ON L.LOT_ITEM = IT.ITEM_ID
+	            ) A
+	
+	            <where>
+	                <choose>
+					    <when test="expStatus != null and expStatus != ''">
+					        AND A.lotStatus IN (10, 20)
+					    </when>
+					    <when test="lotStatus != null and lotStatus != ''">
+					        AND A.lotStatus = #{lotStatus}
+					    </when>
+					
+					
+					    <when test="
+					        searchKeyword != null and searchKeyword != ''
+					        or startDate != null and startDate != ''
+					        or endDate != null and endDate != ''
+					        or itemTypeList != null and itemTypeList.size() > 0
+					    ">
+					        <!-- 일반 검색조건 있으면 lot_status 제한 없음 -->
+					    </when>
+					
+					    <otherwise>
+					        AND A.lotStatus IN (10, 20)
+					    </otherwise>
+					</choose>
+	
+	                <if test="itemTypeList != null and itemTypeList.size() > 0">
+	                    AND A.itemType IN
+	                    <foreach collection="itemTypeList"
+	                             item="type"
+	                             open="("
+	                             separator=","
+	                             close=")">
+	                        #{type}
+	                    </foreach>
+	                </if>
+	
+	                <if test="expStatus != null and expStatus != ''">
+	                    AND A.expStatus = #{expStatus}
+	                </if>
+	
+	                <if test="searchKeyword != null and searchKeyword != ''">
+	                    AND (
+	                        UPPER(A.lotId) LIKE UPPER('%' || #{searchKeyword} || '%')
+	                        OR UPPER(A.lotItem) LIKE UPPER('%' || #{searchKeyword} || '%')
+	                        OR UPPER(A.lotItemName) LIKE UPPER('%' || #{searchKeyword} || '%')
+	                    )
+	                </if>
+	
+	                <if test="startDate != null and startDate != ''">
+	                    AND A.lotExp <![CDATA[>=]]> TO_DATE(#{startDate}, 'YYYY-MM-DD')
+	                </if>
+	
+	                <if test="endDate != null and endDate != ''">
+	                    AND A.lotExp <![CDATA[<]]> TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+	                </if>
+	            </where>
+	
+	            ORDER BY A.lotStatus DESC, A.lotExp
+	        ) I
+	    )
+	    WHERE RN BETWEEN #{page.startRow}
+	    AND #{page.endRow}
 
-			<if test="searchKeyword != null and searchKeyword != ''">
-				AND (
-				UPPER(lot_id) LIKE UPPER('%' || #{searchKeyword} || '%')
-				OR UPPER(lot_item) LIKE UPPER('%' || #{searchKeyword} || '%')
-				OR UPPER(IT.item_name) LIKE UPPER('%' || #{searchKeyword} || '%')
-				)
-			</if>
-			
-			<if test="startDate != null and startDate != ''">
-				AND L.lot_exp <![CDATA[>=]]> TO_DATE(#{startDate}, 'YYYY-MM-DD')
-			</if>
-			
-			<if test="endDate != null and endDate != ''">
-				AND L.lot_exp <![CDATA[<]]> TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
-			</if>
-		</where>
-		ORDER BY L.lot_exp
-		) I
-	)
-	WHERE RN BETWEEN #{page.startRow}
-	AND #{page.endRow}
+	</select>
+	
+	<select id="selectLotTotalCount" parameterType="lotDTO"
+		resultType="int">
+		
+		select count(*)
+		from lot
+		where lot_status in (10,20)
+		
+	</select>
+	
+	<select id="selectLotTypeCount" parameterType="map" resultType="int">
 
+	    SELECT COUNT(*)
+	    FROM (
+	        SELECT
+	            L.LOT_ID AS lotId,
+	            L.LOT_ITEM AS lotItem,
+	            IT.ITEM_NAME AS lotItemName,
+	            IT.ITEM_TYPE AS itemType,
+	            L.LOT_EXP AS lotExp,
+	            L.LOT_STATUS AS lotStatus,
+	
+	            CASE
+	                WHEN L.LOT_EXP &lt; SYSDATE THEN '만료'
+	                WHEN TRUNC(L.LOT_EXP) - TRUNC(SYSDATE) &lt;=
+	                    CASE
+	                        WHEN IT.ITEM_WHTYPE IN (20, 40) THEN
+	                            CASE WHEN IT.ITEM_USEDATE &lt;= 9 THEN 1 ELSE CEIL(IT.ITEM_USEDATE * 0.3) END
+	                        WHEN IT.ITEM_WHTYPE IN (10, 50, 60) THEN
+	                            CASE WHEN IT.ITEM_USEDATE &lt;= 9 THEN 1 ELSE CEIL(IT.ITEM_USEDATE * 0.15) END
+	                        WHEN IT.ITEM_WHTYPE = 30 THEN
+	                            CASE WHEN IT.ITEM_USEDATE &lt;= 9 THEN 1 ELSE CEIL(IT.ITEM_USEDATE * 0.25) END
+	                        ELSE
+	                            CASE WHEN IT.ITEM_USEDATE &lt;= 9 THEN 1 ELSE CEIL(IT.ITEM_USEDATE * 0.3) END
+	                    END
+	                THEN '임박'
+	                ELSE '정상'
+	            END AS expStatus
+	
+	        FROM LOT L
+	        LEFT JOIN ITEM IT
+	            ON L.LOT_ITEM = IT.ITEM_ID
+	        WHERE L.LOT_STATUS IN (10, 20)
+	    ) A
+	
+	    <where>
+	        AND A.itemType = #{countItemType}
+	
+	        <if test="expStatus != null and expStatus != ''">
+	            AND A.expStatus = #{expStatus}
+	        </if>
+	
+	        <if test="lotStatus != null and lotStatus != ''">
+	            AND A.lotStatus = #{lotStatus}
+	        </if>
+	
+	        <if test="startDate != null and startDate != ''">
+	            AND A.lotExp <![CDATA[>=]]> TO_DATE(#{startDate}, 'YYYY-MM-DD')
+	        </if>
+	
+	        <if test="endDate != null and endDate != ''">
+	            AND A.lotExp <![CDATA[<]]> TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+	        </if>
+	
+	        <if test="searchKeyword != null and searchKeyword != ''">
+	            AND (
+	                UPPER(A.lotId) LIKE UPPER('%' || #{searchKeyword} || '%')
+	                OR UPPER(A.lotItem) LIKE UPPER('%' || #{searchKeyword} || '%')
+	                OR UPPER(A.lotItemName) LIKE UPPER('%' || #{searchKeyword} || '%')
+	            )
+	        </if>
+	    </where>
+	
+	</select>
+	
+	<select id="selectLotExpCount" resultType="int">
+	
+		SELECT COUNT(*)
+	    FROM (
+	        SELECT
+	            L.LOT_ID AS lotId,
+	            L.LOT_ITEM AS lotItem,
+	            IT.ITEM_NAME AS lotItemName,
+	            IT.ITEM_TYPE AS itemType,
+	            L.LOT_EXP AS lotExp,
+	            L.LOT_STATUS AS lotStatus,
+	
+	            CASE
+	                WHEN L.LOT_EXP &lt; SYSDATE THEN '만료'
+	                WHEN TRUNC(L.LOT_EXP) - TRUNC(SYSDATE) &lt;=
+	                    CASE
+	                        WHEN IT.ITEM_WHTYPE IN (20, 40) THEN
+	                            CASE WHEN IT.ITEM_USEDATE &lt;= 9 THEN 1 ELSE CEIL(IT.ITEM_USEDATE * 0.3) END
+	                        WHEN IT.ITEM_WHTYPE IN (10, 50, 60) THEN
+	                            CASE WHEN IT.ITEM_USEDATE &lt;= 9 THEN 1 ELSE CEIL(IT.ITEM_USEDATE * 0.15) END
+	                        WHEN IT.ITEM_WHTYPE = 30 THEN
+	                            CASE WHEN IT.ITEM_USEDATE &lt;= 9 THEN 1 ELSE CEIL(IT.ITEM_USEDATE * 0.25) END
+	                        ELSE
+	                            CASE WHEN IT.ITEM_USEDATE &lt;= 9 THEN 1 ELSE CEIL(IT.ITEM_USEDATE * 0.3) END
+	                    END
+	                THEN '임박'
+	                ELSE '정상'
+	            END AS expStatus
+	
+	        FROM LOT L
+	        LEFT JOIN ITEM IT
+	            ON L.LOT_ITEM = IT.ITEM_ID
+	        WHERE L.LOT_STATUS IN (10, 20)
+	    ) A
+	
+	    <where>
+	        AND A.expStatus = '임박'
+	
+	        <if test="itemTypeList != null and itemTypeList.size() > 0">
+	            AND A.itemType IN
+	            <foreach collection="itemTypeList"
+	                     item="type"
+	                     open="("
+	                     separator=","
+	                     close=")">
+	                #{type}
+	            </foreach>
+	        </if>
+	
+	        <if test="lotStatus != null and lotStatus != ''">
+	            AND A.lotStatus = #{lotStatus}
+	        </if>
+	
+	        <if test="startDate != null and startDate != ''">
+	            AND A.lotExp <![CDATA[>=]]> TO_DATE(#{startDate}, 'YYYY-MM-DD')
+	        </if>
+	
+	        <if test="endDate != null and endDate != ''">
+	            AND A.lotExp <![CDATA[<]]> TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+	        </if>
+	
+	        <if test="searchKeyword != null and searchKeyword != ''">
+	            AND (
+	                UPPER(A.lotId) LIKE UPPER('%' || #{searchKeyword} || '%')
+	                OR UPPER(A.lotItem) LIKE UPPER('%' || #{searchKeyword} || '%')
+	                OR UPPER(A.lotItemName) LIKE UPPER('%' || #{searchKeyword} || '%')
+	            )
+	        </if>
+	    </where>
+		
 	</select>
 
 	<select id="selectLotDetail"

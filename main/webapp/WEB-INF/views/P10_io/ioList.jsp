@@ -30,12 +30,14 @@
 
             <div style="display: flex; align-items: center; gap: 8px;">
                 <input type="date"
+                	id="startDate"
                     name="startDate"
                     value="${search.startDate}">
 
                 <span>~</span>
 
                 <input type="date"
+                	id="endDate"
                     name="endDate"
                     value="${search.endDate}">
             </div>
@@ -151,9 +153,49 @@
     <jsp:include page="/WEB-INF/views/common/paging.jsp" />
 
 </div>
+
 <style>
 	.table tbody tr:hover .ioId {
 	    color: var(--main-green);
 	    text-decoration: underline;
 	}
 </style>
+
+<script>
+	window.addEventListener("load", function () {
+		const startDate = document.querySelector("#startDate");
+		const endDate = document.querySelector("#endDate");
+
+		function syncDateLimit() {
+		    if (startDate.value !== "") {
+		        endDate.min = startDate.value;
+		    } else {
+		        endDate.removeAttribute("min");
+		    }
+
+		    if (endDate.value !== "") {
+		        startDate.max = endDate.value;
+		    } else {
+		        startDate.removeAttribute("max");
+		    }
+		}
+
+		startDate.addEventListener("change", function () {
+		    if (endDate.value !== "" && startDate.value > endDate.value) {
+		        endDate.value = startDate.value;
+		    }
+
+		    syncDateLimit();
+		});
+
+		endDate.addEventListener("change", function () {
+		    if (startDate.value !== "" && endDate.value < startDate.value) {
+		        startDate.value = endDate.value;
+		    }
+
+		    syncDateLimit();
+		});
+
+		syncDateLimit();
+	})
+</script>

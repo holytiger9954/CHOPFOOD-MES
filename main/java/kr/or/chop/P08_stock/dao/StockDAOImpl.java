@@ -26,9 +26,15 @@ public class StockDAOImpl implements StockDAO{
 		paramMap.put("itemType", stockDTO.getItemType());
 		paramMap.put("stockStatus", stockDTO.getStockStatus());
 		paramMap.put("searchKeyword", stockDTO.getSearchKeyword());
+		paramMap.put("stockStatusList", stockDTO.getStockStatusList());
 		paramMap.put("page", pageInfo);
 
 		return sqlSession.selectList("mapper.P08_stock.selectStockList", paramMap);
+	}
+	
+	@Override
+	public int selectStockCount(StockDTO stockDTO) {
+		return sqlSession.selectOne("mapper.P08_stock.selectStockCount", stockDTO);
 	}
 
 	@Override

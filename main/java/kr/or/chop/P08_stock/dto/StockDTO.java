@@ -1,5 +1,7 @@
 package kr.or.chop.P08_stock.dto;
 
+import java.util.List;
+
 import lombok.Data;
 
 @Data
@@ -16,6 +18,7 @@ public class StockDTO {
     private int itemSafetyStock;
 
     private String stockStatus;
+    private List<String> stockStatusList;
     
     private String itemUnit;
     private String itemSpec;

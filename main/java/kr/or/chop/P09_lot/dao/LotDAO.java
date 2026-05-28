@@ -10,6 +10,11 @@ public interface LotDAO {
 
 	List<LotDTO> selectAllLot(LotDTO lotDTO, PageInfo pageInfo);
 	int selectLotCount(LotDTO lotDTO);
+	int selectLotTotalCount();
+	
+	int selectLotTypeCount(LotDTO lotDTO, String countItemType);
+	int selectLotExpCount(LotDTO lotDTO);
+	
 	LotDTO selectLotDetail(String lotId);
 	
 	List<UseDTO> selectLotUseList(String lotId);

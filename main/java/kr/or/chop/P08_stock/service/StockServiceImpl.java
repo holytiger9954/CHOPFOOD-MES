@@ -20,6 +20,11 @@ public class StockServiceImpl implements StockService {
 	public List<StockDTO> selectStockList(StockDTO stockDTO, PageInfo pageInfo) {
 		return stockDAO.selectStockList(stockDTO, pageInfo);
 	}
+	
+	@Override
+	public int selectStockCount(StockDTO stockDTO) {
+		return stockDAO.selectStockCount(stockDTO);
+	}
 
 	@Override
 	public int selectStockTotalCount(StockDTO stockDTO) {

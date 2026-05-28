@@ -1,7 +1,7 @@
 package kr.or.chop.P09_lot.dto;
 
-import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.List;
 
 import lombok.Data;
 
@@ -26,6 +26,9 @@ public class LotDTO {
 	private String lotAwhsec;
 	private String itemType;
 	private int lotCqty;
+	
+	private List<String> itemTypeList;
+	private String expStatus;
 	
 	private String startDate;
     private String endDate;

@@ -9,6 +9,8 @@ import kr.or.chop.common.pagination.PageInfo;
 public interface StockService {
 
 	List<StockDTO> selectStockList(StockDTO stockDTO, PageInfo pageInfo);
+	
+	int selectStockCount(StockDTO stockDTO);
 
 	int selectStockTotalCount(StockDTO stockDTO);
 

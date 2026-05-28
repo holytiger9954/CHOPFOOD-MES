@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <div class="content">
 
@@ -77,15 +78,19 @@
                         <td>${stock.stockId}</td>
 
                         <th>안전재고</th>
-                        <td>${stock.itemSafetyStock} ${stock.itemUnit}</td>
+                        <td> 
+                        	<fmt:formatNumber value="${stock.itemSafetyStock}" pattern="#,###"/> ${stock.itemUnit}
+                        </td>
                     </tr>
 
                     <tr>
                         <th>품목</th>
-                        <td>${stock.itemName} (${stock.stockItem})</td>
+                        <td><a class="toDetail" href="${pageContext.request.contextPath}/item/detail?itemId=${stock.stockItem}">${stock.itemName} (${stock.stockItem})</a></td>
 
                         <th>현재재고</th>
-                        <td>${stock.stockAvailQty} ${stock.itemUnit}</td>
+                        <td>
+                        	<fmt:formatNumber value="${stock.stockAvailQty}" pattern="#,###"/> ${stock.itemUnit}
+                        </td>
                     </tr>
 
                     <tr>
@@ -93,7 +98,9 @@
                         <td>${stock.itemSpec}</td>
 
                         <th>가용재고</th>
-                        <td>${stock.stockPrevQty} ${stock.itemUnit}</td>
+                        <td>
+                        	<fmt:formatNumber value="${stock.stockPrevQty}" pattern="#,###"/> ${stock.itemUnit}
+                        </td>
                     </tr>
 
                     <tr>
@@ -101,7 +108,9 @@
                         <td>${stock.itemUnit}</td>
 
                         <th>예약재고</th>
-                        <td>${stock.stockReserveQty} ${stock.itemUnit}</td>
+                        <td>
+                        	<fmt:formatNumber value="${stock.stockReserveQty}" pattern="#,###"/> ${stock.itemUnit}
+                        </td>
                     </tr>
 
                 </table>
@@ -126,7 +135,7 @@
                             <th style="width:100px;">입/출고</th>
                             <th>사유</th>
                             <th style="width:180px;">입출고 일시</th>
-                            <th style="width:120px;">수량</th>
+                            <th style="width:120px;">수량 (${stock.itemUnit})</th>
                             <th style="width:140px;">LOT 번호</th>
                         </tr>
                     </thead>
@@ -135,15 +144,15 @@
 
                         <c:forEach var="io" items="${ioList}">
                             <tr onclick="location.href='${pageContext.request.contextPath}/io/detail?ioId=${io.ioId}'">
-                                <td>${io.ioId}</td>
+                                <td class="ioId">${io.ioId}</td>
 
                                 <td>
                                     <c:choose>
-                                        <c:when test="${io.ioType == '입고'}">
+                                        <c:when test="${io.ioType == 'IN'}">
                                             <span class="status status-safe">입고</span>
                                         </c:when>
 
-                                        <c:when test="${io.ioType == '출고'}">
+                                        <c:when test="${io.ioType == 'OUT'}">
                                             <span class="status status-warning">출고</span>
                                         </c:when>
 
@@ -154,8 +163,12 @@
                                 </td>
 
                                 <td>${io.ioReason}</td>
-                                <td>${io.ioDate}</td>
-                                <td>${io.ioQty}</td>
+                                <td>
+                                	<fmt:formatDate value="${io.ioDate}" pattern="YYYY-MM-dd HH:mm"/>
+                                </td>
+                                <td>
+                                	<fmt:formatNumber value="${io.ioQty}" pattern="#,###"/>
+                                </td>
                                 <td>${io.ioLot}</td>
                             </tr>
                         </c:forEach>
@@ -181,3 +194,10 @@
     </div>
 
 </div>
+
+<style>
+	.table tbody tr:hover .ioId {
+	    color: var(--main-green);
+	    text-decoration: underline;
+	}
+</style>

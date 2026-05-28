@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <div class="content">
 
@@ -21,78 +23,37 @@
 
     </div>
 
-    <!-- 재고 카드 -->
-    <div style="
-        display:flex;
-        justify-content:space-between;
-        gap:40px;
-        margin:50px 0 35px;
-    ">
-
-        <div style="
-            width:200px;
-            height:130px;
-            border:1px solid var(--dark-gray);
-            border-radius:8px;
-            display:flex;
-            flex-direction:column;
-            justify-content:center;
-            align-items:center;
-            gap:15px;
-        ">
-            <div style="font-size:18px; font-weight:700;">전체 재고 목록</div>
-            <div style="font-size:42px; font-weight:800;">${stockTotalCount}</div>
-        </div>
-
-        <div style="
-            width:200px;
-            height:130px;
-            border-radius:8px;
-            background-color:var(--safe);
-            color:#fff;
-            display:flex;
-            flex-direction:column;
-            justify-content:center;
-            align-items:center;
-            gap:15px;
-        ">
-            <div style="font-size:18px; font-weight:700;">안전 재고</div>
-            <div style="font-size:42px; font-weight:800;">${safeCount}</div>
-        </div>
-
-        <div style="
-            width:200px;
-            height:130px;
-            border-radius:8px;
-            background-color:var(--warning);
-            color:#fff;
-            display:flex;
-            flex-direction:column;
-            justify-content:center;
-            align-items:center;
-            gap:15px;
-        ">
-            <div style="font-size:18px; font-weight:700;">위험 재고</div>
-            <div style="font-size:42px; font-weight:800;">${warningCount}</div>
-        </div>
-
-        <div style="
-            width:200px;
-            height:130px;
-            border-radius:8px;
-            background-color:var(--danger);
-            color:#fff;
-            display:flex;
-            flex-direction:column;
-            justify-content:center;
-            align-items:center;
-            gap:15px;
-        ">
-            <div style="font-size:18px; font-weight:700;">부족 재고</div>
-            <div style="font-size:42px; font-weight:800;">${dangerCount}</div>
-        </div>
-
-    </div>
+    
+    
+    <div class="card-wrap stockCard">
+		<div class="card info stock-all ${empty search.stockStatusList ? 'active' : ''}"
+	         data-card-type="all">
+	        <div class="card-title">전체 재고 목록</div>
+	        <div class="card-value">${stockTotalCount}</div>
+<!-- 	        <div class="card-subtitle">전체 창고</div> -->
+	    </div>
+	
+	    <div class="card safe stock-card ${fn:contains(search.stockStatusList, '안전') ? 'active' : ''}"
+	         data-card-type="safe">
+	        <div class="card-title">안전 재고</div>
+	        <div class="card-value">${safeCount}</div>
+<!-- 	        <div class="card-subtitle">적재율 80% 미만</div> -->
+	    </div>
+	
+	    <div class="card warning stock-card ${fn:contains(search.stockStatusList, '위험') ? 'active' : ''}"
+	         data-card-type="warning">
+	        <div class="card-title">위험 재고</div>
+	        <div class="card-value">${warningCount}</div>
+<!-- 	        <div class="card-subtitle">80% 이상 100% 미만</div> -->
+	    </div>
+	
+	    <div class="card danger stock-card ${fn:contains(search.stockStatusList, '부족') ? 'active' : ''}"
+	         data-card-type="danger">
+	        <div class="card-title">부족 재고</div>
+	        <div class="card-value">${dangerCount}</div>
+<!-- 	        <div class="card-subtitle">100% 이상</div> -->
+	    </div>
+	</div>
 
     <!-- 검색 -->
     <form class="search-box"
@@ -100,7 +61,7 @@
         method="get"
         style="
             width:100%;
-            justify-content:space-between;
+            justify-content:flex-end;
         ">
 
         <div style="display:flex; gap:20px;">
@@ -111,45 +72,28 @@
                 <select name="itemType">
                     <option value="">전체</option>
 
-                    <option value="원자재"
-                        ${search.itemType == '원자재' ? 'selected' : ''}>
+                    <option value="10"
+                        ${search.itemType == '10' ? 'selected' : ''}>
                         원자재
                     </option>
 
-                    <option value="반제품"
-                        ${search.itemType == '반제품' ? 'selected' : ''}>
+                    <option value="20"
+                        ${search.itemType == '20' ? 'selected' : ''}>
                         반제품
                     </option>
 
-                    <option value="완제품"
-                        ${search.itemType == '완제품' ? 'selected' : ''}>
+                    <option value="30"
+                        ${search.itemType == '30' ? 'selected' : ''}>
                         완제품
                     </option>
-                </select>
-            </div>
-
-            <div class="search-item">
-                <label>상태</label>
-
-                <select name="stockStatus">
-                    <option value="">전체</option>
-
-                    <option value="안전"
-                        ${search.stockStatus == '안전' ? 'selected' : ''}>
-                        안전
-                    </option>
-
-                    <option value="위험"
-                        ${search.stockStatus == '위험' ? 'selected' : ''}>
-                        위험
-                    </option>
-
-                    <option value="부족"
-                        ${search.stockStatus == '부족' ? 'selected' : ''}>
-                        부족
+                    
+                    <option value="40"
+                        ${search.itemType == '40' ? 'selected' : ''}>
+                        기타 자재
                     </option>
                 </select>
             </div>
+		<div id="statusHiddenArea"></div>
 
         </div>
 
@@ -205,20 +149,35 @@
 
                     <tr onclick="location.href='${pageContext.request.contextPath}/stock/detail?stockId=${stock.stockId}'">
 
-                        <td>${stock.stockId}</td>
+                        <td class="stockId">${stock.stockId}</td>
 
-                        <td>${stock.itemType}</td>
+                        <td>
+                        	<c:choose>
+                        		<c:when test="${stock.itemType == 10}">
+                        			원자재
+                        		</c:when>
+                        		<c:when test="${stock.itemType == 20}">
+                        			반제품
+                        		</c:when>
+                        		<c:when test="${stock.itemType == 30}">
+                        			완제품
+                        		</c:when>
+                        		<c:when test="${stock.itemType == 40}">
+                        			기타 자재
+                        		</c:when>
+                        	</c:choose>
+                        </td>
 
                         <td>
                             ${stock.itemName}(${stock.stockItem})
                         </td>
 
                         <td>
-                            ${stock.stockAvailQty}
+                            <fmt:formatNumber value="${stock.stockAvailQty}" pattern="#,###"/>
                         </td>
 
                         <td>
-                            ${stock.itemSafetyStock}
+                            <fmt:formatNumber value="${stock.itemSafetyStock}" pattern="#,###"/>
                         </td>
 
                         <td>
@@ -273,3 +232,96 @@
     <jsp:include page="/WEB-INF/views/common/paging.jsp" />
 
 </div>
+<style>
+	.table tbody tr:hover .stockId {
+	    color: var(--main-green);
+	    text-decoration: underline;
+	}
+
+	.card {
+		cursor: pointer;
+    	width: 155px;
+	    	   
+	    display: flex;
+	    flex-direction: column;
+	    justify-content: center;
+	    align-items: center;
+	    gap: 10px;
+	}
+	
+	.card.info:hover, .card.info.active {
+		border: 1px solid var(--dark-gray);
+		background-color : var(--dark-gray);
+	}
+	
+	.card.success:hover, .card.success.active {
+		background-color : var(--success);
+	}
+	
+	.card.safe:hover, .card.safe.active {
+		background-color : var(--safe);
+	}
+	
+	.card.warning:hover, .card.warning.active {
+		background-color : var(--warning);
+	}
+	
+	.card.danger:hover, .card.danger.active {
+		background-color : var(--danger);
+	}
+	
+	.card:hover div, .card.active div {
+		color : white !important;
+	}
+</style>
+
+<script>
+window.addEventListener("load", function () {
+
+    const cards = document.querySelectorAll(".stockCard .card");
+    const form = document.querySelector(".search-box");
+
+    const statusMap = {
+        safe: "안전",
+        warning: "위험",
+        danger: "부족"
+    };
+
+    cards.forEach(function (card) {
+        card.addEventListener("click", function () {
+
+            const type = card.dataset.cardType;
+
+            const params = new URLSearchParams(window.location.search);
+
+            if (type === "all") {
+                params.delete("stockStatusList");
+                params.delete("page");
+                location.href = form.action + "?" + params.toString();
+                return;
+            }
+
+            let selected = params.getAll("stockStatusList");
+            const status = statusMap[type];
+
+            if (selected.includes(status)) {
+                selected = selected.filter(function (v) {
+                    return v !== status;
+                });
+            } else {
+                selected.push(status);
+            }
+
+            params.delete("stockStatusList");
+            params.delete("page");
+
+            selected.forEach(function (v) {
+                params.append("stockStatusList", v);
+            });
+
+            location.href = form.action + "?" + params.toString();
+        });
+    });
+
+});
+</script>

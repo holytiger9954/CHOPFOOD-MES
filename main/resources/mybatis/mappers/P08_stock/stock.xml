@@ -5,53 +5,133 @@
 
 <mapper namespace="mapper.P08_stock">
 
+	<select id="selectStockCount" parameterType="stockDTO"
+		resultType="int">
+	
+		select count(*)
+		from (
+	        SELECT
+	            A.*
+	        FROM (
+	            SELECT
+	                S.STOCK_ID AS stockId,
+	                S.STOCK_ITEM AS stockItem,
+	                S.STOCK_PREV_QTY AS stockPrevQty,
+	                S.STOCK_AVAIL_QTY AS stockAvailQty,
+	                S.STOCK_RESERVE_QTY AS stockReserveQty,
+	
+	                I.ITEM_NAME AS itemName,
+	                I.ITEM_TYPE AS itemType,
+	                I.ITEM_SAFETY_STOCK AS itemSafetyStock,
+	
+	                CASE
+	                    WHEN S.STOCK_AVAIL_QTY &lt;= I.ITEM_SAFETY_STOCK THEN '부족'
+	                    WHEN S.STOCK_AVAIL_QTY &lt;= I.ITEM_SAFETY_STOCK * 1.2 THEN '위험'
+	                    ELSE '안전'
+	                END AS stockStatus
+	
+	            FROM STOCK S
+	            JOIN ITEM I
+	                ON S.STOCK_ITEM = I.ITEM_ID
+	        ) A
+	
+	        <where>
+	            <if test="itemType != null and itemType != ''">
+	                AND A.itemType = #{itemType}
+	            </if>
+	
+	            <if test="stockStatusList != null and stockStatusList.size() > 0">
+	                AND A.stockStatus IN
+	                <foreach collection="stockStatusList"
+	                         item="status"
+	                         open="("
+	                         separator=","
+	                         close=")">
+	                    #{status}
+	                </foreach>
+	            </if>
+	
+	            <if test="searchKeyword != null and searchKeyword != ''">
+	                AND (
+	                    UPPER(A.stockId) LIKE UPPER('%' || #{searchKeyword} || '%')
+	                    OR UPPER(A.stockItem) LIKE UPPER('%' || #{searchKeyword} || '%')
+	                    OR UPPER(A.itemName) LIKE UPPER('%' || #{searchKeyword} || '%')
+	                )
+	            </if>
+	        </where>
+	    )
+	
+	</select>
+
 	<select id="selectStockList" parameterType="map"
-		resultType="stockDTO">
-
-		SELECT *
-		FROM (
-		SELECT
-		S.STOCK_ID AS stockId,
-		S.STOCK_ITEM AS stockItem,
-		S.STOCK_PREV_QTY AS stockPrevQty,
-		S.STOCK_AVAIL_QTY AS stockAvailQty,
-		S.STOCK_RESERVE_QTY AS stockReserveQty,
-
-		I.ITEM_NAME AS itemName,
-		I.ITEM_TYPE AS itemType,
-		I.ITEM_SAFETY_STOCK AS itemSafetyStock,
-
-		CASE
-		WHEN S.STOCK_AVAIL_QTY &lt;= I.ITEM_SAFETY_STOCK THEN '부족'
-		WHEN
-		S.STOCK_AVAIL_QTY &lt;= I.ITEM_SAFETY_STOCK * 1.2 THEN '위험'
-		ELSE '안전'
-		END AS stockStatus
-
-		FROM STOCK S
-		JOIN ITEM I
-		ON S.STOCK_ITEM = I.ITEM_ID
+	    resultType="stockDTO">
+		
+		select *
+		from
+		(
+		select rownum rn,
+		I.*
+		from
+		(
+	    SELECT *
+	    FROM (
+	        SELECT
+	            A.*
+	        FROM (
+	            SELECT
+	                S.STOCK_ID AS stockId,
+	                S.STOCK_ITEM AS stockItem,
+	                S.STOCK_PREV_QTY AS stockPrevQty,
+	                S.STOCK_AVAIL_QTY AS stockAvailQty,
+	                S.STOCK_RESERVE_QTY AS stockReserveQty,
+	
+	                I.ITEM_NAME AS itemName,
+	                I.ITEM_TYPE AS itemType,
+	                I.ITEM_SAFETY_STOCK AS itemSafetyStock,
+	
+	                CASE
+	                    WHEN S.STOCK_AVAIL_QTY &lt;= I.ITEM_SAFETY_STOCK THEN '부족'
+	                    WHEN S.STOCK_AVAIL_QTY &lt;= I.ITEM_SAFETY_STOCK * 1.2 THEN '위험'
+	                    ELSE '안전'
+	                END AS stockStatus
+	
+	            FROM STOCK S
+	            JOIN ITEM I
+	                ON S.STOCK_ITEM = I.ITEM_ID
+	        ) A
+	
+	        <where>
+	            <if test="itemType != null and itemType != ''">
+	                AND A.itemType = #{itemType}
+	            </if>
+	
+	            <if test="stockStatusList != null and stockStatusList.size() > 0">
+	                AND A.stockStatus IN
+	                <foreach collection="stockStatusList"
+	                         item="status"
+	                         open="("
+	                         separator=","
+	                         close=")">
+	                    #{status}
+	                </foreach>
+	            </if>
+	
+	            <if test="searchKeyword != null and searchKeyword != ''">
+	                AND (
+	                    UPPER(A.stockId) LIKE UPPER('%' || #{searchKeyword} || '%')
+	                    OR UPPER(A.stockItem) LIKE UPPER('%' || #{searchKeyword} || '%')
+	                    OR UPPER(A.itemName) LIKE UPPER('%' || #{searchKeyword} || '%')
+	                )
+	            </if>
+	        </where>
+	    )
+	    ORDER BY stockId DESC
+		) I
 		)
-		<where>
-			<if test="itemType != null and itemType != ''">
-				AND itemType = #{itemType}
-			</if>
-
-			<if test="stockStatus != null and stockStatus != ''">
-				AND stockStatus = #{stockStatus}
-			</if>
-
-			<if test="searchKeyword != null and searchKeyword != ''">
-				AND (
-				UPPER(stockId) LIKE UPPER('%' || #{searchKeyword} ||
-				'%')
-				OR UPPER(stockItem) LIKE UPPER('%' || #{searchKeyword} || '%')
-				OR UPPER(itemName) LIKE UPPER('%' || #{searchKeyword} || '%')
-				)
-			</if>
-		</where>
-		ORDER BY stockId DESC
-
+		where rn between #{page.startRow}
+		and
+		#{page.endRow}
+		
 	</select>
 
 

@@ -10,6 +10,9 @@ public interface LotService {
 
 	 List<LotDTO> selectAllLot(LotDTO lotDTO, PageInfo pageInfo);
 	 int selectLotCount(LotDTO lotDTO);
+	 int selectLotTotalCount();
+	 int selectLotExpCount(LotDTO lotDTO);
+	 int selectLotTypeCount(LotDTO lotDTO, String countItemType);
 	 LotDTO selectLotDetail(String lotId);
 	 List<UseDTO> selectLotUseList(String lotId);
 

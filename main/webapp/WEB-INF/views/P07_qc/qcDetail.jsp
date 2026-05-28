@@ -132,11 +132,19 @@
                         <tr>
 
                             <th>검사대상 LOT</th>
-                            <td>${qc.qcLot}</td>
+                            <td>
+                            	<a class="toDetail"
+                            		href="${pageContext.request.contextPath}/lot/detail?lotId=${qc.qcLot}">
+                            		${qc.qcLot}	
+                            	</a>
+                            </td>
                             <th>품목(코드)</th>
                             <td>
-                            	${qc.itemName}
-    							(${qc.itemId})
+                            	<a class="toDetail"
+                            		href="${pageContext.request.contextPath}/item/detail?itemId=${qc.itemId}">
+	                            	${qc.itemName}
+	    							(${qc.itemId})
+                            	</a>
     						</td>
                         </tr>
 
@@ -291,10 +299,10 @@
 
                         <thead>
                             <tr>
-                                <th>불량 유형</th>
-                                <th>불량 수량</th>
+                                <th style="width: 100px;">불량 유형</th>
+                                <th style="width: 100px;">불량 수량</th>
                                 <th>조치 내용</th>
-                                <th>폐기</th>
+                                <th style="width: 60px;">폐기</th>
                             </tr>
                         </thead>
 
@@ -310,8 +318,8 @@
 						
 								<c:otherwise>
 									<c:forEach var="def" items="${defLogList}">
-										<tr>
-											<td>${def.defTypeName}</td>
+										<tr onclick="location.href='${pageContext.request.contextPath}/defect/detail?defTypeId=${def.defType}'">
+											<td class="defTypeName">${def.defTypeName}</td>
 											<td>
 												<fmt:formatNumber value="${def.defQty}" pattern="#,###" />
 												EA
@@ -334,6 +342,7 @@
 
     </div>
 
+	</div>
 </div>
 
 <style>
@@ -442,5 +451,10 @@
 .qc-defect-table {
     flex: 1;
 }
+
+.table tbody tr:hover .defTypeName {
+	    color: var(--main-green);
+	    text-decoration: underline;
+	}
 
 </style>

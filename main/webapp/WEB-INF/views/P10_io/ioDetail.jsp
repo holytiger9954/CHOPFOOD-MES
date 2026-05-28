@@ -155,7 +155,9 @@
 
                     <tr>
                         <th>입출고 수량</th>
-                        <td>${io.ioQty} EA</td>
+                        <td>
+                        	<fmt:formatNumber value="${io.ioQty}" pattern="#,###"/>
+                        </td>
 
                         <th>일시</th>
                         <td>

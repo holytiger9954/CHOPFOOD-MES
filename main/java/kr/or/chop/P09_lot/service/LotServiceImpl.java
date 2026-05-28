@@ -14,31 +14,46 @@ import kr.or.chop.common.pagination.PageInfo;
 public class LotServiceImpl implements LotService {
 
 	@Autowired
-    LotDAO lotDAO;
+	LotDAO lotDAO;
 
-    @Override
-    public List<LotDTO> selectAllLot(LotDTO lotDTO, PageInfo pageInfo) {
-        return lotDAO.selectAllLot(lotDTO, pageInfo);
-    }
-    
-    @Override
-    public int selectLotCount(LotDTO lotDTO) {
-    	return lotDAO.selectLotCount(lotDTO);
-    }
-    
-    @Override
-    public LotDTO selectLotDetail(String lotId) {
-        return lotDAO.selectLotDetail(lotId);
-    }
-    
-    @Override
-    public List<UseDTO> selectLotUseList(String lotId) {
-    	return lotDAO.selectLotUseList(lotId);
-    }
+	@Override
+	public List<LotDTO> selectAllLot(LotDTO lotDTO, PageInfo pageInfo) {
+		return lotDAO.selectAllLot(lotDTO, pageInfo);
+	}
 
-    @Override
-    public List<UseDTO> selectLotIoList(String lotId) {
-    	return lotDAO.selectLotIoList(lotId);
-    }
-	
+	@Override
+	public int selectLotCount(LotDTO lotDTO) {
+		return lotDAO.selectLotCount(lotDTO);
+	}
+
+	@Override
+	public LotDTO selectLotDetail(String lotId) {
+		return lotDAO.selectLotDetail(lotId);
+	}
+
+	@Override
+	public List<UseDTO> selectLotUseList(String lotId) {
+		return lotDAO.selectLotUseList(lotId);
+	}
+
+	@Override
+	public List<UseDTO> selectLotIoList(String lotId) {
+		return lotDAO.selectLotIoList(lotId);
+	}
+
+	@Override
+	public int selectLotTotalCount() {
+		return lotDAO.selectLotTotalCount();
+	}
+
+	@Override
+	public int selectLotExpCount(LotDTO lotDTO) {
+		return lotDAO.selectLotExpCount(lotDTO);
+	}
+
+	@Override
+	public int selectLotTypeCount(LotDTO lotDTO, String countItemType) {
+		return lotDAO.selectLotTypeCount(lotDTO, countItemType);
+	}
+
 }

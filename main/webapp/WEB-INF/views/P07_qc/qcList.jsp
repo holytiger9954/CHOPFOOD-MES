@@ -25,21 +25,27 @@
     <div class="card info qc-all"
     	data-card-type="all">
         <div class="card-title">금일 검사 수량</div>
-        <div class="card-value">${summary.todayQty}</div>
+        <div class="card-value">
+        	<fmt:formatNumber value="${summary.todayQty}" pattern="#,###"/>
+        </div>
         <div class="card-subtitle">전체 검사 수량</div>
     </div>
 
     <div class="card safe qc-card"
     	data-card-type="safe">
         <div class="card-title">합격 수량</div>
-        <div class="card-value">${summary.passQty}</div>
+        <div class="card-value">
+        	<fmt:formatNumber value="${summary.passQty}" pattern="#,###"/>
+        </div>
         <div class="card-subtitle">정상 처리 수량</div>
     </div>
 
     <div class="card danger qc-card"
     	data-card-type="danger">
         <div class="card-title">불량 수량</div>
-        <div class="card-value">${summary.failQty}</div>
+        <div class="card-value">
+        	<fmt:formatNumber value="${summary.failQty}" pattern="#,###"/>
+        </div>
         <div class="card-subtitle">불량 발생 수량</div>
     </div>
 
@@ -58,9 +64,9 @@
         <div class="search-item">
             <label>기간</label>
 		<div style="display: flex; align-items: center; gap: 8px;">
-            <input type="date" name="startDate" value="${search.startDate}">
+            <input type="date" id="startDate" name="startDate" value="${search.startDate}">
             <span>~</span>
-            <input type="date" name="endDate" value="${search.endDate}">
+            <input type="date" id="endDate" name="endDate" value="${search.endDate}">
         </div>
         </div>
 
@@ -112,7 +118,7 @@
                 <c:otherwise>
                     <c:forEach var="qc" items="${qcList}">
                         <tr onclick="location.href='${pageContext.request.contextPath}/quality/detail?qcId=${qc.qcId}'">
-                            <td>${qc.qcId}</td>
+                            <td class="qcId">${qc.qcId}</td>
                             <td>${qc.qcLot}</td>
                             <td>
                             	<c:choose>
@@ -175,4 +181,48 @@
 	    gap: 10px;
 	}
 	
+	.table tbody tr:hover .qcId {
+	    color: var(--main-green);
+	    text-decoration: underline;
+	}
+	
 </style>
+
+<script>
+	window.addEventListener("load", function (){
+		const startDate = document.querySelector("#startDate");
+		const endDate = document.querySelector("#endDate");
+
+		function syncDateLimit() {
+		    if (startDate.value !== "") {
+		        endDate.min = startDate.value;
+		    } else {
+		        endDate.removeAttribute("min");
+		    }
+
+		    if (endDate.value !== "") {
+		        startDate.max = endDate.value;
+		    } else {
+		        startDate.removeAttribute("max");
+		    }
+		}
+
+		startDate.addEventListener("change", function () {
+		    if (endDate.value !== "" && startDate.value > endDate.value) {
+		        endDate.value = startDate.value;
+		    }
+
+		    syncDateLimit();
+		});
+
+		endDate.addEventListener("change", function () {
+		    if (startDate.value !== "" && endDate.value < startDate.value) {
+		        startDate.value = endDate.value;
+		    }
+
+		    syncDateLimit();
+		});
+
+		syncDateLimit();
+	})
+</script>

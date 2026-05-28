@@ -93,12 +93,23 @@
 						<td>${lot.lotId}</td>
 
 						<th>품목</th>
-						<td>${lot.lotItemName} (${lot.lotItem})</td>
+						<td>
+							<a class="toDetail" href="${pageContext.request.contextPath}/item/detail?itemId=${lot.lotItem}">${lot.lotItemName} (${lot.lotItem})</a>
+						</td>
 					</tr>
 
 					<tr>
 						<th>거래처이름(코드)</th>
-						<td>${lot.lotVendorName}(${lot.lotVendor})</td>
+						<td>
+							<c:choose>
+								<c:when test="${not empty lot.lotVendor}">
+									<a class="toDetail" href="${pageContext.request.contextPath}/vendor/detail?vendorId=${lot.lotVendor}">${lot.lotVendorName}(${lot.lotVendor})</a>
+								</c:when>
+								<c:otherwise>
+									-
+								</c:otherwise>
+							</c:choose>
+						</td>
 
 						<th>제조일시</th>
 						<td>
@@ -122,7 +133,10 @@
 						</td>
 
 						<th>입고수량</th>
-						<td>${lot.lotQty}EA</td>
+						<td>
+							<fmt:formatNumber value="${lot.lotQty}"
+							pattern="#,###"/>
+						EA</td>
 					</tr>
 
 					<tr>
@@ -132,7 +146,10 @@
 						</td>
 
 						<th>가용 수량</th>
-						<td>${lot.lotFqty}EA</td>
+						<td>
+							<fmt:formatNumber value="${lot.lotFqty}"
+							pattern="#,###"/>
+						EA</td>
 					</tr>
 
 					<tr>
@@ -144,10 +161,12 @@
 						<td>
 							<c:choose>
 								<c:when test="${lot.lotQc == 'Y'}">
-									${lot.lotAwhsec}
+									<a class="toDetail"
+									href="${pageContext.request.contextPath}/warehouse/section/detail?secId=${lot.lotAwhsec}">${lot.lotAwhsec}</a>
 								</c:when>
 								<c:when test="${lot.lotQc == 'N'}">
-									${lot.lotBwhsec}
+									<a class="toDetail"
+									href="${pageContext.request.contextPath}/warehouse/section/detail?secId=${lot.lotBwhsec}">${lot.lotBwhsec}</a>
 								</c:when>
 							</c:choose>
 						</td>
@@ -247,12 +266,19 @@
 									<tr>
 										<td>${use.useWork}</td>
 
-										<td>${use.useQty}EA</td>
+										<td>
+											<fmt:formatNumber value="${use.useQty}"
+												pattern="#,###"/> EA
+										</td>
 
 										<td><fmt:formatDate value="${use.useDate}"
 												pattern="yyyy-MM-dd HH:mm" /></td>
 
-										<td>${use.useType}</td>
+										<td>
+											<c:if test="${use.useType == 10}">
+												작업투입
+											</c:if>
+										</td>
 
 										<td>
 											<c:choose>
@@ -315,7 +341,7 @@
 				 class="lot-qr-image">
 		</div>
 		
-		<div class="lot-qr-info-wrap">
+		<div class="lot-qr-info-wrap" style="margin-top: 15px;">
 			<table class="info-table lot-qr-info-table">
 				<tbody>
 					<tr>
@@ -353,7 +379,11 @@
 
 					<tr>
 						<th>가용 수량</th>
-						<td>${lot.lotFqty}EA</td>
+						<td>
+							<fmt:formatNumber value="${lot.lotFqty}"
+								pattern="#,###"/>
+								EA
+						</td>
 					</tr>
 
 					<tr>

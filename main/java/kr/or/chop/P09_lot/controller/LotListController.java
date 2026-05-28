@@ -35,10 +35,24 @@ public class LotListController {
 				10);
 
         List<LotDTO> lotList = lotService.selectAllLot(lotDTO, pageInfo);
+        
+        int totalCount = lotService.selectLotTotalCount();
+        int rawCount = lotService.selectLotTypeCount(lotDTO, "10");
+        int semiCount = lotService.selectLotTypeCount(lotDTO, "20");
+        int finCount = lotService.selectLotTypeCount(lotDTO, "30");
+        int etcCount = lotService.selectLotTypeCount(lotDTO, "40");
+        int expCount = lotService.selectLotExpCount(lotDTO);
 
         model.addAttribute("lotList", lotList);
         model.addAttribute("lotDTO", lotDTO);
         model.addAttribute("page",pageInfo);
+        
+        model.addAttribute("totalCount", totalCount);
+        model.addAttribute("rawCount", rawCount);
+        model.addAttribute("semiCount", semiCount);
+        model.addAttribute("finCount", finCount);
+        model.addAttribute("etcCount", etcCount);
+        model.addAttribute("expCount", expCount);
 
         return "P09_lot/lotList.tiles";
     }
