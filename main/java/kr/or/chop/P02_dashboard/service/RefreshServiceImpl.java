@@ -16,7 +16,7 @@ public class RefreshServiceImpl implements RefreshService{
 	@Transactional
 	public void refreshStatus() {
 		dao.updateWorkStatusAuto();
-		dao.updatePlanWpQty();
+//		dao.updatePlanWpQty();
 		dao.updatePlanStatusAuto();
 		dao.updateQcStatusAuto();
 	}

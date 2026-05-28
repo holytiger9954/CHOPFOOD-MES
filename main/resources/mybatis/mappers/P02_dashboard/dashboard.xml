@@ -517,29 +517,52 @@
 </update>
 
 <update id="updatePlanWpQty">
-	UPDATE plan p
-	SET p.plan_wp_qty = (
-		SELECT NVL(SUM(NVL(w.work_prev_qty, 0)), 0)
+	MERGE INTO plan p
+	USING (
+		SELECT
+			w.work_plan,
+			NVL(SUM(NVL(w.work_prev_qty, 0)), 0) AS sum_prev_qty
 		FROM work w
-		WHERE w.work_plan = p.plan_id
+		WHERE w.work_usage = 'Y'
 		  AND w.work_status IN (30, 40, 60)
-		  AND w.work_usage = 'Y'
+		GROUP BY w.work_plan
+	) x
+	ON (
+		p.plan_id = x.work_plan
+		AND p.plan_usage = 'Y'
+		AND p.plan_status NOT IN (0, 30)
 	)
-	WHERE p.plan_usage = 'Y'
-	  AND p.plan_status NOT IN (0, 30)
-	  AND EXISTS (
-		SELECT 1
+	WHEN MATCHED THEN
+		UPDATE SET
+			p.plan_wp_qty = x.sum_prev_qty
+		WHERE NVL(p.plan_wp_qty, 0) != x.sum_prev_qty
+</update>
+
+<update id="updatePlanWpQtyOne" parameterType="string">
+	MERGE INTO plan p
+	USING (
+		SELECT
+			#{planId} AS plan_id,
+			NVL(SUM(
+				CASE
+					WHEN w.work_status IN (30, 40, 60)
+					THEN NVL(w.work_prev_qty, 0)
+					ELSE 0
+				END
+			), 0) AS sum_prev_qty
 		FROM work w
-		WHERE w.work_plan = p.plan_id
+		WHERE w.work_plan = #{planId}
 		  AND w.work_usage = 'Y'
-	  )
-	  AND NVL(p.plan_wp_qty, 0) != (
-		SELECT NVL(SUM(NVL(w.work_prev_qty, 0)), 0)
-		FROM work w
-		WHERE w.work_plan = p.plan_id
-		  AND w.work_status IN (30, 40, 60)
-		  AND w.work_usage = 'Y'
-	  )
+	) x
+	ON (
+		p.plan_id = x.plan_id
+		AND p.plan_usage = 'Y'
+		AND p.plan_status NOT IN (0, 30)
+	)
+	WHEN MATCHED THEN
+		UPDATE SET
+			p.plan_wp_qty = x.sum_prev_qty
+		WHERE NVL(p.plan_wp_qty, 0) != x.sum_prev_qty
 </update>
 
 <update id="updatePlanStatusAuto">
