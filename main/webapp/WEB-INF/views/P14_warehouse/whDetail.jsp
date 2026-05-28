@@ -183,11 +183,11 @@
 				<table class="table">
 					<thead>
 						<tr>
-							<th style="width: 150px">점검 이력 번호</th>
-							<th style="width: 180px">점검자</th>
+							<th style="width: 140px">점검 이력 번호</th>
+							<th style="width: 140px">점검자</th>
 							<th style="width: 250px">점검 기준</th>
-							<th style="width: 120px">점검 결과</th>
-							<th style="width: 230px">점검 일시</th>
+							<th style="width: 110px">점검 결과</th>
+							<th style="width: 200px">점검 일시</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -205,7 +205,9 @@
 								<c:if test="${glog.glogResult != 'fail' && glog.glogResult != 'pass'}">
 									<td>-</td>
 								</c:if>
-								<td>${glog.glogDate}</td>
+								<td>
+									<fmt:formatDate value="${glog.glogDate}" pattern="YYYY-MM-dd HH:mm" />
+								</td>
 							</tr>	
 						</c:forEach>
 						

@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <div class="content">
 	
@@ -63,17 +64,26 @@
 								</a>
 							</td>
 							<th>GHP 기준</th>
-							<td>${glog.ghpName} (${glog.ghpId})</td>
+							<td>
+								<a class="toDetail"
+									href="${pageContext.request.contextPath}/ghp/detail?ghpId=${glog.ghpId}">
+									${glog.ghpName} (${glog.ghpId})
+								</a>
+							</td>
 						</tr>
 						<tr>
 							<th>점검일시</th>
-							<td>${glog.glogDate}</td>
+							<td>
+								<fmt:formatDate value="${glog.glogDate}" pattern="YYYY-MM-dd HH:mm" />
+							</td>
 							<th>측정값</th>
-							<td>${glog.glogValue}</td>
+							<td>${glog.glogValue == null or glog.glogValue == '' ? '-' : glog.glogValue}</td>
 						</tr>
 						<tr>
 							<th>등록일시</th>
-							<td>${glog.glogCdate}</td>
+							<td>
+								<fmt:formatDate value="${glog.glogCdate}" pattern="YYYY-MM-dd HH:mm" />
+							</td>
 							<th>점검자</th>
 							<td>${glog.glogWName} (${glog.glogWorker})</td>
 						</tr>

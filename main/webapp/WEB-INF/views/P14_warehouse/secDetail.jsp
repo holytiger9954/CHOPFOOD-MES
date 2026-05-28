@@ -148,8 +148,12 @@
 								<td class="lotId">${lot.lotId}</td>
 								<td>${lot.lotItemName} (${lot.lotItem})</td>
 								<td>${lot.lotFqty}</td>
-								<td>${lot.lotEtw}</td>
-								<td>${lot.lotExp}</td>
+								<td>
+									<fmt:formatDate value="${lot.lotEtw}" pattern="YYYY-MM-DD HH:mm" />
+								</td>
+								<td>
+									<fmt:formatDate value="${lot.lotExp}" pattern="YYYY-MM-DD HH:mm" />
+								</td>
 								<td>
 									<c:if test="${lot.lotStatus == 10}">
 										<span style="color: var(--success)">• 사용가능</span>
