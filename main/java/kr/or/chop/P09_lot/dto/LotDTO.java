@@ -27,6 +27,8 @@ public class LotDTO {
 	private String itemType;
 	private int lotCqty;
 	
+	private String startDate;
+    private String endDate;
 	private String searchType;
 	private String searchKeyword;
 	

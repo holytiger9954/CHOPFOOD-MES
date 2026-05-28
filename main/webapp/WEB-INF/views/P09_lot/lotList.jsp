@@ -23,10 +23,10 @@
 			<label>유통기한</label>
 
 			<div style="display: flex; align-items: center; gap: 8px;">
-				<input type="date" name="startDate" value="${search.startDate}">
+				<input type="date" name="startDate" value="${lotDTO.startDate}">
 
 				<span>~</span> <input type="date" name="endDate"
-					value="${search.endDate}">
+					value="${lotDTO.endDate}">
 			</div>
 		</div>
 
@@ -34,26 +34,26 @@
 			<label>상태</label> <select name="lotStatus">
 				<option value="">전체</option>
 
-				<option value="10" ${search.lotStatus == '10' ? 'selected' : ''}>
+				<option value="10" ${lotDTO.lotStatus == '10' ? 'selected' : ''}>
 					사용 가능</option>
 
-				<option value="20" ${search.lotStatus == '20' ? 'selected' : ''}>
+				<option value="20" ${lotDTO.lotStatus == '20' ? 'selected' : ''}>
 					사용중</option>
 
-				<option value="30" ${search.lotStatus == '30' ? 'selected' : ''}>
+				<option value="30" ${lotDTO.lotStatus == '30' ? 'selected' : ''}>
 					사용완료</option>
 
-				<option value="40" ${search.lotStatus == '40' ? 'selected' : ''}>
+				<option value="40" ${lotDTO.lotStatus == '40' ? 'selected' : ''}>
 					보류</option>
 
-				<option value="0" ${search.lotStatus == '0' ? 'selected' : ''}>
+				<option value="0" ${lotDTO.lotStatus == '0' ? 'selected' : ''}>
 					폐기</option>
 			</select>
 		</div>
 
 		<div class="search-item keyword">
 			<label>품목명/LOT 번호 검색</label> <input type="text" name="searchKeyword"
-				value="${search.searchKeyword}" placeholder="내용을 입력하세요." class="short">
+				value="${lotDTO.searchKeyword}" placeholder="내용을 입력하세요." class="short">
 		</div>
 
 		<div class="search-btn-area">

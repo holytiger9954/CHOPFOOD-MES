@@ -28,6 +28,8 @@ public class LotDAOImpl implements LotDAO {
 	    paramMap.put("lotMfd", lotDTO.getLotMfd());
 	    paramMap.put("lotExp", lotDTO.getLotExp());
 		paramMap.put("page", pageInfo);
+		paramMap.put("startDate", lotDTO.getStartDate());
+		paramMap.put("endDate", lotDTO.getEndDate());
 		
 		
 		return sqlSession.selectList("mapper.P09_lot.selectlotList", paramMap);
