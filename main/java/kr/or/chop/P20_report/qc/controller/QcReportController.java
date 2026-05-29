@@ -1,5 +1,6 @@
 package kr.or.chop.P20_report.qc.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,14 @@ public class QcReportController {
             QcReportSearchDTO searchDTO,
             @RequestParam(value = "page", defaultValue = "1") int currentPage,
             Model model) {
+    	
+    	if (searchDTO.getStartDate() == null || searchDTO.getStartDate().isEmpty()) {
+			searchDTO.setStartDate(LocalDate.now().minusMonths(6).toString());
+		}
+		
+		if (searchDTO.getEndDate() == null || searchDTO.getEndDate().isEmpty()) {
+			searchDTO.setEndDate(LocalDate.now().toString());
+		}
 
         QcReportSummaryDTO summary = qcReportService.selectQcSummary(searchDTO);
 

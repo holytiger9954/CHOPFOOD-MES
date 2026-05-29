@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <div class="content">
 
@@ -22,14 +23,19 @@
          	action="${pageContext.request.contextPath}/report/quality">
           
           <div class="search-row row1">
-          		<div class="search-item">
-				    <label>기간</label>
-				    <div>
-					    <input type="date" name="startDate" value="${searchDTO.startDate}">
-					    ~
-			            <input type="date" name="endDate" value="${searchDTO.endDate}">
-				    </div>
-		        </div>
+          		<div class="btn-row">
+          			<div class="left">
+          				<button type="button" class="btn btn-white" id="pdfBtn">pdf 다운로드</button>
+          			</div>
+	          		<div class="search-item right">
+					    <label>기간</label>
+					    <div>
+						    <input type="date" name="startDate" value="${searchDTO.startDate}">
+						    ~
+				            <input type="date" name="endDate" value="${searchDTO.endDate}">
+					    </div>
+			        </div>
+          		</div>
           </div>
           
           <div class="search-row row2">
@@ -81,37 +87,45 @@
 		    <div class="card-wrap reportCard">
 		        <div class="card success">
 		            <div class="card-title">총 검사 수량</div>
-		            <div class="card-value">${summary.totalQcQty}</div>
-		            <div class="card-subtitle">QC 기준</div>
+		            <div class="card-value">
+		            	<fmt:formatNumber value="${summary.totalQcQty}" pattern="#,###"/>
+		            </div>
+		            <div class="card-subtitle">실제 검사 수량</div>
 		        </div>
 		
 		        <div class="card safe">
 		            <div class="card-title">총 합격 수량</div>
-		            <div class="card-value">${summary.totalPassQty}</div>
-		            <div class="card-subtitle">합격</div>
+		            <div class="card-value">
+		            	<fmt:formatNumber value="${summary.totalPassQty}" pattern="#,###"/>
+		            </div>
+		            <div class="card-subtitle">실제 합격 수량</div>
 		        </div>
 		
 		        <div class="card warning">
 		            <div class="card-title">총 불량 수량</div>
-		            <div class="card-value">${summary.totalDefectQty}</div>
-		            <div class="card-subtitle">검사 - 합격</div>
+		            <div class="card-value">
+		            	<fmt:formatNumber value="${summary.totalDefectQty}" pattern="#,###"/>
+		            </div>
+		            <div class="card-subtitle">실제 불합격 수량</div>
 		        </div>
 		
 		        <div class="card info">
 		            <div class="card-title">평균 불량률</div>
-		            <div class="card-value">${summary.defectRate}%</div>
+		            <div class="card-value">${summary.defectRate} <span>%</span></div>
 		            <div class="card-subtitle">전체 평균</div>
 		        </div>
 		
 		        <div class="card danger-card">
 		            <div class="card-title">HIGH 위험 건수</div>
-		            <div class="card-value">${summary.highRiskCount}</div>
+		            <div class="card-value">
+		            	<fmt:formatNumber value="${summary.highRiskCount}" pattern="#,###"/>
+		            </div>
 		            <div class="card-subtitle">AI 기준</div>
 		        </div>
 		
 		        <div class="card danger-card">
 		            <div class="card-title">HIGH 위험 비율</div>
-		            <div class="card-value">${summary.highRiskRate}%</div>
+		            <div class="card-value">${summary.highRiskRate} <span>%</span></div>
 		            <div class="card-subtitle">전체 대비</div>
 		        </div>
 		    </div>
@@ -132,10 +146,6 @@
 		    </div>
 	    </div>
 	    
-	    <div class="analysis">
-	    
-	    </div>
-	    
 	    <div class="card-wrap aiCard">
 	    	<div class="card ai">
 	    		<div class="card-title card-title-big">날짜별 불량률 추이</div>
@@ -144,6 +154,17 @@
 	            </div>
 	    	</div>
 	    </div>
+	    
+	    <div class="analysis">
+	    	<div class="analysis-title">
+	    		<div class="content-content-content-title">AI 품질 분석 결과</div>
+	    		<div class="analysis-subtitle">Machine Learning Analysis</div>
+	    	</div>
+	    	<div class="analysis-content">
+	    		일부 생산 구간에서 위험도 증가 패턴이 감지되었습니다.<br>온도, 습도, 설비 가동시간 조건을 우선 확인하세요.
+	    	</div>
+	    </div>
+	    
     </div>
     
     
@@ -168,9 +189,9 @@
 
                 <tbody>
                     <c:forEach var="qc" items="${qualityList}">
-                        <tr>
+                        <tr onclick="window.location.href='${pageContext.request.contextPath}/quality/detail?qcId=${qc.qcId}'">
                             <td>${qc.qcDate}</td>
-                            <td>${qc.qcId}</td>
+                            <td class="qcId">${qc.qcId}</td>
                             <td>${qc.lotId}</td>
                             <td class="item-name-cell">${qc.itemName}(${qc.itemId})</td>
                             <td>${qc.qcQty}</td>
@@ -214,6 +235,15 @@
     .content {
         min-width: 0;
         overflow-x: hidden;
+    }
+    
+    .content-content {
+    	padding-bottom: 0;
+    }
+    
+    .btn-row {
+    	width: 100%;
+    	align-items: flex-end;
     }
     
     .search-tool {
@@ -270,6 +300,11 @@
 		gap: 15px;
 	}
 	
+	.card-value span {
+		font-weigth : 500;
+		font-size: 18px;
+	}
+	
 	.card-title-big {
 	    width: 100%;
 	    font-size: 17px;
@@ -301,7 +336,6 @@
 	}
 	
 	.btn-type.active {
-/* 		font-weight: 700; */
 		color: var(--main-green);
 		border: 1px solid var(--main-green);
 	}
@@ -312,93 +346,50 @@
 	
 	
 	.analysis {
-/* 		하이트는 나중에 지우기 */
-		height: 100px;
-		
 		width: 100%;
-		background-color: var(--success-back);
+		padding: 20px 25px;
+		
+		color: var(--success);
+		
+		border: 1px solid var(--success);
+		border-radius: 5px;
+		
+		background-color: #d0f4d163;
 	}
 	
+	.analysis-title {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		
+		margin-bottom: 15px;
+	}
+	
+	.analysis-title .content-content-content-title {
+		margin: 0;
+	}
+	
+	.analysis-subtitle {
+		color: var(--success);
+		font-weight: 600;
+	}
+	
+	.analysis-content {
+		font-size: 14px;
+		
+		padding-left: 10px;
+	}
 
-/*     .table-wrap { */
-/*         width: 100%; */
-/*         max-width: 100%; */
-/*         overflow-x: auto; */
-/*         box-sizing: border-box; */
-        
-/*         padding: 0 15px; */
-/*     } */
 
-/*     .table { */
-/*         width: 100%; */
-/*         min-width: 0; */
-/*         table-layout: fixed; */
-/*     } */
-
-/*     .table th, */
-/*     .table td { */
-/*         white-space: nowrap; */
-/*         vertical-align: middle; */
-/*         text-align: center; */
-/*     } */
-
-/*     .table .item-name-cell { */
-/*         text-align: left; */
-/*         white-space: normal; */
-/*         word-break: keep-all; */
-/*         line-height: 1.4; */
-/*     } */
-
-/*     .table th:nth-child(1), */
-/*     .table td:nth-child(1) { */
-/*         width: 90px; */
-/*     } */
-
-/*     .table th:nth-child(2), */
-/*     .table td:nth-child(2) { */
-/*         width: 90px; */
-/*     } */
-
-/*     .table th:nth-child(3), */
-/*     .table td:nth-child(3) { */
-/*         width: 100px; */
-/*     } */
-
-/*     .table th:nth-child(4), */
-/*     .table td:nth-child(4) { */
-/*         width: 180px; */
-/*     } */
-
-/*     .table th:nth-child(5), */
-/*     .table td:nth-child(5), */
-/*     .table th:nth-child(6), */
-/*     .table td:nth-child(6), */
-/*     .table th:nth-child(7), */
-/*     .table td:nth-child(7) { */
-/*         width: 90px; */
-/*     } */
-
-/*     .table th:nth-child(8), */
-/*     .table td:nth-child(8), */
-/*     .table th:nth-child(9), */
-/*     .table td:nth-child(9), */
-/*     .table th:nth-child(10), */
-/*     .table td:nth-child(10) { */
-/*         width: 80px; */
-/*     } */
-
-/*     .search-btn-area { */
-/*         display: flex; */
-/*         gap: 8px; */
-/*         align-items: flex-end; */
-/*     } */
-
-/*     @media (max-width: 1200px) { */
-/*         .reportCard { */
-/*             grid-template-columns: repeat(3, minmax(0, 1fr)); */
-/*         } */
-/*     } */
-
+	
+	.table tr:hover .qcId {
+		color: var(--main-green);
+		text-decoration: underline;
+	}
+	
+	
+	
+	
     @media (max-width: 900px) {
         .reportCard {
             grid-template-columns: repeat(2, minmax(0, 1fr));
