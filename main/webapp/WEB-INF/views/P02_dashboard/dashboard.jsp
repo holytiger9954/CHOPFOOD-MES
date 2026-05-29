@@ -5,297 +5,280 @@
 
 <div class="content">
 
-	<div class="dashboard-container">
-
-		<div class="dashboard-header">
-			<div>
-				<h2 class="page-title">대시보드</h2>
-				<p class="page-subtitle">전체 현황을 한눈에 확인하세요.</p>
-			</div>
-
-			<p class="page-route">홈 &gt; 대시보드</p>
+	<div class="header-row">
+		<div>
+			<h2 class="page-title">대시보드</h2>
+			<p class="page-subtitle">전체 현황을 한눈에 확인하세요.</p>
 		</div>
-
-		<div class="dashboard-grid">
-
-			<!-- 창고 적재 현황 -->
-			<div class="dashboard-box warehouse-card">
-				<div class="dashboard-box-title">창고 적재 현황</div>
-
-				<div class="warehouse-list">
-					<c:choose>
-						<c:when test="${empty warehouseTopList}">
-							<div class="empty-msg">창고 데이터가 없습니다.</div>
-						</c:when>
-
-						<c:otherwise>
-							<c:forEach var="wh" items="${warehouseTopList}">
-								<div class="warehouse-row">
-									<div class="warehouse-info">
-										<span class="warehouse-name">${wh.whName} (${wh.whId})</span>
-										<span class="warehouse-rate">
-											<fmt:formatNumber value="${wh.whUsageRate}" pattern="0.00" />%
-										</span>
-									</div>
-
-									<div class="warehouse-bar">
-										<div class="warehouse-bar-fill"
-											style="width:${wh.whUsageRate}%;"></div>
-									</div>
-								</div>
-							</c:forEach>
-						</c:otherwise>
-					</c:choose>
-				</div>
-			</div>
-
-			<!-- 설비 가동 현황 -->
-			<div class="dashboard-box machine-card">
-				<div class="dashboard-box-title">설비 가동 현황</div>
-
-				<div class="eq-summary">
-				<div class="eq-total">
-					전체 설비
-					<strong>
-						${empty eqStatusSummary.totalEqCnt ? 0 : eqStatusSummary.totalEqCnt}
-					</strong>대
-				</div>
-				
-				<div class="eq-status-list">
-				
-					<div>
-						<span class="status-back status-back-success">
-							가동중
-						</span>
-				
-						<strong>
-							${empty eqStatusSummary.runCnt ? 0 : eqStatusSummary.runCnt}대
-						</strong>
-					</div>
-				
-					<div>
-						<span class="status-back status-back-info">
-							정지
-						</span>
-				
-						<strong>
-							${empty eqStatusSummary.stopCnt ? 0 : eqStatusSummary.stopCnt}대
-						</strong>
-					</div>
-				
-					<div>
-						<span class="status-back status-back-warning">
-							점검중
-						</span>
-				
-						<strong>
-							${empty eqStatusSummary.checkCnt ? 0 : eqStatusSummary.checkCnt}대
-						</strong>
-					</div>
-				
-					<div>
-						<span class="status-back status-back-danger">
-							고장
-						</span>
-				
-						<strong>
-							${empty eqStatusSummary.breakCnt ? 0 : eqStatusSummary.breakCnt}대
-						</strong>
-					</div>
-				
-				</div>
-				</div>
-			</div>
-
-			<!-- 오늘 요약 카드 -->
-			<div class="card success dashboard-kpi-card">
-				<div class="card-title">일일 생산 LOT</div>
-				<div class="card-value">
-					${empty todaySummary.todayProdLotCnt ? 0 : todaySummary.todayProdLotCnt}
-					<span class="dashboard-unit">LOT</span>
-				</div>
-				<div class="card-subtitle">오늘 작업 기준 LOT</div>
-			</div>
-			
-			<div class="card safe dashboard-kpi-card">
-				<div class="card-title">작업 완료 LOT</div>
-				<div class="card-value">
-					${empty todaySummary.todayDoneLotCnt ? 0 : todaySummary.todayDoneLotCnt}
-					<span class="dashboard-unit">LOT</span>
-				</div>
-				<div class="card-subtitle">오늘 완료 작업지시</div>
-			</div>
-			
-			<div class="card warning dashboard-kpi-card">
-				<div class="card-title">일일 검사 LOT</div>
-				<div class="card-value">
-					${empty todaySummary.todayQcLotCnt ? 0 : todaySummary.todayQcLotCnt}
-					<span class="dashboard-unit">LOT</span>
-				</div>
-				<div class="card-subtitle">오늘 품질검사 LOT</div>
-			</div>
-			
-			<div class="card danger dashboard-kpi-card">
-				<div class="card-title">일일 불량률</div>
-				<div class="card-value">
-					${empty todaySummary.todayFailRate ? 0 : todaySummary.todayFailRate}
-					<span class="dashboard-unit">%</span>
-				</div>
-				<div class="card-subtitle">오늘 불량수량 / 검사수량</div>
-			</div>
-
-			<!-- 주간 작업 현황 -->
-			<div class="dashboard-box graph-card">
-				<div class="dashboard-box-title">주간 작업 현황</div>
-
-				<div class="chart-box">
-					<canvas id="weeklyWorkChart"></canvas>
-				</div>
-			</div>
-
-			<!-- 주간 불량률 현황 -->
-			<div class="dashboard-box graph-card">
-				<div class="dashboard-box-title">주간 불량률 현황</div>
-
-				<div class="chart-box">
-					<canvas id="weeklyDefectChart"></canvas>
-				</div>
-			</div>
-
+		
+		<div>
+			<p class="page-route">홈</p>
 		</div>
-
-		<div class="dashboard-bottom-grid">
-
-			<!-- 공지사항 -->
-			<div class="dashboard-box bottom-card">
-				<div class="dashboard-card-head">
-					<div class="dashboard-box-title">공지사항</div>
-					<a href="${pageContext.request.contextPath}/notice/list"
-						class="dashboard-more">전체 보기 &gt;</a>
-				</div>
-			
-				<ul class="dashboard-list">
-					<c:choose>
-						<c:when test="${empty recentNoticeList}">
-							<li>등록된 공지사항이 없습니다.</li>
-						</c:when>
-			
-						<c:otherwise>
-							<c:forEach var="n" items="${recentNoticeList}">
-								<li>
-									<a href="${pageContext.request.contextPath}/notice/detail?not_no=${n.notNo}">
-										${n.notTitle}
-									</a>
-								</li>
-							</c:forEach>
-						</c:otherwise>
-					</c:choose>
-				</ul>
+	</div>
+	
+	<div class="content-content">
+		<div class="content-content-content">
+			<div class="content-content-content-title">
+				주요 정보 요약
 			</div>
-
-			<!-- 금일 예정 작업 -->
-			<div class="dashboard-box bottom-card bottom-work-card">
-				<div class="dashboard-card-head">
-					<div class="dashboard-box-title">금일 예정 작업</div>
-					<a href="${pageContext.request.contextPath}/work/list"
-						class="dashboard-more">전체 보기 &gt;</a>
-				</div>
-
-				<div class="table-wrap">
-					<table class="table dashboard-small-table">
-						<thead>
-							<tr>
-								<th>일자</th>
-								<th>작업코드</th>
-								<th>상태</th>
-							</tr>
-						</thead>
-
-						<tbody>
-							<c:choose>
-								<c:when test="${empty todayWorkList}">
+			<div class="card-wrap card3-long">
+				<div class="card item1">
+					<div class="card-title">${not empty sessionScope.loginUser.empName ? sessionScope.loginUser.empName : '-'} 님의 금일 작업목록</div>
+					<div class="table-wrap">
+						<table class="table workTable">
+							<tbody>
+								<c:if test="${empty workList or workList == null}">
 									<tr>
-										<td colspan="3">금일 예정 작업이 없습니다.</td>
+										<td colspan="3">금일 예정된 작업 없음</td>
 									</tr>
-								</c:when>
-
-								<c:otherwise>
-									<c:forEach var="w" items="${todayWorkList}">
-										<tr>
-											<td>${w.workDate}</td>
-											<td>
-												<a class="dashboard-link"
-													href="${pageContext.request.contextPath}/work/detail?workId=${w.workId}">
-													${w.workId}
-												</a>
-											</td>
-											<td>
-												<c:choose>
-													<c:when test="${w.workStatus eq 10}">
-														<span class="status-back status-back-info">
-															${w.workStatusName}
-														</span>
-													</c:when>
-
-													<c:when test="${w.workStatus eq 20}">
-														<span class="status-back status-back-warning">
-															${w.workStatusName}
-														</span>
-													</c:when>
-
-													<c:when test="${w.workStatus eq 30}">
-														<span class="status-back status-back-success">
-															${w.workStatusName}
-														</span>
-													</c:when>
-
-													<c:when test="${w.workStatus eq 40}">
-														<span class="status-back status-back-danger">
-															${w.workStatusName}
-														</span>
-													</c:when>
-
-													<c:otherwise>
-														<span class="status-back status-back-info">
-															${w.workStatusName}
-														</span>
-													</c:otherwise>
-												</c:choose>
-											</td>
-										</tr>
-									</c:forEach>
-								</c:otherwise>
-							</c:choose>
-						</tbody>
-					</table>
+								</c:if>	
+								
+								<c:forEach var="work" items="${workList}">
+									<tr class="workTr"
+										onclick="window.location.href='${pageContext.request.contextPath}/work/detail?${work.workId}">
+										<td class="workId">${work.workId}</td>
+										<td>${work.itemName} (${work.item})</td>
+										<td>
+											<c:choose>
+												<c:when test="${work.status == 10}">
+													<span class="status status-warning">• 대기</span>
+												</c:when>
+												<c:when test="${work.status == 20}">
+													<span class="status status-success">• 진행 중</span>
+												</c:when>
+												<c:when test="${work.status == 30}">
+													<span class="status status-safe">• 완료</span>
+												</c:when>
+												<c:when test="${work.status == 40}">
+													<span class="status stauts-danger">• 지연</span>
+												</c:when>
+												<c:when test="${work.status == 0}">
+													<span class="status status-info">• 보류</span>
+												</c:when>
+												<c:otherwise>
+													<span class="status status-info">-</span>
+												</c:otherwise>
+											</c:choose>
+										</td>
+									</tr>
+								</c:forEach>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				
+				<div class="card movePage item2" title="작업관리 페이지로 이동"
+						onclick="window.location.href='${pageContext.request.contextPath}/work/list'">
+					<div class="card-title">전체 작업 현황</div>
+					<div class="circle-chart-box">
+						<canvas id="todayWorkProgressChart"></canvas>
+						<div class="circle-chart-text">
+							<strong>${empty todayProgressSummary.todayWorkProgressRate ? 0 : todayProgressSummary.todayWorkProgressRate} </strong>%
+						</div>
+					</div>
+					<div class="progress-subtitle">
+						${empty todayProgressSummary.todayDoneWorkCnt ? 0 : todayProgressSummary.todayDoneWorkCnt}
+						/
+						${empty todayProgressSummary.todayWorkCnt ? 0 : todayProgressSummary.todayWorkCnt}
+						건 완료
+					</div>
+				</div>
+				
+				<div class="card movePage item3" title="품질검사 페이지로 이동"
+						onclick="window.location.href='${pageContext.request.contextPath}/quality/list'">
+					<div class="card-title">전체 품질검사 현황</div>
+					<div class="circle-chart-box">
+						<canvas id="todayQcProgressChart"></canvas>
+						<div class="circle-chart-text">
+							<strong>${empty todayProgressSummary.todayQcProgressRate ? 0 : todayProgressSummary.todayQcProgressRate} </strong>%
+						</div>
+					</div>
+					<div>
+						<div class="progress-subtitle">
+							${empty todayProgressSummary.todayDoneQcCnt ? 0 : todayProgressSummary.todayDoneQcCnt}
+							/
+							${empty todayProgressSummary.todayQcCnt ? 0 : todayProgressSummary.todayQcCnt}
+							건 완료
+						</div>
+					</div>
 				</div>
 			</div>
-
 		</div>
-
-		<div class="dashboard-kpi-title">주요 KPI 지표</div>
-
-		<div class="table-wrap">
-			<table class="table dashboard-kpi-table">
-				<thead>
-					<tr>
-						<th>구분</th>
-						<th>이번 주</th>
-						<th>이번 달</th>
-						<th>전월</th>
-						<th>전월 대비</th>
-					</tr>
-				</thead>
-
-				<tbody>
-					<c:choose>
-						<c:when test="${empty kpiList}">
+		
+		
+		<div class="content-content-content">
+			<div class="content-content-content-title">
+				작업환경
+			</div>
+			<div class="card-wrap card3">
+				<div class="card movePage" title="창고 페이지로 이동"
+						onclick="window.location.href='${pageContext.request.contextPath}/warehouse/list'">
+					<div class="card-title">창고 적재 현황</div>
+					<div class="chart-total">
+				        전체 창고 ${whStatusChart.totalWhCnt}개
+				    </div>
+					<div class="chart-box">
+						<canvas id="whStatusChart" class="chart"></canvas>
+					</div>
+				</div>
+				<div class="card">
+					<div class="card-title">창고 온도 현황</div>
+					<div class="card-value"></div>
+				</div>
+				<div class="card">
+					<div class="card-title">창고 위생 현황</div>
+					<div class="card-value"></div>
+				</div>
+			</div>
+			<div class="card-wrap card3">
+			
+				<div class="card movePage" title="창고 페이지로 이동"
+						onclick="window.location.href='${pageContext.request.contextPath}/equip/list'">
+					<div class="card-title">설비 가동 현황</div>
+					
+					<div>전체 설비 <span class="eqValue eqValueTotal">${empty eqStatusSummary.totalEqCnt ? 0 : eqStatusSummary.totalEqCnt}</span> 대</div>
+					
+					<div class="eqRow">
+						<div class="eqCard">
+							<div class="status-back status-back-success">
+								• 가동 중
+							</div>
+							<div><span class="eqValue">${empty eqStatusSummary.totalEqCnt ? 0 : eqStatusSummary.runCnt}</span> 대</div>
+						</div>
+						<div class="eqCard">
+							<div class="status-back status-back-info">
+								• 정지
+							</div>
+							<div><span class="eqValue">${empty eqStatusSummary.totalEqCnt ? 0 : eqStatusSummary.stopCnt}</span> 대</div>
+						</div>
+					</div>
+					
+					<div class="eqRow">
+						<div class="eqCard">
+							<div class="status-back status-back-warning">
+								• 점검 중
+							</div>
+							<div><span class="eqValue">${empty eqStatusSummary.totalEqCnt ? 0 : eqStatusSummary.checkCnt}</span> 대</div>
+						</div>
+						<div class="eqCard">
+							<div class="status-back status-back-danger">
+								• 고장
+							</div>
+							<div><span class="eqValue">${empty eqStatusSummary.totalEqCnt ? 0 : eqStatusSummary.breakCnt}</span> 대</div>
+						</div>
+					</div>
+					
+				</div>
+				
+				<div class="card">
+					<div class="card-title">작업장 온도 현황</div>
+					<div class="card-value"></div>
+				</div>
+				<div class="card">
+					<div class="card-title">작업장 위생 현황</div>
+					<div class="card-value"></div>
+				</div>
+				
+			</div>
+		</div>
+		
+		<div class="content-content-content">
+			<div class="content-content-content-title">
+				생산 현황
+			</div>
+			<div class="card-wrap prod card4">
+				<div class="card warning">
+					<div class="card-title">금일 예정 작업</div>
+					<div class="card-value">${todaySummary.todayWorkCnt}<span class="unit"> 건</span></div>
+					<div class="card-subtitle">작업예정일이 오늘인 작업 건수</div>
+				</div>
+				<div class="card success">
+					<div class="card-title">완료된 작업</div>
+					<div class="card-value">${todaySummary.todayDoneWorkCnt}<span class="unit"> 건</span></div>
+					<div class="card-subtitle">금일 예정 작업 중 완료된 작업</div>
+				</div>
+				<div class="card safe">
+					<div class="card-title">품질검사</div>
+					<div class="card-value">${todaySummary.todayQcCnt}<span class="unit"> 건</span></div>
+					<div class="card-subtitle">금일 완료된 품질검사 건수</div>
+				</div>
+				<div class="card danger">
+					<div class="card-title">불량률</div>
+					<div class="card-value">${todaySummary.todayFailRate}<span class="unit"> %</span></div>
+					<div class="card-subtitle">품질검사 평균 불량률</div>
+				</div>
+			</div>
+			<div class="card-wrap card2">
+				<div class="card">
+					<div class="card-title">주간 작업 현황</div>
+					<div class="card-value">
+						<canvas id="weeklyWorkChart" class="graph"></canvas>
+					</div>
+				</div>
+				<div class="card">
+					<div class="card-title">주간 불량 현황</div>
+					<div class="card-value">
+						<canvas id="weeklyDefectChart" class="graph"></canvas>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="content-content-content">
+			<div class="content-content-content-title">
+				게시판
+			</div>
+			<div class="card-wrap card2 userInfo">
+				<div class="card">
+					<div class="card-title">공지사항</div>
+					<div class="table-wrap">
+						<table class="table workTable">
+							<tbody>
+								<c:if test="${empty recentNoticeList or recentNoticeList == null}">
+									<tr>
+										<td>공지사항 없음</td>
+									</tr>
+								</c:if>	
+								
+								<c:forEach var="notice" items="${recentNoticeList}">
+									<tr class="noticeTr"
+										onclick="window.location.href='${pageContext.request.contextPath}/notice/detail?${notice.notNo}'">
+										<td class="notTitle">${notice.notTitle}</td>
+									</tr>
+								</c:forEach>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="card">
+					<div class="card-title">건의사항</div>
+					<div class="card-value"></div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="content-content-content">
+			<div class="content-content-content-title">
+				주요 KPI 지표
+			</div>
+			<div class="table-wrap kpi">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>구분</th>
+							<th>이번 주</th>
+							<th>이번 달</th>
+							<th>전월</th>
+							<th>전월 대비</th>
+						</tr>
+					</thead>
+					<tbody>
+						<c:if test="${empty kpiList}">
 							<tr>
-								<td colspan="5">KPI 데이터가 없습니다.</td>
+								<td colspan="5">내용 없음</td>
 							</tr>
-						</c:when>
-
-						<c:otherwise>
+						</c:if>
+						<c:if test="${not empty kpiList}">
 							<c:forEach var="kpi" items="${kpiList}">
 								<tr>
 									<td>${kpi.kpiName}</td>
@@ -314,19 +297,290 @@
 									</c:choose>
 								</tr>
 							</c:forEach>
-						</c:otherwise>
-					</c:choose>
-				</tbody>
-			</table>
+						</c:if>
+					</tbody>
+				</table>
+			</div>
 		</div>
-
+		
 	</div>
 
+	
 </div>
+
+
+
+
+<style>
+	
+	.card {
+		width: 100%;
+		
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		
+		gap: 15px;
+	}
+	
+	.card.movePage:hover {
+		cursor: pointer;
+		box-shadow: 0 0 0 2px var(--main-green) inset;
+	}
+	
+	.card.item2:hover {
+		box-shadow: 0 0 0 2px var(--warning) inset;
+	}
+	
+	.card.item3:hover {
+		box-shadow: 0 0 0 2px var(--safe) inset;
+	}
+	
+	.card3-long {
+		display: flex;
+	}
+	
+	.card3-long .item2, .card3-long .item3 {
+		flex: 1 1 0;
+	}
+	
+	.card3-long .item1 {
+		flex: 2 1 0;
+/* 		border: none; */
+/* 		padding: 0; */
+	}
+	
+	.table-wrap {
+		padding: 0 10px;
+	}
+	
+	.workTable tr, .workTable td {
+		height: 32px;
+	}
+	
+	.workTr:hover .workId {
+		color: var(--main-green);
+		text-decoration: underline;
+	}
+	
+	.kpi .table tr:hover {
+		cursor: default;
+		background-color: white;
+	}
+	
+	.userInfo .card-title {
+		width: 100%;
+		padding-left: 15px;
+		
+		color: black;
+	}
+	
+	.eqValue {
+		font-size: 18px;
+		font-weight: 700;
+	}
+	
+	.eqValueTotal {
+		font-size: 20px;
+		color: var(--main-green);
+	}
+	
+	.eqRow {
+		display: flex;
+		justify-content: space-evenly;
+		
+		gap: 40px;
+	}
+	
+	.eqCard {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 10px;
+	}
+	
+	.card-wrap.prod card-title {
+		font-size: 37px;
+	}
+	
+	.unit {
+		font-size: 18px;
+		color: #666;
+	}
+	
+	
+	.chart-box {
+		padding: 5px 15px;
+	    width: 100%;
+	    height: 200px;
+	}
+	
+	.chart-total {
+	    text-align: right;
+	    font-size: 13px;
+	    color: var(--dark-gray);
+	}
+	
+	canvas.chart {
+		width: 235px;
+	}
+	
+	canvas.graph {
+		width: 400px;
+	}
+	
+	.progress-card-wrap {
+		margin-top: 15px;
+	}
+	
+	.progress-card {
+		min-height: 230px;
+		justify-content: flex-start;
+	}
+	
+	.circle-chart-box {
+		position: relative;
+		width: 120px;
+		height: 120px;
+		margin-top: 8px;
+	}
+	
+	.circle-chart-box canvas {
+		width: 120px !important;
+		height: 120px !important;
+		display: block;
+	}
+	
+	.circle-chart-text {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+		z-index: 2;
+	
+		display: flex;
+		align-items: baseline;
+		justify-content: center;
+	
+		font-size: 11px;
+		font-weight: 400;
+		color: #555;
+		line-height: 1;
+		pointer-events: none;
+	}
+	
+	.circle-chart-text strong {
+		font-size: 27px;
+		font-weight: 500;
+		letter-spacing: -1.5px;
+		color: #444;
+		margin-right: 6px;
+	}
+	
+	.progress-subtitle {
+		font-size: 11px;
+		color: #aaa;
+		margin-top: -2px;
+	}
+
+</style>
+
+
+
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
+	/* =========================
+		창고 적재 현황
+	========================= */
+	const whSafeCnt = Number('${empty whStatusChart.safeWhCnt ? 0 : whStatusChart.safeWhCnt}');
+	const whDangerCnt = Number('${empty whStatusChart.dangerWhCnt ? 0 : whStatusChart.dangerWhCnt}');
+	const whOverCnt = Number('${empty whStatusChart.overWhCnt ? 0 : whStatusChart.overWhCnt}');
+	const whTotalCnt = Number('${empty whStatusChart.totalWhCnt ? 0 : whStatusChart.totalWhCnt}');
+
+	const whStatusCtx = document.getElementById('whStatusChart');
+
+	if (whStatusCtx) {
+		new Chart(whStatusCtx, {
+			type: 'bar',
+			data: {
+				labels: ['적정', '위험', '포화'],
+				datasets: [
+					{
+						label: '창고 수',
+						data: [whSafeCnt, whDangerCnt, whOverCnt],
+						backgroundColor: [
+							'#4caf50',
+							'#ffb300',
+							'#e53935'
+						],
+						borderRadius: 3,
+						barThickness: 36
+					}
+				]
+			},
+			options: {
+				responsive: true,
+				maintainAspectRatio: false,
+				plugins: {
+					legend: {
+						display: false
+					},
+					tooltip: {
+						callbacks: {
+							label: function(context) {
+								return context.raw + '개 / ' + whTotalCnt + '개';
+							},
+							afterLabel: function(context) {
+								const label = context.label;
+
+								if (label === '적정') {
+									return '적재율 80% 미만';
+								}
+
+								if (label === '위험') {
+									return '적재율 80% 이상 ~ 100% 미만';
+								}
+
+								if (label === '포화') {
+									return '적재율 100% 이상';
+								}
+
+								return '';
+							}
+						}
+					}
+				},
+				scales: {
+					x: {
+						grid: {
+							display: false
+						},
+						ticks: {
+							font: {
+								size: 13
+							}
+						}
+					},
+					y: {
+						beginAtZero: true,
+						ticks: {
+							stepSize: 4,
+							callback: function(value) {
+								return value + '개';
+							}
+						}
+					}
+				}
+			}
+		});
+	}
+
+
+	/* =========================
+		주간 작업 현황
+	========================= */
 	const weeklyWorkLabels = [
 		<c:forEach var="row" items="${weeklyWorkChart}" varStatus="status">
 			"${row.dayLabel}"<c:if test="${!status.last}">,</c:if>
@@ -335,10 +589,67 @@
 
 	const weeklyWorkValues = [
 		<c:forEach var="row" items="${weeklyWorkChart}" varStatus="status">
-			${row.value}<c:if test="${!status.last}">,</c:if>
+			${empty row.value ? 0 : row.value}<c:if test="${!status.last}">,</c:if>
 		</c:forEach>
 	];
 
+	const weeklyWorkCtx = document.getElementById("weeklyWorkChart");
+
+	if (weeklyWorkCtx) {
+		new Chart(weeklyWorkCtx, {
+			type: "line",
+			data: {
+				labels: weeklyWorkLabels,
+				datasets: [{
+					label: "작업 수량",
+					data: weeklyWorkValues,
+					borderColor: "#2E6F4E",
+					backgroundColor: "rgba(46, 111, 78, 0)",
+					tension: 0.35,
+					fill: true,
+					pointRadius: 3,
+					pointHoverRadius: 5
+				}]
+			},
+			options: {
+				responsive: true,
+				maintainAspectRatio: false,
+				plugins: {
+					legend: {
+						display: false
+					},
+					tooltip: {
+						callbacks: {
+							label: function(context) {
+								return context.raw + "개";
+							}
+						}
+					}
+				},
+				scales: {
+					x: {
+						grid: {
+							display: false
+						}
+					},
+					y: {
+						beginAtZero: true,
+						ticks: {
+							stepSize: 4,
+							callback: function(value) {
+								return value + "개";
+							}
+						}
+					}
+				}
+			}
+		});
+	}
+
+
+	/* =========================
+		주간 불량 현황
+	========================= */
 	const weeklyDefectLabels = [
 		<c:forEach var="row" items="${weeklyDefectChart}" varStatus="status">
 			"${row.dayLabel}"<c:if test="${!status.last}">,</c:if>
@@ -347,442 +658,149 @@
 
 	const weeklyDefectValues = [
 		<c:forEach var="row" items="${weeklyDefectChart}" varStatus="status">
-			${row.value}<c:if test="${!status.last}">,</c:if>
+			${empty row.value ? 0 : row.value}<c:if test="${!status.last}">,</c:if>
 		</c:forEach>
 	];
 
-	new Chart(document.getElementById("weeklyWorkChart"), {
-		type: "line",
-		data: {
-			labels: weeklyWorkLabels,
-			datasets: [{
-				data: weeklyWorkValues,
-				borderColor: "#2E6F4E",
-				backgroundColor: "rgba(46, 111, 78, 0.08)",
-				tension: 0.35,
-				fill: true,
-				pointRadius: 3
-			}]
-		},
-		options: {
-			responsive: true,
-			maintainAspectRatio: false,
-			plugins: {
-				legend: {
-					display: false
-				}
-			},
-			scales: {
-				y: {
-					beginAtZero: true
-				}
-			}
-		}
-	});
+	const weeklyDefectCtx = document.getElementById("weeklyDefectChart");
 
-	new Chart(document.getElementById("weeklyDefectChart"), {
-		type: "line",
-		data: {
-			labels: weeklyDefectLabels,
-			datasets: [{
-				data: weeklyDefectValues,
-				borderColor: "#2E6F4E",
-				backgroundColor: "rgba(46, 111, 78, 0.08)",
-				tension: 0.35,
-				fill: true,
-				pointRadius: 3
-			}]
-		},
-		options: {
-			responsive: true,
-			maintainAspectRatio: false,
-			plugins: {
-				legend: {
-					display: false
-				}
+	if (weeklyDefectCtx) {
+		new Chart(weeklyDefectCtx, {
+			type: "line",
+			data: {
+				labels: weeklyDefectLabels,
+				datasets: [{
+					label: "불량률",
+					data: weeklyDefectValues,
+					borderColor: "#e53935",
+					backgroundColor: "rgba(229, 57, 53, 0)",
+					tension: 0.35,
+					fill: true,
+					pointRadius: 3,
+					pointHoverRadius: 5
+				}]
 			},
-			scales: {
-				y: {
-					beginAtZero: true,
-					ticks: {
-						callback: function(value) {
-							return value + "%";
+			options: {
+				responsive: true,
+				maintainAspectRatio: false,
+				plugins: {
+					legend: {
+						display: false
+					},
+					tooltip: {
+						callbacks: {
+							label: function(context) {
+								return context.raw + "%";
+							}
+						}
+					}
+				},
+				scales: {
+					x: {
+						grid: {
+							display: false
+						}
+					},
+					y: {
+						beginAtZero: true,
+						ticks: {
+							callback: function(value) {
+								return value + "%";
+							}
 						}
 					}
 				}
 			}
+		});
+	}
+	
+	/* =========================
+		금일 작업 / 품질 진행률 원형 차트
+	========================= */
+	const todayWorkProgressRate = Number('${empty todayProgressSummary.todayWorkProgressRate ? 0 : todayProgressSummary.todayWorkProgressRate}');
+	const todayQcProgressRate = Number('${empty todayProgressSummary.todayQcProgressRate ? 0 : todayProgressSummary.todayQcProgressRate}');
+	
+	const todayWorkCnt = Number('${empty todayProgressSummary.todayWorkCnt ? 0 : todayProgressSummary.todayWorkCnt}');
+	const todayDoneWorkCnt = Number('${empty todayProgressSummary.todayDoneWorkCnt ? 0 : todayProgressSummary.todayDoneWorkCnt}');
+	
+	const todayQcCnt = Number('${empty todayProgressSummary.todayQcCnt ? 0 : todayProgressSummary.todayQcCnt}');
+	const todayDoneQcCnt = Number('${empty todayProgressSummary.todayDoneQcCnt ? 0 : todayProgressSummary.todayDoneQcCnt}');
+	
+	function drawCircleProgressChart(canvasId, rate, doneCnt, totalCnt, labelText, progressColor, trackColor) {
+		const canvas = document.getElementById(canvasId);
+
+		if (!canvas) {
+			return;
 		}
-	});
+
+		const rawRate = Math.max(0, Math.min(Number(rate), 100));
+		const drawRate = rawRate >= 100 ? 99.2 : rawRate;
+
+		const size = 120;
+		const lineWidth = 2;
+		const dotRadius = 4;
+
+		const dpr = window.devicePixelRatio || 1;
+
+		canvas.width = size * dpr;
+		canvas.height = size * dpr;
+
+		const ctx = canvas.getContext('2d');
+		ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+		ctx.clearRect(0, 0, size, size);
+
+		const centerX = size / 2;
+		const centerY = size / 2;
+		const radius = (size - lineWidth - dotRadius - 2) / 2;
+
+		const startAngle = -Math.PI / 2;
+		const endAngle = startAngle - (Math.PI * 2 * drawRate / 100);
+
+		/* 바탕 원 */
+		ctx.beginPath();
+		ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+		ctx.strokeStyle = trackColor;
+		ctx.lineWidth = lineWidth;
+		ctx.lineCap = 'round';
+		ctx.stroke();
+
+		/* 진행 원 */
+		ctx.beginPath();
+		ctx.arc(centerX, centerY, radius, startAngle, endAngle, true);
+		ctx.strokeStyle = progressColor;
+		ctx.lineWidth = lineWidth;
+		ctx.lineCap = 'round';
+		ctx.stroke();
+
+		/* 끝점 원 */
+		const dotX = centerX + Math.cos(endAngle) * radius;
+		const dotY = centerY + Math.sin(endAngle) * radius;
+
+		ctx.beginPath();
+		ctx.arc(dotX, dotY, dotRadius, 0, Math.PI * 2);
+		ctx.fillStyle = progressColor;
+		ctx.fill();
+
+		canvas.title = labelText + ' / ' + doneCnt + '건 / ' + totalCnt + '건 완료 / 진행률 ' + rawRate + '%';
+	}
+	
+	drawCircleProgressChart(
+		'todayWorkProgressChart',
+		todayWorkProgressRate,
+		todayDoneWorkCnt,
+		todayWorkCnt,
+		'금일 작업 진행률',
+		'#F9A825',
+		'#FFE5BC'
+	);
+	
+	drawCircleProgressChart(
+		'todayQcProgressChart',
+		todayQcProgressRate,
+		todayDoneQcCnt,
+		todayQcCnt,
+		'금일 품질검사 진행률',
+		'#2B8EFF',
+		'#C7E1FF'
+	);
 </script>
-
-<style>
-.dashboard-container{
-	width:100%;
-	max-width:1040px;
-	min-height:837px;
-	margin:0 auto;
-}
-
-.dashboard-header{
-	display:flex;
-	justify-content:space-between;
-	align-items:flex-start;
-	margin-bottom:10px;
-}
-
-.dashboard-header .page-title{
-	font-size:24px;
-	margin:0 0 5px;
-}
-
-.dashboard-header .page-subtitle{
-	font-size:13px;
-	margin:0;
-}
-
-.dashboard-header .page-route{
-	font-size:11px;
-	margin:0;
-}
-
-.dashboard-grid{
-	display:grid;
-	grid-template-columns:repeat(4, 1fr);
-	gap:8px;
-}
-
-.dashboard-box{
-	background:#fff;
-	border:1px solid var(--gray);
-	border-radius:6px;
-	padding:10px;
-	box-sizing:border-box;
-	overflow:hidden;
-}
-
-.dashboard-box-title{
-	font-size:12px;
-	font-weight:700;
-	color:#222;
-	margin-bottom:7px;
-}
-
-.warehouse-card{
-	grid-column:span 3;
-	height:170px;
-}
-
-.machine-card{
-	grid-column:span 1;
-	height:170px;
-}
-
-.warehouse-list{
-	display:flex;
-	flex-direction:column;
-	gap:5px;
-}
-
-.warehouse-row{
-	width:100%;
-}
-
-.warehouse-info{
-	display:flex;
-	justify-content:space-between;
-	align-items:center;
-	font-size:10px;
-	margin-bottom:2px;
-}
-
-.warehouse-name{
-	white-space:nowrap;
-	overflow:hidden;
-	text-overflow:ellipsis;
-	max-width:75%;
-	font-weight:600;
-}
-
-.warehouse-rate{
-	font-weight:700;
-	color:var(--main-green);
-}
-
-.warehouse-bar{
-	width:100%;
-	height:6px;
-	background:var(--light-gray);
-	border-radius:10px;
-	overflow:hidden;
-}
-
-.warehouse-bar-fill{
-	height:100%;
-	background:var(--main-green);
-	border-radius:10px;
-}
-
-/* 설비 가동 현황 */
-.eq-summary{
-	height:130px;
-	display:flex;
-	flex-direction:column;
-	gap:6px;
-}
-
-.eq-total{
-	height:26px;
-	font-size:11px;
-	display:flex;
-	align-items:center;
-}
-
-.eq-total strong{
-	font-size:19px;
-	color:var(--main-green);
-	margin:0 3px;
-}
-
-.eq-status-list{
-	flex:1;
-	display:grid;
-	grid-template-columns:1fr 1fr;
-	gap:5px;
-}
-
-.eq-status-list div{
-	height:45px;
-	border:1px solid var(--light-gray);
-	border-radius:6px;
-	padding:5px;
-	box-sizing:border-box;
-
-	display:flex;
-	flex-direction:column;
-	justify-content:center;
-	align-items:center;
-	gap:3px;
-}
-
-.eq-status-list .status-back{
-	min-width:45px;
-	height:18px;
-	padding:0 6px;
-	font-size:9px;
-
-	display:flex;
-	align-items:center;
-	justify-content:center;
-}
-
-.eq-status-list strong{
-	font-size:13px;
-	font-weight:800;
-	line-height:1;
-}
-
-.dashboard-kpi-card{
-	height:112px;
-	padding:10px;
-}
-
-.dashboard-kpi-card .card-title{
-	font-size:12px;
-	margin-bottom:7px;
-}
-
-.dashboard-kpi-card .card-value{
-	font-size:36px;
-	line-height:1;
-}
-
-.dashboard-unit{
-	font-size:16px;
-	font-weight:700;
-	color:#111;
-}
-
-.dashboard-kpi-card .card-subtitle{
-	font-size:11px;
-	margin-top:8px;
-}
-
-.graph-card{
-	grid-column:span 2;
-	height:165px;
-}
-
-.chart-box{
-	height:125px;
-}
-
-.dashboard-bottom-grid{
-	display:grid;
-	grid-template-columns:1fr 1fr;
-	gap:8px;
-	margin-top:12px;
-}
-
-.bottom-card{
-	height:140px;
-	padding:10px;
-	overflow:hidden;
-}
-
-.dashboard-card-head{
-	display:flex;
-	justify-content:space-between;
-	align-items:center;
-}
-
-.dashboard-card-head .dashboard-box-title{
-	margin-bottom:6px;
-}
-
-.dashboard-more{
-	font-size:9px;
-	color:var(--dark-gray);
-}
-
-.dashboard-list{
-	margin:0;
-	padding:0;
-}
-
-.dashboard-list li{
-	height:21px;
-	line-height:21px;
-	font-size:10.5px;
-	border-bottom:1px solid var(--light-gray);
-	white-space:nowrap;
-	overflow:hidden;
-	text-overflow:ellipsis;
-}
-
-.dashboard-small-table{
-	table-layout:fixed;
-	font-size:9px;
-}
-
-.dashboard-small-table th{
-	height:22px;
-	font-size:9px;
-	padding:0 4px;
-}
-
-.dashboard-small-table td{
-	height:19px;
-	font-size:9px;
-	padding:0 4px;
-}
-
-.dashboard-small-table .status-back{
-	font-size:9px;
-	padding:2px 6px;
-}
-
-.dashboard-kpi-title{
-	margin:16px 0 7px;
-	font-size:15px;
-	font-weight:700;
-}
-
-.dashboard-kpi-table{
-	table-layout:fixed;
-	font-size:10.5px;
-}
-
-.dashboard-kpi-table th{
-	height:28px;
-	font-size:10.5px;
-	padding:0 5px;
-}
-
-.dashboard-kpi-table td{
-	height:28px;
-	font-size:10.5px;
-	padding:0 5px;
-}
-
-.empty-msg{
-	height:100px;
-	display:flex;
-	align-items:center;
-	justify-content:center;
-	font-size:12px;
-	color:var(--dark-gray);
-}
-
-.table tbody tr:hover{
-	background:#fff;
-	cursor:default;
-}
-
-/* 창고 적재 현황만 스크롤 허용 */
-.warehouse-card{
-	overflow:hidden;
-}
-
-.warehouse-list{
-	max-height:135px;
-	overflow-y:auto;
-	padding-right:4px;
-}
-
-/* 금일 예정 작업만 스크롤 허용 */
-.bottom-work-card{
-	overflow:hidden;
-}
-
-.bottom-work-card .table-wrap{
-	max-height:105px;
-	overflow-y:auto;
-}
-
-/* 스크롤 생겨도 테이블 헤더 고정 */
-.bottom-work-card .dashboard-small-table thead th{
-	position:sticky;
-	top:0;
-	z-index:1;
-}
-
-/* 창고 적재 현황: 카드 높이는 유지하고 내부만 압축 */
-.warehouse-card{
-	overflow:hidden;
-}
-
-.warehouse-list{
-	max-height:140px;
-	overflow-y:auto;
-	padding-right:6px;
-	padding-bottom:4px;
-	gap:4px;
-}
-
-.warehouse-row{
-	padding-bottom:1px;
-}
-
-.warehouse-info{
-	font-size:9.5px;
-	margin-bottom:1px;
-	line-height:14px;
-}
-
-.warehouse-bar{
-	height:5px;
-	margin-bottom:1px;
-}
-
-/* 대시보드 작업코드 링크 */
-.dashboard-link{
-	color: inherit;
-	text-decoration: none;
-	cursor: pointer;
-}
-
-.dashboard-link:hover{
-	color: var(--main-green);
-	text-decoration: underline;
-}
-</style>

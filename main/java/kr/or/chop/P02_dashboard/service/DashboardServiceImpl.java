@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.or.chop.P02_dashboard.dao.DashboardDAO;
+import kr.or.chop.P14_warehouse.dto.WHDTO;
 
 @Service
 public class DashboardServiceImpl implements DashboardService {
@@ -30,6 +31,12 @@ public class DashboardServiceImpl implements DashboardService {
 	@Override
 	public List<Map<String, Object>> selectWarehouseTopList() {
 		return dao.selectWarehouseTopList();
+	}
+	
+	// 창고 적재 상태 요약 조회
+	@Override
+	public WHDTO selectWarehouseUsageSummary() {
+		return dao.selectWarehouseUsageSummary();
 	}
 
 	// 최근 7일 작업 수량 조회
@@ -60,6 +67,12 @@ public class DashboardServiceImpl implements DashboardService {
 	@Override
 	public List<Map<String, Object>> selectRecentNoticeList() {
 		return dao.selectRecentNoticeList();
+	}
+	
+	// 오늘 작업, 품질검사 진행률
+	@Override
+	public Map<String, Object> selectTodayProgressSummary() {
+		return dao.selectTodayProgressSummary();
 	}
 
 }

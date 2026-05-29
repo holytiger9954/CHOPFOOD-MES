@@ -7,6 +7,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import kr.or.chop.P14_warehouse.dto.WHDTO;
+
 @Repository
 public class DashboardDAOImpl implements DashboardDAO {
 
@@ -29,6 +31,12 @@ public class DashboardDAOImpl implements DashboardDAO {
 	@Override
 	public List<Map<String, Object>> selectWarehouseTopList() {
 		return session.selectList("mapper.P02_dashboard.selectWarehouseTopList");
+	}
+	
+	// 창고 적재 상태 요약 조회
+	@Override
+	public WHDTO selectWarehouseUsageSummary() {
+		return session.selectOne("mapper.P02_dashboard.selectWarehouseUsageSummary");
 	}
 
 	// 최근 7일 작업 수량 조회
@@ -59,6 +67,12 @@ public class DashboardDAOImpl implements DashboardDAO {
 	@Override
 	public List<Map<String, Object>> selectRecentNoticeList() {
 		return session.selectList("mapper.P02_dashboard.selectRecentNoticeList");
+	}
+	
+	// 오늘 작업, 품질검사 진행률
+	@Override
+	public Map<String, Object> selectTodayProgressSummary() {
+		return session.selectOne("mapper.P02_dashboard.selectTodayProgressSummary");
 	}
 
 }

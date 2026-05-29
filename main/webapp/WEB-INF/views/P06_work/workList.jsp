@@ -13,11 +13,11 @@
 		</div>
 		
 		<div>
-		<p class="page-route">홈 > 작업 관리</p>
-		<a class="btn btn-white"
-			href="${pageContext.request.contextPath}/work/order/add">
-			작업지시 등록	
-		</a>
+			<p class="page-route">홈 > 작업 관리</p>
+			<a class="btn btn-white"
+				href="${pageContext.request.contextPath}/work/order/add">
+				작업지시 등록	
+			</a>
 		</div>
 	</div>
 	

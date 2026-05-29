@@ -3,6 +3,8 @@ package kr.or.chop.P02_dashboard.service;
 import java.util.List;
 import java.util.Map;
 
+import kr.or.chop.P14_warehouse.dto.WHDTO;
+
 public interface DashboardService {
 
 	// 오늘 생산/완료/검사/불량 수량 조회
@@ -13,6 +15,8 @@ public interface DashboardService {
 
 	// 적재율 높은 창고 TOP5 조회
 	List<Map<String, Object>> selectWarehouseTopList();
+	
+	public WHDTO selectWarehouseUsageSummary();
 
 	// 최근 7일 작업 수량 조회
 	List<Map<String, Object>> selectWeeklyWorkChart();
@@ -28,5 +32,8 @@ public interface DashboardService {
 	
 	// 최근 공지사항 5개 조회
 	List<Map<String, Object>> selectRecentNoticeList();
+	
+	// 오늘 작업, 품질검사 진행률
+	Map<String, Object> selectTodayProgressSummary();
 
 }
