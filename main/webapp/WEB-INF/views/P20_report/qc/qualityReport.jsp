@@ -157,15 +157,12 @@
                 <thead>
                     <tr>
                         <th style="width: 120px;">검사일</th>
-                        <th style="width: 120px;">QC 코드</th>
+                        <th style="width: 120px;">QC번호</th>
                         <th style="width: 150px;">LOT</th>
-                        <th>품목명</th>
-                        <th style="width: 120px;">검사수량</th>
-                        <th style="width: 120px;">합격수량</th>
-                        <th style="width: 120px;">불량수량</th>
+                        <th>품목</th>
+                        <th>검사수량</th>
                         <th style="width: 100px;">불량률</th>
-                        <th style="width: 100px;">위험도</th>
-                        <th style="width: 120px;">검사자</th>
+                        <th style="width: 120px;">위험도</th>
                     </tr>
                 </thead>
 
@@ -175,10 +172,8 @@
                             <td>${qc.qcDate}</td>
                             <td>${qc.qcId}</td>
                             <td>${qc.lotId}</td>
-                            <td class="item-name-cell">${qc.itemName}</td>
+                            <td class="item-name-cell">${qc.itemName}(${qc.itemId})</td>
                             <td>${qc.qcQty}</td>
-                            <td>${qc.qcPassQty}</td>
-                            <td>${qc.defectQty}</td>
                             <td>${qc.defectRate}%</td>
                             <td>
                                 <c:choose>
@@ -196,7 +191,6 @@
                                     </c:otherwise>
                                 </c:choose>
                             </td>
-                            <td>${qc.workerName}</td>
                         </tr>
                     </c:forEach>
 
@@ -326,84 +320,84 @@
 	}
 	
 
-    .table-wrap {
-        width: 100%;
-        max-width: 100%;
-        overflow-x: auto;
-        box-sizing: border-box;
+/*     .table-wrap { */
+/*         width: 100%; */
+/*         max-width: 100%; */
+/*         overflow-x: auto; */
+/*         box-sizing: border-box; */
         
-        padding: 0 15px;
-    }
+/*         padding: 0 15px; */
+/*     } */
 
-    .table {
-        width: 100%;
-        min-width: 0;
-        table-layout: fixed;
-    }
+/*     .table { */
+/*         width: 100%; */
+/*         min-width: 0; */
+/*         table-layout: fixed; */
+/*     } */
 
-    .table th,
-    .table td {
-        white-space: nowrap;
-        vertical-align: middle;
-        text-align: center;
-    }
+/*     .table th, */
+/*     .table td { */
+/*         white-space: nowrap; */
+/*         vertical-align: middle; */
+/*         text-align: center; */
+/*     } */
 
-    .table .item-name-cell {
-        text-align: left;
-        white-space: normal;
-        word-break: keep-all;
-        line-height: 1.4;
-    }
+/*     .table .item-name-cell { */
+/*         text-align: left; */
+/*         white-space: normal; */
+/*         word-break: keep-all; */
+/*         line-height: 1.4; */
+/*     } */
 
-    .table th:nth-child(1),
-    .table td:nth-child(1) {
-        width: 90px;
-    }
+/*     .table th:nth-child(1), */
+/*     .table td:nth-child(1) { */
+/*         width: 90px; */
+/*     } */
 
-    .table th:nth-child(2),
-    .table td:nth-child(2) {
-        width: 90px;
-    }
+/*     .table th:nth-child(2), */
+/*     .table td:nth-child(2) { */
+/*         width: 90px; */
+/*     } */
 
-    .table th:nth-child(3),
-    .table td:nth-child(3) {
-        width: 100px;
-    }
+/*     .table th:nth-child(3), */
+/*     .table td:nth-child(3) { */
+/*         width: 100px; */
+/*     } */
 
-    .table th:nth-child(4),
-    .table td:nth-child(4) {
-        width: 180px;
-    }
+/*     .table th:nth-child(4), */
+/*     .table td:nth-child(4) { */
+/*         width: 180px; */
+/*     } */
 
-    .table th:nth-child(5),
-    .table td:nth-child(5),
-    .table th:nth-child(6),
-    .table td:nth-child(6),
-    .table th:nth-child(7),
-    .table td:nth-child(7) {
-        width: 90px;
-    }
+/*     .table th:nth-child(5), */
+/*     .table td:nth-child(5), */
+/*     .table th:nth-child(6), */
+/*     .table td:nth-child(6), */
+/*     .table th:nth-child(7), */
+/*     .table td:nth-child(7) { */
+/*         width: 90px; */
+/*     } */
 
-    .table th:nth-child(8),
-    .table td:nth-child(8),
-    .table th:nth-child(9),
-    .table td:nth-child(9),
-    .table th:nth-child(10),
-    .table td:nth-child(10) {
-        width: 80px;
-    }
+/*     .table th:nth-child(8), */
+/*     .table td:nth-child(8), */
+/*     .table th:nth-child(9), */
+/*     .table td:nth-child(9), */
+/*     .table th:nth-child(10), */
+/*     .table td:nth-child(10) { */
+/*         width: 80px; */
+/*     } */
 
-    .search-btn-area {
-        display: flex;
-        gap: 8px;
-        align-items: flex-end;
-    }
+/*     .search-btn-area { */
+/*         display: flex; */
+/*         gap: 8px; */
+/*         align-items: flex-end; */
+/*     } */
 
-    @media (max-width: 1200px) {
-        .reportCard {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-        }
-    }
+/*     @media (max-width: 1200px) { */
+/*         .reportCard { */
+/*             grid-template-columns: repeat(3, minmax(0, 1fr)); */
+/*         } */
+/*     } */
 
     @media (max-width: 900px) {
         .reportCard {
