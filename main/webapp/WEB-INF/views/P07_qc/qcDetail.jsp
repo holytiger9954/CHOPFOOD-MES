@@ -548,8 +548,8 @@ window.addEventListener("load", function () {
     });
 
     const colors = [
-    	'#91C784', 
     	'#0F5132', 
+    	'#91C784', 
     	'#DFE1E6',
     	'#FFAB00', 
     	'#0052CC' 
