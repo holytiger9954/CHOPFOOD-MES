@@ -167,7 +167,7 @@ public class QcServiceImpl implements QcService{
 	    dto.setInQty(inQty);
 	    dto.setDisposeQty(realDisposeQty);
 
-	    if (dto.getQcStatus() == 30) {
+	    if (dto.getQcStatus() == 30 && origin.getQcStatus() != 30) {
 	        qcDAO.plusStockByQcResult(dto);
 	        qcDAO.updateLotByQcResult(dto);
 	    }

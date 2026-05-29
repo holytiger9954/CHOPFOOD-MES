@@ -50,6 +50,7 @@
 			NVL(G.GHP_WH_TYPE, 0) AS ghpWhType,
 			NVL(G.GHP_WP_TYPE, 0) AS ghpWpType,
 			WP.WP_TYPE_NAME AS wpTypeName,
+			WH.WH_TYPE_NAME AS whTypeName,
 			G.GHP_MIN_VALUE AS ghpMinValue,
 			G.GHP_MAX_VALUE AS ghpMaxValue,
 			G.GHP_UNIT AS ghpUnit,
@@ -57,6 +58,8 @@
 		FROM GHP G
 		LEFT JOIN WP_TYPE WP
 			ON G.GHP_WP_TYPE = WP.WP_TYPE_NO
+		LEFT JOIN WH_TYPE WH
+			ON G.GHP_WH_TYPE = WH.WH_TYPE_NO
 		<where>
 			G.GHP_USAGE = 'Y'
 		
@@ -95,6 +98,7 @@
 			G.GHP_CYCLE AS ghpCycle,
 			NVL(G.GHP_WH_TYPE, 0) AS ghpWhType,
 			NVL(G.GHP_WP_TYPE, 0) AS ghpWpType,
+			WH.WH_TYPE_NAME AS whTypeName,
 			WP.WP_TYPE_NAME AS wpTypeName,
 			G.GHP_MIN_VALUE AS ghpMinValue,
 			G.GHP_MAX_VALUE AS ghpMaxValue,
@@ -103,8 +107,83 @@
 		FROM GHP G
 		LEFT JOIN WP_TYPE WP
 			ON G.GHP_WP_TYPE = WP.WP_TYPE_NO
+		LEFT JOIN WH_TYPE WH
+			ON G.GHP_WH_TYPE = WH.WH_TYPE_NO
 		WHERE G.GHP_ID = #{ghpId}
 
+	</select>
+	
+	<select id="selectGlogCount" parameterType="string" resultType="int">
+	
+		select count(*)
+		from
+		GHP_LOG GL
+	
+	    LEFT JOIN EMP E
+	        ON GL.GLOG_WORKER = E.EMP_ID
+	
+	    LEFT JOIN WAREHOUSE W
+	        ON GL.GLOG_WHID = W.WH_ID
+	
+	    LEFT JOIN WORKPLACE WP
+	        ON GL.GLOG_WPID = WP.WP_ID
+	
+	    WHERE GL.GLOG_GHP = #{ghpId}
+	      AND GL.GLOG_USAGE = 'Y'
+	
+	</select>
+	
+	<select id="selectGlogList" parameterType="map" resultType="ghpDTO">
+		
+		select *
+		from
+		(
+		select rownum rn,
+		I.*
+		from
+		(
+		SELECT
+	        GL.GLOG_ID AS glogId,
+	        GL.GLOG_GHP AS ghpId,
+	        GL.GLOG_DATE AS glogDate,
+	
+	        GL.GLOG_WORKER AS glogWorkerId,
+	        E.EMP_NAME AS glogWorkerName,
+	
+	        GL.GLOG_VALUE AS glogValue,
+	        GL.GLOG_RESULT AS glogResult,
+	        GL.GLOG_ACTION AS glogAction,
+	        GL.GLOG_MEMO AS glogMemo,
+	
+	        GL.GLOG_WHID AS glogWhId,
+	        W.WH_NAME AS glogWhName,
+	
+	        GL.GLOG_WPID AS glogWpId,
+	        WP.WP_NAME AS glogWpName,
+	
+	        GL.GLOG_USAGE AS glogUsage
+	
+	    FROM GHP_LOG GL
+	
+	    LEFT JOIN EMP E
+	        ON GL.GLOG_WORKER = E.EMP_ID
+	
+	    LEFT JOIN WAREHOUSE W
+	        ON GL.GLOG_WHID = W.WH_ID
+	
+	    LEFT JOIN WORKPLACE WP
+	        ON GL.GLOG_WPID = WP.WP_ID
+	
+	    WHERE GL.GLOG_GHP = #{ghpId}
+	      AND GL.GLOG_USAGE = 'Y'
+	
+	    ORDER BY GL.GLOG_DATE DESC, GL.GLOG_ID DESC
+	    ) I
+		)
+		where rn between #{page.startRow}
+		and
+		#{page.endRow}
+		
 	</select>
 	
 	<select id="selectTargetList" parameterType="map" resultType="map">

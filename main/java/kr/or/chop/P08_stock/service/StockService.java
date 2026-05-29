@@ -10,6 +10,8 @@ public interface StockService {
 
 	List<StockDTO> selectStockList(StockDTO stockDTO, PageInfo pageInfo);
 	
+	int selectStockIoCount(String stockId);
+	
 	int selectStockCount(StockDTO stockDTO);
 
 	int selectStockTotalCount(StockDTO stockDTO);

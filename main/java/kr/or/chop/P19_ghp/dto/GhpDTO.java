@@ -1,5 +1,7 @@
 package kr.or.chop.P19_ghp.dto;
 
+import java.sql.Timestamp;
+
 import lombok.Data;
 
 @Data
@@ -19,6 +21,16 @@ public class GhpDTO {
 	private Integer ghpMaxValue;
 	private String ghpUnit;
 	private String ghpUsage;
+	
+	private String glogId;
+	private Timestamp glogDate;
+	private String glogWorkerId;
+	private String glogWorkerName;
+	private String glogResult;
+	private String glogWhName;
+	private String glogWhId;
+	private String glogWpName;
+	private String glogWpId;
 
     private String targetType;
 

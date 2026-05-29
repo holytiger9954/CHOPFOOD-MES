@@ -33,6 +33,11 @@ public class StockDAOImpl implements StockDAO{
 	}
 	
 	@Override
+	public int selectStockIoCount(String stockId) {
+		return sqlSession.selectOne("mapper.P08_stock.selectStockIoCount", stockId);
+	}
+	
+	@Override
 	public int selectStockCount(StockDTO stockDTO) {
 		return sqlSession.selectOne("mapper.P08_stock.selectStockCount", stockDTO);
 	}

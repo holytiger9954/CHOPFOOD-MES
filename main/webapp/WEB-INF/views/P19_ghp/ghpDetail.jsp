@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <div class="content">
 
@@ -68,7 +69,7 @@
 							<td>
 								<c:choose>
 									<c:when test="${ghp.ghpWhType != 0}">
-										${ghp.whTypeName}(창고)
+										${ghp.whTypeName}
 									</c:when>
 									<c:when test="${ghp.ghpWpType != 0}">
 										${ghp.wpTypeName}(작업장)
@@ -107,11 +108,87 @@
 			</div>
 
 		</div>
+		<div class="content-content-content">
+			
+			<div class="content-content-content-title">
+				점검 이력
+			</div>
+			
+			<div class="table-wrap">
+			
+				<table class="table">
+					
+					<thead>
+						<th>점검이력 코드</th>
+						<th>점검 날짜</th>
+						<th>점검자</th>
+						<th>결과</th>
+						<th>점검대상</th>
+					</thead>
+					<tbody>
+						<c:choose>
+					        <c:when test="${empty glogList}">
+					            <tr>
+					                <td colspan="5" style="text-align:center;">
+					                    등록된 점검 이력이 없습니다.
+					                </td>
+					            </tr>
+					        </c:when>
+					
+					        <c:otherwise>
+					            <c:forEach var="glog" items="${glogList}">
+					            	<c:if test="${ghp.ghpWhType != 0}">
+						                <tr onclick="location.href='${pageContext.request.contextPath}/warehouse/glog/detail?glogId=${glog.glogId}'">
+					            	</c:if>
+					            	<c:if test="${ghp.ghpWpType != 0}">
+					            		<tr onclick="location.href='${pageContext.request.contextPath}/workplace/glog/detail?glogId=${glog.glogId}'">
+					            	</c:if>
+					                    <td class="whwpId">${glog.glogId}</td>
+					                    <td>
+					                    	<fmt:formatDate value="${glog.glogDate}"
+					                    		pattern="YYYY-MM-dd"/>
+					                    </td>
+					                    <td>${glog.glogWorkerName}(${glog.glogWorkerId})</td>
+					                    <td class="
+					                    ${glog.glogResult == 'pass' ? 'status-safe' : 'status-danger'}
+					                    ">
+					                    ${glog.glogResult}
+					                    </td>
+					                    <td>
+					                        <c:choose>
+					                            <c:when test="${not empty glog.glogWhId}">
+					                                ${glog.glogWhName}(${glog.glogWhId})
+					                            </c:when>
+					                            <c:when test="${not empty glog.glogWpId}">
+					                                ${glog.glogWpName}(${glog.glogWpId})
+					                            </c:when>
+					                            <c:otherwise>
+					                                -
+					                            </c:otherwise>
+					                        </c:choose>
+					                    </td>
+					                </tr>
+					            </c:forEach>
+					        </c:otherwise>
+					    </c:choose>
+					</tbody>
+					
+				</table>
+				<jsp:include page="/WEB-INF/views/common/paging.jsp" />
+			</div>
+			
+		</div>
+		
 	</div>
 
 </div>
 
 <style>
+.table tbody tr:hover .whwpId {
+	    color: var(--main-green);
+	    text-decoration: underline;
+	}
+
 .simple-section {
 	border-bottom: 1px solid var(--dark-gray);
 	padding: 18px 12px 28px;

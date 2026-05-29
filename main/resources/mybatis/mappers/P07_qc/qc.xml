@@ -190,12 +190,13 @@
         parameterType="string"
         resultType="kr.or.chop.P07_qc.dto.QcDTO">
 
-	    SELECT
+		   SELECT
 	        Q.QC_ID AS qcId,
 	        Q.QC_LOT AS qcLot,
 	
 	        L.LOT_ITEM AS itemId,
 	        L.LOT_QTY AS lotQty,
+	        L.LOT_CQTY AS lotCqty,
 	        I.ITEM_NAME AS itemName,
 	
 	        Q.QC_TYPE AS qcType,
@@ -224,17 +225,21 @@
 	
 	        Q.QC_PASS_QTY AS qcPassQty,
 	
+	        L.LOT_BWHSEC AS bwhsec,
+	        L.LOT_BWHSEC AS secId,
+	        SUBSTR(L.LOT_BWHSEC, 1, INSTR(L.LOT_BWHSEC, '-') - 1) AS whId,
+	
 	        Q.QC_USAGE AS qcUsage,
 	
 	        NVL(D.DEF_QTY, 0) AS failQty,
-			
-			CASE
-			    WHEN NVL(Q.QC_QTY, 0) = 0 THEN 0
-			    ELSE ROUND(
-			        LEAST(NVL(D.DEF_QTY, 0), Q.QC_QTY)
-			        / Q.QC_QTY * 100
-			    , 1)
-			END AS failRate
+	
+	        CASE
+	            WHEN NVL(Q.QC_QTY, 0) = 0 THEN 0
+	            ELSE ROUND(
+	                LEAST(NVL(D.DEF_QTY, 0), Q.QC_QTY)
+	                / Q.QC_QTY * 100
+	            , 1)
+	        END AS failRate
 	
 	    FROM QC Q
 	
@@ -255,15 +260,15 @@
 	
 	    LEFT JOIN EMP EW
 	        ON Q.QC_WORKER = EW.EMP_ID
-	        
+	
 	    LEFT JOIN (
-		    SELECT
-		        DLOG_QCID,
-		        SUM(NVL(DLOG_QTY, 0)) AS DEF_QTY
-		    FROM DEF_LOG
-		    GROUP BY DLOG_QCID
-		) D
-		    ON Q.QC_ID = D.DLOG_QCID
+	        SELECT
+	            DLOG_QCID,
+	            SUM(NVL(DLOG_QTY, 0)) AS DEF_QTY
+	        FROM DEF_LOG
+	        GROUP BY DLOG_QCID
+	    ) D
+	        ON Q.QC_ID = D.DLOG_QCID
 	
 	    WHERE Q.QC_ID = #{qcId}
 	

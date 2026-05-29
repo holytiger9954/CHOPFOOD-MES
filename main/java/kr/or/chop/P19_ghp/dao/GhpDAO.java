@@ -11,6 +11,10 @@ public interface GhpDAO {
 	List<GhpDTO> selectGhpList(GhpDTO dto, PageInfo pageInfo);
 	
 	int selectGhpCount(GhpDTO dto);
+	
+	List<GhpDTO> selectGlogList(String ghpId, PageInfo pageInfo);
+	
+	int selectGlogCount(String ghpId);
 
 	GhpDTO selectGhpDetail(String ghpId);
 

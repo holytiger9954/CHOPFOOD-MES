@@ -27,7 +27,8 @@
 		<input type="hidden" name="lotQty" id="lotQty" value="${qc.lotQty}">
 		
 		<input type="hidden" id="savedWhId" value="${qc.whId}">
-		<input type="hidden" id="savedSecId" value="${qc.secId}">
+		<input type="hidden" id="savedSecId" value="${qc.bwhsec}">
+		
 
         <div style="display:flex; justify-content:flex-end; gap:12px;">
             <a class="btn btn-white"

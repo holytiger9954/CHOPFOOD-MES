@@ -49,13 +49,13 @@
 	<table class="table">
 		<thead>
 			<tr>
-				<th>기준ID</th>
-				<th>기준명</th>
-				<th>구분</th>
-				<th>대상</th>
-				<th>점검주기</th>
-				<th>기준값</th>
-				<th>단위</th>
+				<th style="width: 95px;">기준ID</th>
+				<th style="width: 280px;">기준명</th>
+				<th style="width: 90px;">구분</th>
+				<th style="width: 220px;">대상</th>
+				<th style="width: 90px;">점검주기</th>
+				<th style="width: 90px;">기준값</th>
+				<th style="width: 60px;">단위</th>
 			</tr>
 		</thead>
 

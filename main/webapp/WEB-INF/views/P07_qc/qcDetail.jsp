@@ -143,6 +143,20 @@
                             	</a>
     						</td>
                         </tr>
+                        <tr>
+                        	<th>입고 수량</th>
+                        	<td>
+                        		<fmt:formatNumber value="${qc.lotQty}"
+                        			pattern="#,###"/>
+                        			EA
+                        	</td>
+                        	<th>LOT 수량</th>
+                        	<td>
+                        		<fmt:formatNumber value="${qc.lotCqty}"
+                        			pattern="#,###"/>
+                        			EA
+                        	</td>
+                        </tr>
 
                         <tr>
 
@@ -272,20 +286,22 @@
             <div class="qc-defect-wrap">
 
                 <div class="qc-donut-box">
-
-                    <div class="qc-donut"
-                        style="background:conic-gradient(var(--danger) 0 ${qc.failRate}%, #f5d1d1 ${qc.failRate}% 100%);">
-
-                        <div class="qc-donut-inner">
-                            <div class="qc-donut-rate">
-                                ${qc.failRate}%
-                            </div>
-                            <div class="qc-donut-label">
-                                불량률
-                            </div>
-                        </div>
-
-                    </div>
+					<div>
+				        <div class="qc-donut" id="defectDonut">
+				
+				            <div class="qc-donut-inner">
+				                <div class="qc-donut-rate">
+				                    ${qc.failQty}EA
+				                </div>
+				                <div class="qc-donut-label">
+				                    전체 불량
+				                </div>
+				            </div>
+				
+				        </div>
+				
+				        <div id="defectLegend" class="qc-donut-legend"></div>
+				    </div>
 
                 </div>
 
@@ -295,10 +311,10 @@
 
                         <thead>
                             <tr>
-                                <th style="width: 100px;">불량 유형</th>
+                                <th style="width: 125px;">불량 유형</th>
                                 <th style="width: 100px;">불량 수량</th>
                                 <th>조치 내용</th>
-                                <th style="width: 60px;">폐기</th>
+                                <th style="width: 70px;">폐기</th>
                             </tr>
                         </thead>
 
@@ -418,6 +434,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
+
+    box-shadow:
+        0 8px 20px rgba(0,0,0,0.08);
 }
 
 .qc-donut-inner {
@@ -435,7 +454,6 @@
 .qc-donut-rate {
     font-size: 28px;
     font-weight: 800;
-    color: var(--danger);
 }
 
 .qc-donut-label {
@@ -452,5 +470,115 @@
 	    color: var(--main-green);
 	    text-decoration: underline;
 	}
+	
+	.qc-donut-box {
+    flex-direction: column;
+}
+
+.qc-donut-legend {
+    margin-top: 24px;
+    width: 230px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.legend-color {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    box-shadow:0 0 8px rgba(0,0,0,0.15);
+    flex-shrink: 0;
+}
+
+.legend-name {
+    font-weight: 700;
+}
+
+.legend-value {
+    margin-left: auto;
+    color: #666;
+}
+
+.legend-empty {
+    text-align: center;
+    color: #777;
+    font-size: 13px;
+}
 
 </style>
+
+<script>
+window.addEventListener("load", function () {
+
+    const defectList = [
+        <c:forEach var="def" items="${defLogList}" varStatus="st">
+            {
+                typeName: "${def.defTypeName}",
+                qty: Number("${def.defQty}")
+            }<c:if test="${!st.last}">,</c:if>
+        </c:forEach>
+    ];
+
+    const donut = document.querySelector("#defectDonut");
+    const legend = document.querySelector("#defectLegend");
+
+    if (!donut || !legend) return;
+
+    const totalFailQty = Number("${qc.failQty}");
+
+    if (totalFailQty <= 0 || defectList.length === 0) {
+        donut.style.background = "#eeeeee";
+        legend.innerHTML = "<div class='legend-empty'>불량 내역 없음</div>";
+        return;
+    }
+
+    const grouped = {};
+
+    defectList.forEach(function (def) {
+        if (!grouped[def.typeName]) {
+            grouped[def.typeName] = 0;
+        }
+        grouped[def.typeName] += def.qty;
+    });
+
+    const colors = [
+    	'#91C784', 
+    	'#0F5132', 
+    	'#DFE1E6',
+    	'#FFAB00', 
+    	'#0052CC' 
+    ];
+
+    let start = 0;
+    let gradient = "";
+    let legendHtml = "";
+
+    Object.keys(grouped).forEach(function (typeName, index) {
+        const qty = grouped[typeName];
+        const percent = totalFailQty === 0 ? 0 : (qty / totalFailQty) * 100;
+        const end = start + percent;
+        const color = colors[index % colors.length];
+
+        gradient += color + " " + start + "% " + end + "%,";
+        start = end;
+
+        legendHtml += 
+        	'<div class="legend-item">' +
+            '<span class="legend-color" style="background-color:' + color + ';"></span>' +
+            '<span class="legend-name">' + typeName + '</span>' +
+            '<span class="legend-value">' +
+                qty + 'EA (' + percent.toFixed(1) + '%)' +
+            '</span>' +
+        '</div>'
+    });
+
+    donut.style.background = "conic-gradient(" + gradient.slice(0, -1) + ")";
+    legend.innerHTML = legendHtml;
+});
+</script>

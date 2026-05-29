@@ -31,6 +31,7 @@ public class QcDTO {
 
 	private String lotId;
 	private int lotQty;
+	private int lotCqty;
 	private String itemId;
 	private String itemName;
 	private String itemQcType;
@@ -46,6 +47,7 @@ public class QcDTO {
 	private String defStandardAction;
 	
 	private String awhsec;
+	private String bwhsec;
 	private String secId;
 	private String whId;
 	private String whName;

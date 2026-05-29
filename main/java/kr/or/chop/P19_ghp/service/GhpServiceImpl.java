@@ -26,6 +26,16 @@ public class GhpServiceImpl implements GhpService {
 	public int selectGhpCount(GhpDTO dto) {
 		return ghpDAO.selectGhpCount(dto);
 	}
+	
+	@Override
+	public List<GhpDTO> selectGlogList(String ghpId, PageInfo pageInfo) {
+		return ghpDAO.selectGlogList(ghpId, pageInfo);
+	}
+	
+	@Override
+	public int selectGlogCount(String ghpId) {
+		return ghpDAO.selectGlogCount(ghpId);
+	}
 
 	@Override
 	public GhpDTO selectGhpDetail(String ghpId) {

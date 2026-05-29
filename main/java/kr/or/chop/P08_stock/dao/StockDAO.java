@@ -11,6 +11,8 @@ public interface StockDAO {
 	List<StockDTO> selectStockList(StockDTO stockDTO, PageInfo pageInfo);
 	
 	int selectStockCount(StockDTO stockDTO);
+	
+	int selectStockIoCount(String stockId);
 
     int selectStockTotalCount(StockDTO stockDTO);
 

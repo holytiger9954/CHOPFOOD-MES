@@ -35,6 +35,21 @@ public class GhpDAOImpl implements GhpDAO {
 	public int selectGhpCount(GhpDTO dto) {
 		return sqlSession.selectOne(namespace + "selectGhpCount", dto);
 	}
+	
+	@Override
+	public List<GhpDTO> selectGlogList(String ghpId, PageInfo pageInfo) {
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		
+		paramMap.put("ghpId", ghpId);
+		paramMap.put("page", pageInfo);
+		
+		return sqlSession.selectList(namespace + "selectGlogList", paramMap);
+	}
+	
+	@Override
+	public int selectGlogCount(String ghpId) {
+		return sqlSession.selectOne(namespace + "selectGlogCount", ghpId);
+	}
 
 	@Override
 	public GhpDTO selectGhpDetail(String ghpId) {

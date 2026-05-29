@@ -184,6 +184,7 @@
 	<select id="selectStockDetail" parameterType="string"
 		resultType="kr.or.chop.P08_stock.dto.StockDTO">
 
+		
 		SELECT
 		S.STOCK_ID AS stockId,
 		S.STOCK_ITEM AS stockItem,
@@ -212,11 +213,39 @@
 		WHERE S.STOCK_ID = #{stockId}
 
 	</select>
+	
+	<select id="selectStockIoCount" parameterType="string"
+		resultType="int">
+	
+		select count(*)
+		from IO
+		WHERE IO_LOT IN (
+
+		SELECT LOT_ID
+		FROM LOT
+		WHERE LOT_ITEM = (
+
+		SELECT STOCK_ITEM
+		FROM STOCK
+		WHERE STOCK_ID = #{stockId}
+
+		)
+
+		)
+		
+	</select>
 
 
 	<select id="selectStockIoList" parameterType="map"
 		resultType="kr.or.chop.P10_io.dto.IoDTO">
 
+		select *
+		from
+		(
+		select rownum rn,
+		I.*
+		from
+		(
 		SELECT
 		IO_ID AS ioId,
 		IO_TYPE AS ioType,
@@ -239,6 +268,11 @@
 
 		)
 		ORDER BY IO_DATE DESC
+		) I
+		)
+		where rn between #{page.startRow}
+		and
+		#{page.endRow}
 
 	</select>
 

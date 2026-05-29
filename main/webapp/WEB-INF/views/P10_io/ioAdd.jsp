@@ -75,6 +75,7 @@
 					<option value="10">원자재</option>
 					<option value="20">반제품</option>
 					<option value="30">완제품</option>
+					<option value="40">기타 자재</option>
 				</select>
 			</div>
 
