@@ -115,7 +115,7 @@
 		            <div class="card-subtitle">전체 평균</div>
 		        </div>
 		
-		        <div class="card danger-card">
+		        <div class="card danger">
 		            <div class="card-title">HIGH 위험 건수</div>
 		            <div class="card-value">
 		            	<fmt:formatNumber value="${summary.highRiskCount}" pattern="#,###"/>
@@ -123,7 +123,7 @@
 		            <div class="card-subtitle">AI 기준</div>
 		        </div>
 		
-		        <div class="card danger-card">
+		        <div class="card info">
 		            <div class="card-title">HIGH 위험 비율</div>
 		            <div class="card-value">${summary.highRiskRate} <span>%</span></div>
 		            <div class="card-subtitle">전체 대비</div>
@@ -194,7 +194,9 @@
                             <td class="qcId">${qc.qcId}</td>
                             <td>${qc.lotId}</td>
                             <td class="item-name-cell">${qc.itemName}(${qc.itemId})</td>
-                            <td>${qc.qcQty}</td>
+                            <td>
+                            	<fmt:formatNumber value="${qc.qcQty}" pattern="#,###"/>
+                            </td>
                             <td>${qc.defectRate}%</td>
                             <td>
                                 <c:choose>

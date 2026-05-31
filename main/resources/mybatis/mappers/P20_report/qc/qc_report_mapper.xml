@@ -263,6 +263,7 @@
 	            WHERE q.qc_qty IS NOT NULL
 	              AND q.qc_pass_qty IS NOT NULL
 	              AND q.qc_qty > 0
+	              AND dl.defect_qty > 0
 	              AND q.qc_usage = 'Y'
 	
 	            <choose>
