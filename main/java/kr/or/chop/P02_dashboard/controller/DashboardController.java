@@ -42,11 +42,13 @@ public class DashboardController {
 		model.addAttribute("eqStatusSummary", dashboardService.selectEqStatusSummary());
 		model.addAttribute("warehouseTopList", dashboardService.selectWarehouseTopList());
 		model.addAttribute("whStatusChart", dashboardService.selectWarehouseUsageSummary());
+		model.addAttribute("wpCount", dashboardService.selectWpCount());
 		model.addAttribute("weeklyWorkChart", dashboardService.selectWeeklyWorkChart());
 		model.addAttribute("weeklyDefectChart", dashboardService.selectWeeklyDefectChart());
 		model.addAttribute("todayWorkList", dashboardService.selectTodayWorkList());
 		model.addAttribute("kpiList", dashboardService.selectKpiList());
 		model.addAttribute("recentNoticeList", dashboardService.selectRecentNoticeList());
+		model.addAttribute("recentSuggList", dashboardService.selectRecentSuggList());
 		
 		model.addAttribute("todaySummary", dashboardService.selectTodaySummary());
 		model.addAttribute("todayProgressSummary", dashboardService.selectTodayProgressSummary());

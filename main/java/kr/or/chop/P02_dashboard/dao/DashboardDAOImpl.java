@@ -38,6 +38,12 @@ public class DashboardDAOImpl implements DashboardDAO {
 	public WHDTO selectWarehouseUsageSummary() {
 		return session.selectOne("mapper.P02_dashboard.selectWarehouseUsageSummary");
 	}
+	
+	// 작업장 수량
+	@Override
+	public int selectWpCount() {
+		return session.selectOne("mapper.P02_dashboard.selectWpCount");
+	}
 
 	// 최근 7일 작업 수량 조회
 	@Override
@@ -67,6 +73,10 @@ public class DashboardDAOImpl implements DashboardDAO {
 	@Override
 	public List<Map<String, Object>> selectRecentNoticeList() {
 		return session.selectList("mapper.P02_dashboard.selectRecentNoticeList");
+	}
+	@Override
+	public List<Map<String, Object>> selectRecentSuggList() {
+		return session.selectList("mapper.P02_dashboard.selectRecentSuggList");
 	}
 	
 	// 오늘 작업, 품질검사 진행률

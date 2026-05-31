@@ -113,9 +113,9 @@
 			<div class="card-wrap card3">
 				<div class="card movePage" title="창고 페이지로 이동"
 						onclick="window.location.href='${pageContext.request.contextPath}/warehouse/list'">
-					<div class="card-title">창고 적재 현황</div>
+					<div class="card-title">창고 적재 현황 (전체 ${whStatusChart.totalWhCnt}개)</div>
 					<div class="chart-total">
-				        전체 창고 ${whStatusChart.totalWhCnt}개
+				        냉동 창고: 개<br>냉장 창고: 개<br>상온창고: 개
 				    </div>
 					<div class="chart-box">
 						<canvas id="whStatusChart" class="chart"></canvas>
@@ -123,16 +123,26 @@
 				</div>
 				<div class="card">
 					<div class="card-title">창고 온도 현황</div>
-					<div class="card-value"></div>
+					<div class="chart-total">
+				        냉동 창고: -18℃ 이하<br>냉장 창고: 0 ~ 10℃<br>상온창고: 15℃ ~ 25℃
+				    </div>
+					<div class="chart-box">
+						<canvas id="whDegreeChart" class="chart"></canvas>
+					</div>
 				</div>
 				<div class="card">
 					<div class="card-title">창고 위생 현황</div>
-					<div class="card-value"></div>
+					<div class="chart-total">
+				        청결: 이물, 오염, 악취 없음<br>습도·결로: 결로, 누수, 물고임, 곰팡이 없음<br>해충: 해충, 배설물, 포획 흔적 없음
+				    </div>
+					<div class="chart-box">
+						<canvas id="whCleanChart" class="chart"></canvas>
+					</div>
 				</div>
 			</div>
 			<div class="card-wrap card3">
 			
-				<div class="card movePage" title="창고 페이지로 이동"
+				<div class="card movePage" title="설비 페이지로 이동"
 						onclick="window.location.href='${pageContext.request.contextPath}/equip/list'">
 					<div class="card-title">설비 가동 현황</div>
 					
@@ -170,13 +180,24 @@
 					
 				</div>
 				
-				<div class="card">
+				<div class="card movePage" title="작업장 페이지로 이동"
+						onclick="window.location.href='${pageContext.request.contextPath}/workplace/list'">
 					<div class="card-title">작업장 온도 현황</div>
-					<div class="card-value"></div>
+					<div class="chart-total">
+				        일반 작업장: 10 ~ 22℃<br>냉각 작업장: 0 ~ 10℃<br>냉동 작업장: -30 ~ -18℃
+				    </div>
+					<div class="chart-box">
+						<canvas id="wpDegreeChart" class="chart"></canvas>
+					</div>
 				</div>
 				<div class="card">
 					<div class="card-title">작업장 위생 현황</div>
-					<div class="card-value"></div>
+					<div class="chart-total">
+				        청결: 이물, 오염, 악취 없음<br>작업자: 위생복, 위생모, 마스크, 장갑 착용<br>설비·도구: 도구 세척·소독, 용도별 구분 보관
+				    </div>
+					<div class="chart-box">
+						<canvas id="wpCleanChart" class="chart"></canvas>
+					</div>
 				</div>
 				
 			</div>
@@ -230,7 +251,13 @@
 			</div>
 			<div class="card-wrap card2 userInfo">
 				<div class="card">
-					<div class="card-title">공지사항</div>
+					<div class="flexSpace">
+						<div class="card-title">공지사항</div>
+						<div class="goToList toDetail"
+								onclick="window.location.href='${pageContext.request.contextPath}/notice/list'">
+								전체보기 >
+						</div>
+					</div>
 					<div class="table-wrap">
 						<table class="table workTable">
 							<tbody>
@@ -242,8 +269,12 @@
 								
 								<c:forEach var="notice" items="${recentNoticeList}">
 									<tr class="noticeTr"
-										onclick="window.location.href='${pageContext.request.contextPath}/notice/detail?${notice.notNo}'">
-										<td class="notTitle">${notice.notTitle}</td>
+										onclick="window.location.href='${pageContext.request.contextPath}/notice/detail?not_no=${notice.notNo}'">
+										<td class="notTitle title">${notice.notTitle}</td>
+										<td style="width: 70px;">${notice.empName}</td>
+										<td style="width: 100px;">
+											<fmt:formatDate value="${notice.notCdate}" pattern="yyyy-MM-dd" />
+										</td>
 									</tr>
 								</c:forEach>
 							</tbody>
@@ -251,8 +282,40 @@
 					</div>
 				</div>
 				<div class="card">
-					<div class="card-title">건의사항</div>
-					<div class="card-value"></div>
+					<div class="flexSpace">
+						<div class="card-title">건의사항</div>
+						<div class="goToList toDetail"
+								onclick="window.location.href='${pageContext.request.contextPath}/sugg/list'">
+								전체보기 >
+						</div>
+					</div>
+					<div class="table-wrap">
+						<table class="table workTable">
+							<tbody>
+								<c:if test="${empty recentSuggList or recentSuggList == null}">
+									<tr>
+										<td>건의사항 없음</td>
+									</tr>
+								</c:if>	
+								
+								<c:forEach var="sugg" items="${recentSuggList}">
+									<tr class="suggTr">
+										<c:if test="${sugg.suggAnswer == 'Y'}">
+											<td style="width: 55px;" class="status status-success">• 완료</td>
+										</c:if>
+										<c:if test="${sugg.suggAnswer != 'Y'}">
+											<td style="width: 55px;" class="status status-info">• 대기</td>
+										</c:if>
+										<td class="title">${sugg.suggTitle}</td>
+										<td style="width: 70px;">${sugg.empName}</td>
+										<td style="width: 100px;">
+											<fmt:formatDate value="${sugg.suggCdate}" pattern="yyyy-MM-dd" />
+										</td>
+									</tr>
+								</c:forEach>
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -356,6 +419,7 @@
 	
 	.workTable tr, .workTable td {
 		height: 32px;
+		border: 0px solid gray;
 	}
 	
 	.workTr:hover .workId {
@@ -369,7 +433,6 @@
 	}
 	
 	.userInfo .card-title {
-		width: 100%;
 		padding-left: 15px;
 		
 		color: black;
@@ -416,7 +479,7 @@
 	}
 	
 	.chart-total {
-	    text-align: right;
+	    text-align: center;
 	    font-size: 13px;
 	    color: var(--dark-gray);
 	}
@@ -481,6 +544,39 @@
 		font-size: 11px;
 		color: #aaa;
 		margin-top: -2px;
+	}
+	
+	.title {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	
+	.noticeTr:hover .notTitle {
+		color: var(--main-green);
+		text-decoration: underline;
+	}
+	
+	.suggTr:hover {
+		cursor: default !important;
+		background-color: white !important;
+	}
+	
+	.goToList {
+		padding-right: 15px;
+		font-size: 12px;
+		color: var(--dark-gray);
+		cursor: pointer;
+	}
+	
+	.flexSpace {
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+	}
+	
+	.status {
+		padding: 0px;
 	}
 
 </style>
@@ -576,7 +672,337 @@
 			}
 		});
 	}
+	
+	/* =========================
+		창고 온도 현황
+	========================= */
+	const whDegreeCtx = document.getElementById('whDegreeChart');
 
+	if (whDegreeCtx) {
+		new Chart(whDegreeCtx, {
+			type: 'bar',
+			data: {
+				labels: ['적정', '주의', '초과'],
+				datasets: [
+					{
+						label: '창고 수',
+						data: [19, 1, 0],
+						backgroundColor: [
+							'#4caf50',
+							'#ffb300',
+							'#e53935'
+						],
+						borderRadius: 3,
+						barThickness: 36
+					}
+				]
+			},
+			options: {
+				responsive: true,
+				maintainAspectRatio: false,
+				plugins: {
+					legend: {
+						display: false
+					},
+					tooltip: {
+						callbacks: {
+							label: function(context) {
+								return context.raw + '개 / ' + whTotalCnt + '개';
+							},
+							afterLabel: function(context) {
+								const label = context.label;
+
+								if (label === '적정') {
+									return '안전온도 90% 이내';
+								}
+
+								if (label === '주의') {
+									return '안전온도 10% 이내';
+								}
+
+								if (label === '초과') {
+									return '안전온도 초과';
+								}
+
+								return '';
+							}
+						}
+					}
+				},
+				scales: {
+					x: {
+						grid: {
+							display: false
+						},
+						ticks: {
+							font: {
+								size: 13
+							}
+						}
+					},
+					y: {
+						beginAtZero: true,
+						ticks: {
+							stepSize: 4,
+							callback: function(value) {
+								return value + '개';
+							}
+						}
+					}
+				}
+			}
+		});
+	}
+
+	
+	/* =========================
+		창고 위생 현황
+	========================= */
+	const whCleanCtx = document.getElementById('whCleanChart');
+
+	if (whCleanCtx) {
+		new Chart(whCleanCtx, {
+			type: 'bar',
+			data: {
+				labels: ['적정', '주의', '위험'],
+				datasets: [
+					{
+						label: '창고 수',
+						data: [18, 2, 0],
+						backgroundColor: [
+							'#4caf50',
+							'#ffb300',
+							'#e53935'
+						],
+						borderRadius: 3,
+						barThickness: 36
+					}
+				]
+			},
+			options: {
+				responsive: true,
+				maintainAspectRatio: false,
+				plugins: {
+					legend: {
+						display: false
+					},
+					tooltip: {
+						callbacks: {
+							label: function(context) {
+								return context.raw + '개 / ' + whTotalCnt + '개';
+							},
+							afterLabel: function(context) {
+								const label = context.label;
+
+								if (label === '적정') {
+									return '모든 항목 정상';
+								}
+
+								if (label === '주의') {
+									return '경미한 미흡 1~2건';
+								}
+
+								if (label === '위험') {
+									return '주요 항목 미흡 1건 이상 또는 경미 3건 이상';
+								}
+
+								return '';
+							}
+						}
+					}
+				},
+				scales: {
+					x: {
+						grid: {
+							display: false
+						},
+						ticks: {
+							font: {
+								size: 13
+							}
+						}
+					},
+					y: {
+						beginAtZero: true,
+						ticks: {
+							stepSize: 4,
+							callback: function(value) {
+								return value + '개';
+							}
+						}
+					}
+				}
+			}
+		});
+	}
+	
+
+	/* =========================
+		작업장 온도 현황
+	========================= */
+	const wpDegreeCtx = document.getElementById('wpDegreeChart');
+
+	if (wpDegreeCtx) {
+		new Chart(wpDegreeCtx, {
+			type: 'bar',
+			data: {
+				labels: ['적정', '주의', '초과'],
+				datasets: [
+					{
+						label: '작업장 수',
+						data: [17, 2, 1],
+						backgroundColor: [
+							'#4caf50',
+							'#ffb300',
+							'#e53935'
+						],
+						borderRadius: 3,
+						barThickness: 36
+					}
+				]
+			},
+			options: {
+				responsive: true,
+				maintainAspectRatio: false,
+				plugins: {
+					legend: {
+						display: false
+					},
+					tooltip: {
+						callbacks: {
+							label: function(context) {
+								return context.raw + '개 / ' + whTotalCnt + '개';
+							},
+							afterLabel: function(context) {
+								const label = context.label;
+
+								if (label === '적정') {
+									return '안전온도 90% 이내';
+								}
+
+								if (label === '주의') {
+									return '안전온도 10% 이내';
+								}
+
+								if (label === '초과') {
+									return '안전온도 초과';
+								}
+
+								return '';
+							}
+						}
+					}
+				},
+				scales: {
+					x: {
+						grid: {
+							display: false
+						},
+						ticks: {
+							font: {
+								size: 13
+							}
+						}
+					},
+					y: {
+						beginAtZero: true,
+						ticks: {
+							stepSize: 4,
+							callback: function(value) {
+								return value + '개';
+							}
+						}
+					}
+				}
+			}
+		});
+	}
+	
+
+	
+	/* =========================
+		창고 위생 현황
+	========================= */
+	const wpCleanCtx = document.getElementById('wpCleanChart');
+
+	if (wpCleanCtx) {
+		new Chart(wpCleanCtx, {
+			type: 'bar',
+			data: {
+				labels: ['적정', '주의', '위험'],
+				datasets: [
+					{
+						label: '작업장 수',
+						data: [18, 0, 2],
+						backgroundColor: [
+							'#4caf50',
+							'#ffb300',
+							'#e53935'
+						],
+						borderRadius: 3,
+						barThickness: 36
+					}
+				]
+			},
+			options: {
+				responsive: true,
+				maintainAspectRatio: false,
+				plugins: {
+					legend: {
+						display: false
+					},
+					tooltip: {
+						callbacks: {
+							label: function(context) {
+								return context.raw + '개 / ' + whTotalCnt + '개';
+							},
+							afterLabel: function(context) {
+								const label = context.label;
+
+								if (label === '적정') {
+									return '모든 항목 정상';
+								}
+
+								if (label === '주의') {
+									return '경미한 미흡 1~2건';
+								}
+
+								if (label === '위험') {
+									return '주요 항목 미흡 1건 이상 또는 경미 3건 이상';
+								}
+
+								return '';
+							}
+						}
+					}
+				},
+				scales: {
+					x: {
+						grid: {
+							display: false
+						},
+						ticks: {
+							font: {
+								size: 13
+							}
+						}
+					},
+					y: {
+						beginAtZero: true,
+						ticks: {
+							stepSize: 4,
+							callback: function(value) {
+								return value + '개';
+							}
+						}
+					}
+				}
+			}
+		});
+	}
+	
+
+	
 
 	/* =========================
 		주간 작업 현황

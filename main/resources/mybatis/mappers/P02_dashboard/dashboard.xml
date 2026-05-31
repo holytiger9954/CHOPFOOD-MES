@@ -241,6 +241,12 @@
 
 </select>
 
+<select id="selectWpCount" resultType="int">
+	select count(*)
+	from workplace
+	where wp_usage = 'Y'
+</select>
+
 
 <!-- 설비 가동 현황 -->
 <select id="selectEqStatusSummary" resultType="hashmap">
@@ -771,6 +777,31 @@
 
 		ORDER BY n.not_cdate DESC,
 		         n.not_no DESC
+	)
+	WHERE ROWNUM <![CDATA[<=]]> 5
+
+</select>
+
+<!-- 최근 건의사항 5개 조회 -->
+<select id="selectRecentSuggList" resultType="hashmap">
+
+	SELECT *
+	FROM (
+		SELECT
+			n.sugg_no AS "suggNo",
+			n.sugg_title AS "suggTitle",
+			n.sugg_cdate AS "suggCdate",
+			n.sugg_answer As "suggAnswer",
+			e.emp_name AS "empName"
+		FROM suggestion n
+
+			LEFT JOIN emp e
+				ON UPPER(n.sugg_writer) = UPPER(e.emp_id)
+
+		WHERE n.sugg_usage = 'Y'
+
+		ORDER BY n.sugg_cdate DESC,
+		         n.sugg_no DESC
 	)
 	WHERE ROWNUM <![CDATA[<=]]> 5
 

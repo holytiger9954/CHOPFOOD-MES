@@ -38,6 +38,12 @@ public class DashboardServiceImpl implements DashboardService {
 	public WHDTO selectWarehouseUsageSummary() {
 		return dao.selectWarehouseUsageSummary();
 	}
+	
+	// 작업장 수
+	@Override
+	public int selectWpCount() {
+		return dao.selectWpCount();
+	}
 
 	// 최근 7일 작업 수량 조회
 	@Override
@@ -67,6 +73,10 @@ public class DashboardServiceImpl implements DashboardService {
 	@Override
 	public List<Map<String, Object>> selectRecentNoticeList() {
 		return dao.selectRecentNoticeList();
+	}
+	@Override
+	public List<Map<String, Object>> selectRecentSuggList() {
+		return dao.selectRecentSuggList();
 	}
 	
 	// 오늘 작업, 품질검사 진행률

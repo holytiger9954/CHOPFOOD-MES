@@ -17,6 +17,7 @@ public interface DashboardService {
 	List<Map<String, Object>> selectWarehouseTopList();
 	
 	public WHDTO selectWarehouseUsageSummary();
+	public int selectWpCount();
 
 	// 최근 7일 작업 수량 조회
 	List<Map<String, Object>> selectWeeklyWorkChart();
@@ -32,6 +33,7 @@ public interface DashboardService {
 	
 	// 최근 공지사항 5개 조회
 	List<Map<String, Object>> selectRecentNoticeList();
+	List<Map<String, Object>> selectRecentSuggList();
 	
 	// 오늘 작업, 품질검사 진행률
 	Map<String, Object> selectTodayProgressSummary();
