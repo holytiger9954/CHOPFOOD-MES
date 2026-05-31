@@ -241,6 +241,15 @@
 
 </select>
 
+<select id="selectWhCount" resultType="hashmap">
+	SELECT
+	    COUNT(CASE WHEN wh_type IN (10, 50, 60) THEN 1 END) AS free,
+	    COUNT(CASE WHEN wh_type IN (20, 40) THEN 1 END) AS ref,
+	    COUNT(CASE WHEN wh_type IN (30, 70) THEN 1 END) AS room
+	FROM warehouse
+	WHERE wh_usage = 'Y'
+</select>
+
 <select id="selectWpCount" resultType="int">
 	select count(*)
 	from workplace
@@ -357,14 +366,41 @@
 
 <!-- KPI 지표 -->
 <select id="selectKpiList" resultType="hashmap">
+
 	WITH today AS (
-		SELECT TRUNC(SYSDATE + (9/24)) AS dt FROM dual
+		SELECT TRUNC(SYSDATE + (9/24)) AS dt
+		FROM dual
 	),
+
+	period_range AS (
+		SELECT
+			'THIS_WEEK' AS period_key,
+			TRUNC((SELECT dt FROM today), 'IW') AS sdt,
+			(SELECT dt FROM today) + 1 AS edt
+		FROM dual
+
+		UNION ALL
+
+		SELECT
+			'THIS_MONTH' AS period_key,
+			TRUNC((SELECT dt FROM today), 'MM') AS sdt,
+			ADD_MONTHS(TRUNC((SELECT dt FROM today), 'MM'), 1) AS edt
+		FROM dual
+
+		UNION ALL
+
+		SELECT
+			'LAST_MONTH' AS period_key,
+			ADD_MONTHS(TRUNC((SELECT dt FROM today), 'MM'), -1) AS sdt,
+			TRUNC((SELECT dt FROM today), 'MM') AS edt
+		FROM dual
+	),
+
 	plan_kpi AS (
 		SELECT
 			'생산계획 달성률' AS kpi_name,
 
-			ROUND(
+			NVL(ROUND(
 				SUM(CASE
 					WHEN p.plan_sdate <![CDATA[>=]]> TRUNC((SELECT dt FROM today), 'IW')
 					 AND p.plan_sdate <![CDATA[<]]> (SELECT dt FROM today) + 1
@@ -380,9 +416,9 @@
 				END), 0)
 				* 100,
 				1
-			) AS this_week,
+			), 0) AS this_week,
 
-			ROUND(
+			NVL(ROUND(
 				SUM(CASE
 					WHEN p.plan_sdate <![CDATA[>=]]> TRUNC((SELECT dt FROM today), 'MM')
 					 AND p.plan_sdate <![CDATA[<]]> ADD_MONTHS(TRUNC((SELECT dt FROM today), 'MM'), 1)
@@ -398,9 +434,9 @@
 				END), 0)
 				* 100,
 				1
-			) AS this_month,
+			), 0) AS this_month,
 
-			ROUND(
+			NVL(ROUND(
 				SUM(CASE
 					WHEN p.plan_sdate <![CDATA[>=]]> ADD_MONTHS(TRUNC((SELECT dt FROM today), 'MM'), -1)
 					 AND p.plan_sdate <![CDATA[<]]> TRUNC((SELECT dt FROM today), 'MM')
@@ -416,14 +452,16 @@
 				END), 0)
 				* 100,
 				1
-			) AS last_month
+			), 0) AS last_month
+
 		FROM plan p
 		WHERE p.plan_usage = 'Y'
 	),
+
 	defect_kpi AS (
 		SELECT
 			'불량률' AS kpi_name,
-	
+
 			NVL(ROUND(
 				SUM(CASE
 					WHEN q.qc_date <![CDATA[>=]]> TRUNC((SELECT dt FROM today), 'IW')
@@ -441,7 +479,7 @@
 				* 100,
 				1
 			), 0) AS this_week,
-	
+
 			NVL(ROUND(
 				SUM(CASE
 					WHEN q.qc_date <![CDATA[>=]]> TRUNC((SELECT dt FROM today), 'MM')
@@ -459,7 +497,7 @@
 				* 100,
 				1
 			), 0) AS this_month,
-	
+
 			NVL(ROUND(
 				SUM(CASE
 					WHEN q.qc_date <![CDATA[>=]]> ADD_MONTHS(TRUNC((SELECT dt FROM today), 'MM'), -1)
@@ -477,8 +515,9 @@
 				* 100,
 				1
 			), 0) AS last_month
-	
+
 		FROM qc q
+
 		LEFT JOIN (
 			SELECT
 				dlog_qcid,
@@ -487,24 +526,142 @@
 			GROUP BY dlog_qcid
 		) dl
 			ON q.qc_id = dl.dlog_qcid
+
 		WHERE q.qc_usage = 'Y'
 		  AND q.qc_qty IS NOT NULL
 		  AND q.qc_qty > 0
 	),
+
+	eq_work_day AS (
+		SELECT
+			prd.period_key,
+			e.eq_id,
+			COUNT(DISTINCT TRUNC(w.work_fdate)) AS work_day_cnt
+		FROM period_range prd
+
+		JOIN work w
+		  ON w.work_fdate IS NOT NULL
+		 AND w.work_fdate <![CDATA[>=]]> prd.sdt
+		 AND w.work_fdate <![CDATA[<]]> prd.edt
+		 AND w.work_usage = 'Y'
+
+		JOIN plan p
+		  ON p.plan_id = w.work_plan
+		 AND p.plan_usage = 'Y'
+
+		JOIN item i
+		  ON i.item_id = p.plan_item
+		 AND i.item_usage = 'Y'
+
+		JOIN routing r
+		  ON r.rout_item = i.item_id
+		 AND r.rout_usage = 'Y'
+
+		JOIN routing_detail rd
+		  ON rd.rout_dtl_rout = r.rout_id
+		 AND rd.rout_dtl_usage = 'Y'
+
+		JOIN process pr
+		  ON pr.proc_id = rd.rout_dtl_proc
+		 AND pr.proc_usage = 'Y'
+
+		JOIN wp_type wt
+		  ON wt.wp_type_no = pr.proc_wp_type
+
+		JOIN workplace wp
+		  ON wp.wp_type = wt.wp_type_no
+		 AND wp.wp_usage = 'Y'
+
+		JOIN equipment e
+		  ON e.eq_wpid = wp.wp_id
+		 AND e.eq_usage = 'Y'
+
+		GROUP BY
+			prd.period_key,
+			e.eq_id
+	),
+
+	eq_run_hour AS (
+		SELECT
+			prd.period_key,
+			l.eq_run_eqid AS eq_id,
+			SUM(
+				(
+					LEAST(
+						NVL(l.eq_run_etime, SYSDATE + (9/24)),
+						prd.edt
+					)
+					-
+					GREATEST(
+						l.eq_run_stime,
+						prd.sdt
+					)
+				) * 24
+			) AS run_hour
+		FROM period_range prd
+
+		JOIN eq_run_log l
+		  ON l.eq_run_stime IS NOT NULL
+		 AND l.eq_run_stime <![CDATA[<]]> prd.edt
+		 AND NVL(l.eq_run_etime, SYSDATE + (9/24)) <![CDATA[>=]]> prd.sdt
+
+		GROUP BY
+			prd.period_key,
+			l.eq_run_eqid
+	),
+
+	eq_rate AS (
+		SELECT
+			wd.period_key,
+			wd.eq_id,
+
+			wd.work_day_cnt * 12 AS total_hour,
+			NVL(rh.run_hour, 0) AS run_hour,
+
+			ROUND(
+				NVL(rh.run_hour, 0)
+				/
+				NULLIF(wd.work_day_cnt * 12, 0)
+				* 100,
+				1
+			) AS run_rate
+
+		FROM eq_work_day wd
+
+		LEFT JOIN eq_run_hour rh
+		  ON rh.period_key = wd.period_key
+		 AND rh.eq_id = wd.eq_id
+
+		WHERE wd.work_day_cnt > 0
+	),
+
 	eq_kpi AS (
 		SELECT
 			'설비 가동률' AS kpi_name,
-			ROUND(SUM(CASE WHEN eq_status = 10 THEN 1 ELSE 0 END) / NULLIF(COUNT(*), 0) * 100, 1) AS this_week,
-			ROUND(SUM(CASE WHEN eq_status = 10 THEN 1 ELSE 0 END) / NULLIF(COUNT(*), 0) * 100, 1) AS this_month,
-			ROUND(SUM(CASE WHEN eq_status = 10 THEN 1 ELSE 0 END) / NULLIF(COUNT(*), 0) * 100, 1) AS last_month
-		FROM equipment
-		WHERE eq_usage = 'Y'
+
+			NVL(ROUND(AVG(CASE
+				WHEN period_key = 'THIS_WEEK'
+				THEN run_rate
+			END), 1), 0) AS this_week,
+
+			NVL(ROUND(AVG(CASE
+				WHEN period_key = 'THIS_MONTH'
+				THEN run_rate
+			END), 1), 0) AS this_month,
+
+			NVL(ROUND(AVG(CASE
+				WHEN period_key = 'LAST_MONTH'
+				THEN run_rate
+			END), 1), 0) AS last_month
+
+		FROM eq_rate
 	),
+
 	work_kpi AS (
 		SELECT
 			'작업 완료율' AS kpi_name,
 
-			ROUND(
+			NVL(ROUND(
 				SUM(CASE
 					WHEN work_date <![CDATA[>=]]> TRUNC((SELECT dt FROM today), 'IW')
 					 AND work_date <![CDATA[<]]> (SELECT dt FROM today) + 1
@@ -519,9 +676,9 @@
 				END), 0)
 				* 100,
 				1
-			) AS this_week,
+			), 0) AS this_week,
 
-			ROUND(
+			NVL(ROUND(
 				SUM(CASE
 					WHEN work_date <![CDATA[>=]]> TRUNC((SELECT dt FROM today), 'MM')
 					 AND work_date <![CDATA[<]]> ADD_MONTHS(TRUNC((SELECT dt FROM today), 'MM'), 1)
@@ -536,9 +693,9 @@
 				END), 0)
 				* 100,
 				1
-			) AS this_month,
+			), 0) AS this_month,
 
-			ROUND(
+			NVL(ROUND(
 				SUM(CASE
 					WHEN work_date <![CDATA[>=]]> ADD_MONTHS(TRUNC((SELECT dt FROM today), 'MM'), -1)
 					 AND work_date <![CDATA[<]]> TRUNC((SELECT dt FROM today), 'MM')
@@ -553,10 +710,12 @@
 				END), 0)
 				* 100,
 				1
-			) AS last_month
+			), 0) AS last_month
+
 		FROM work
 		WHERE work_usage = 'Y'
 	)
+
 	SELECT
 		kpi_name AS "kpiName",
 		NVL(this_week, 0) AS "thisWeek",
@@ -594,7 +753,9 @@
 		NVL(last_month, 0),
 		ROUND(NVL(this_month, 0) - NVL(last_month, 0), 1)
 	FROM work_kpi
+
 </select>
+
 
 <update id="updateWorkStatusAuto">
 	UPDATE work w

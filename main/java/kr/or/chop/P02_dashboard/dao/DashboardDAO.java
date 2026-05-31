@@ -18,6 +18,7 @@ public interface DashboardDAO {
 	
 	// 창고 적재 현황
 	public WHDTO selectWarehouseUsageSummary();
+	public Map<String, Object> selectWhCount();
 	
 	// 작업장 수량
 	public int selectWpCount();

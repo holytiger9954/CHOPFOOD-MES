@@ -38,6 +38,10 @@ public class DashboardDAOImpl implements DashboardDAO {
 	public WHDTO selectWarehouseUsageSummary() {
 		return session.selectOne("mapper.P02_dashboard.selectWarehouseUsageSummary");
 	}
+	@Override
+	public Map<String, Object> selectWhCount() {
+		return session.selectOne("mapper.P02_dashboard.selectWhCount");
+	}
 	
 	// 작업장 수량
 	@Override

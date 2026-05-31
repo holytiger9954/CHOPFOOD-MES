@@ -38,15 +38,19 @@ public class DashboardController {
 			model.addAttribute("workList", null);
 		}
 
-		model.addAttribute("todaySummary", dashboardService.selectTodaySummary());
-		model.addAttribute("eqStatusSummary", dashboardService.selectEqStatusSummary());
+
 		model.addAttribute("warehouseTopList", dashboardService.selectWarehouseTopList());
 		model.addAttribute("whStatusChart", dashboardService.selectWarehouseUsageSummary());
+		model.addAttribute("whCount", dashboardService.selectWhCount());
+
+		model.addAttribute("eqStatusSummary", dashboardService.selectEqStatusSummary());
 		model.addAttribute("wpCount", dashboardService.selectWpCount());
-		model.addAttribute("weeklyWorkChart", dashboardService.selectWeeklyWorkChart());
-		model.addAttribute("weeklyDefectChart", dashboardService.selectWeeklyDefectChart());
-		model.addAttribute("todayWorkList", dashboardService.selectTodayWorkList());
-		model.addAttribute("kpiList", dashboardService.selectKpiList());
+		
+//		model.addAttribute("todaySummary", dashboardService.selectTodaySummary());
+//		model.addAttribute("weeklyWorkChart", dashboardService.selectWeeklyWorkChart());
+//		model.addAttribute("weeklyDefectChart", dashboardService.selectWeeklyDefectChart());
+		
+//		model.addAttribute("todayWorkList", dashboardService.selectTodayWorkList());
 		model.addAttribute("recentNoticeList", dashboardService.selectRecentNoticeList());
 		model.addAttribute("recentSuggList", dashboardService.selectRecentSuggList());
 		
@@ -55,6 +59,8 @@ public class DashboardController {
 
 		model.addAttribute("weeklyWorkChart", dashboardService.selectWeeklyWorkChart());
 		model.addAttribute("weeklyDefectChart", dashboardService.selectWeeklyDefectChart());
+
+		model.addAttribute("kpiList", dashboardService.selectKpiList());
 
 		return "P02_dashboard/dashboard.tiles";
 	}

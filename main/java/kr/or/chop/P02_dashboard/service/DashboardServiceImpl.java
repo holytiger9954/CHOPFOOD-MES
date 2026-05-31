@@ -33,6 +33,11 @@ public class DashboardServiceImpl implements DashboardService {
 		return dao.selectWarehouseTopList();
 	}
 	
+	@Override
+	public Map<String, Object> selectWhCount() {
+		return dao.selectWhCount();
+	}
+	
 	// 창고 적재 상태 요약 조회
 	@Override
 	public WHDTO selectWarehouseUsageSummary() {

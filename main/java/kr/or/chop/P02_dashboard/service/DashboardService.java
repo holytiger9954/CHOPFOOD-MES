@@ -15,6 +15,7 @@ public interface DashboardService {
 
 	// 적재율 높은 창고 TOP5 조회
 	List<Map<String, Object>> selectWarehouseTopList();
+	public Map<String, Object> selectWhCount();
 	
 	public WHDTO selectWarehouseUsageSummary();
 	public int selectWpCount();
