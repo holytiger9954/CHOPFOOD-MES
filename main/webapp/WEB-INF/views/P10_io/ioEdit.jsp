@@ -71,13 +71,13 @@
 				<select name="ioReason" id="ioReason">
 					<c:if test="${io.ioType == 'IN'}">
 						<option value="" disabled>입고 사유 선택</option>
-						<option value="구매" ${io.ioReason == '구매' ? selected : '' }>구매</option>
-						<option value="생산" ${io.ioReason == '생산' ? selected : '' }>생산</option>
+						<option value="구매" ${io.ioReason == '구매' ? 'selected' : '' }>구매</option>
+						<option value="생산" ${io.ioReason == '생산' ? 'selected' : '' }>생산</option>
 					</c:if>
 					<c:if test="${io.ioType == 'OUT'}">
 						<option value="" disabled>출고 사유 선택</option>
-						<option value="판매" ${io.ioReason == '판매' ? selected : '' }>판매</option>
-						<option value="폐기" ${io.ioReason == '폐기' ? selected : '' }>폐기</option>
+						<option value="판매" ${io.ioReason == '판매' ? 'selected' : '' }>판매</option>
+						<option value="폐기" ${io.ioReason == '폐기' ? 'selected' : '' }>폐기</option>
 					</c:if>
 				</select>
 				
@@ -166,7 +166,19 @@
 
 				<label>LOT</label>
 
-				<input type="text" value="${io.ioLot}" readonly>
+				<c:choose>
+					<c:when test="${io.ioType == 'IN'}">
+						<input type="text"
+							value="${io.ioLot} / 입고수량 ${io.ioQty} / 만료 ${io.lotExpText}"
+							readonly>
+					</c:when>
+				
+					<c:otherwise>
+						<input type="text"
+							value="${io.ioLot} / 출고수량 ${io.ioQty} / 만료 ${io.lotExpText}"
+							readonly>
+					</c:otherwise>
+				</c:choose>
 				<input type="hidden" name="ioLot" value="${io.ioLot}">
 			</div>
 
@@ -372,11 +384,6 @@ window.addEventListener("load", function() {
 	const currentWhId = "${io.whId}";
 	const currentWhSec = "${io.whSec}";
 
-// 	const workerModal = document.querySelector("#workerModal");
-// 	const workerSearchBtn = document.querySelector("#workerSearchBtn");
-// 	const workerModalClose = document.querySelector("#workerModalClose");
-// 	const workerSelectBtn = document.querySelector("#workerSelectBtn");
-// 	const ioWorkerInput = document.querySelector("#ioWorker");
 
 	function getIoType() {
 		return document.querySelector("input[name='ioType']").value;
@@ -538,33 +545,6 @@ window.addEventListener("load", function() {
 		loadWhSecList(this.value, "");
 	});
 
-// 	workerSearchBtn.addEventListener("click", function() {
-// 		workerModal.style.display = "flex";
-// 		loadWorkerList("");
-// 	});
-
-// 	workerModalClose.addEventListener("click", function() {
-// 		workerModal.style.display = "none";
-// 	});
-
-// 	workerSelectBtn.addEventListener("click", function() {
-
-// 		const checked =
-// 			document.querySelector("input[name='workerRadio']:checked");
-
-// 		if (!checked) {
-// 			alert("작업자를 선택하세요.");
-// 			return;
-// 		}
-
-// 		const empId = checked.value;
-// 		const empName = checked.getAttribute("data-name");
-
-// 		ioWorkerInput.value =
-// 			empName + " (" + empId + ")";
-
-// 		workerModal.style.display = "none";
-// 	});
 
 	function formatComma(inputTag) {
 
@@ -644,8 +624,6 @@ window.addEventListener("load", function() {
 		qtyInput.value =
 			qtyInput.value.replace(/,/g, "");
 
-		ioWorkerInput.value =
-			ioWorkerInput.value.replace(/^.*\((.*)\)$/, "$1");
 
 	});
 
@@ -656,43 +634,6 @@ function searchRT() {
 	loadWorkerList(keyword);
 }
 
-// function loadWorkerList(keyword) {
 
-// 	fetch(
-// 		"${pageContext.request.contextPath}/io/workerList?keyword="
-// 		+ encodeURIComponent(keyword)
-// 	)
-// 	.then(function(response) {
-// 		return response.json();
-// 	})
-// 	.then(function(result) {
 
-// 		let html = "";
-
-// 		for (let i = 0; i < result.length; i++) {
-
-// 			html += "<tr>";
-// 			html += "<td>" + result[i].empId + "</td>";
-// 			html += "<td>" + result[i].empName + "</td>";
-
-// 			html += "<td>";
-// 			html += "<input type='radio' ";
-// 			html += "name='workerRadio' ";
-// 			html += "value='" + result[i].empId + "' ";
-// 			html += "data-name='" + result[i].empName + "'>";
-// 			html += "</td>";
-
-// 			html += "</tr>";
-// 		}
-
-// 		if (result.length == 0) {
-// 			html =
-// 				'<tr>' +
-// 					'<td colspan="3">검색 결과가 없습니다.</td>' +
-// 				'</tr>';
-// 		}
-
-// 		document.querySelector("#workerTbody").innerHTML = html;
-// 	});
-}
 </script>

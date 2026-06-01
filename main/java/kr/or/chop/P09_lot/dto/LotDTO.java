@@ -26,6 +26,7 @@ public class LotDTO {
 	private String lotAwhsec;
 	private String itemType;
 	private int lotCqty;
+	private String lotExpText;
 	
 	private List<String> itemTypeList;
 	private String expStatus;

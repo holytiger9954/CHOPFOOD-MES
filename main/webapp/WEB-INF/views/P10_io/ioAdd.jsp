@@ -71,13 +71,14 @@
 			<div class="search-item" style="display:flex; flex-direction:column; flex:1;">
 				<label>품목유형 <span class="red">*</span></label>
 
-				<select id="itemType" name="itemType">
+				<select id="itemType">
 					<option value="" disabled selected>품목유형 선택</option>
 					<option value="10">원자재</option>
 					<option value="20">반제품</option>
 					<option value="30">완제품</option>
 					<option value="40">기타 자재</option>
 				</select>
+				<input type="hidden" id="itemTypeHidden" name="itemType">
 			</div>
 
 			<div class="search-item" style="display:flex; flex-direction:column; flex:1;">
@@ -245,16 +246,19 @@ window.addEventListener("load", function() {
 
 		lotTag.addEventListener("change", function() {
 			const selectedOption = this.options[this.selectedIndex];
-			const lotQty = selectedOption.getAttribute("data-lot-fqty");
+		    const lotQty = selectedOption.getAttribute("data-lot-cqty");
 
-			if (lotQty !== null && lotQty !== "") {
-				qtyInput.value = formatNumber(lotQty);
-			}
+		    if (lotQty !== null && lotQty !== "") {
+		        qtyInput.value = formatNumber(lotQty);
+		    }
 		});
 	}
 
 	function applyIoTypeMode() {
 		qtyInput.value = "";
+
+		itemSelect.innerHTML =
+			'<option value="" disabled selected>품목 선택</option>';
 
 		if (getIoType() === "IN") {
 			changeLotToInput();
@@ -263,11 +267,14 @@ window.addEventListener("load", function() {
 			setQtyRequired(true);
 
 			warehouseArea.style.display = "flex";
-			
+
+			itemTypeSelect.disabled = false;
+			itemTypeSelect.value = "";
+
 			ioReason.innerHTML = `
-				<option value='' dsiabled>입고 사유 선택</option>
-				<option value='구매'>구매</option>
-				<option value='생산'>생산</option>
+				<option value="" disabled selected>입고 사유 선택</option>
+				<option value="구매">구매</option>
+				<option value="생산">생산</option>
 			`;
 		} else {
 			changeLotToSelect();
@@ -277,19 +284,60 @@ window.addEventListener("load", function() {
 
 			warehouseArea.style.display = "none";
 
-			if (itemSelect.value !== "") {
-				loadLotList(itemSelect.value);
-			}
-			
+			itemTypeSelect.disabled = false;
+			itemTypeSelect.value = "";
+
 			ioReason.innerHTML = `
-				<option value='' dsiabled>출고 사유 선택</option>
-				<option value='판매'>판매</option>
-				<option value='폐기'>폐기</option>
+				<option value="" disabled selected>출고 사유 선택</option>
+				<option value="판매">판매</option>
+				<option value="폐기">폐기</option>
 			`;
-			
-			
 		}
 	}
+	
+	ioReason.addEventListener("change", function() {
+		if (getIoType() === "OUT" && this.value === "판매") {
+			itemTypeSelect.value = "30";
+			itemTypeSelect.disabled = true;
+
+			itemSelect.innerHTML =
+				'<option value="" disabled selected>품목 선택</option>';
+
+			qtyInput.value = "";
+			changeLotToSelect();
+
+			fetch("${pageContext.request.contextPath}/io/itemList?itemType=30")
+				.then(function(response) {
+					return response.json();
+				})
+				.then(function(result) {
+					let html = '<option value="" disabled selected>품목 선택</option>';
+
+					for (let i = 0; i < result.length; i++) {
+						html += '<option value="' + result[i].itemId + '">';
+						html += result[i].itemName + ' (' + result[i].itemId + ')';
+						html += '</option>';
+					}
+
+					itemSelect.innerHTML = html;
+				})
+				.catch(function() {
+					alert("품목 목록 조회 실패");
+				});
+		} else {
+			itemTypeSelect.disabled = false;
+			itemTypeSelect.value = "";
+
+			itemSelect.innerHTML =
+				'<option value="" disabled selected>품목 선택</option>';
+
+			qtyInput.value = "";
+
+			if (getIoType() === "OUT") {
+				changeLotToSelect();
+			}
+		}
+	});
 
 	function loadLotList(itemId) {
 		changeLotToSelect();
@@ -308,12 +356,22 @@ window.addEventListener("load", function() {
 
 				for (let i = 0; i < result.length; i++) {
 					html += '<option value="' + result[i].lotId + '" ';
-					html += 'data-lot-fqty="' + result[i].lotFqty + '">';
-					html += result[i].lotId + ' / 잔량 ' + result[i].lotFqty;
+					html += 'data-lot-cqty="' + result[i].lotCqty + '">';
+					html += result[i].lotId + ' / 잔량 ' + result[i].lotCqty;
+					html += ' / 만료 ' + result[i].lotExpText;
 					html += '</option>';
 				}
 
 				lotTag.innerHTML = html;
+				
+				if (result.length > 0) {
+			        lotTag.selectedIndex = 1;
+
+			        const selectedOption = lotTag.options[lotTag.selectedIndex];
+			        const lotQty = selectedOption.getAttribute("data-lot-cqty");
+
+			        qtyInput.value = formatNumber(lotQty);
+			    }
 			})
 			.catch(function() {
 				alert("LOT 목록 조회 실패");
@@ -505,6 +563,8 @@ window.addEventListener("load", function() {
 			e.preventDefault();
 			return;
 		}
+
+		document.querySelector("#itemTypeHidden").value = itemTypeSelect.value;
 
 		const requiredLabels = document.querySelectorAll("label .red");
 

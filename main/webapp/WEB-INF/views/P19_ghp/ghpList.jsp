@@ -36,11 +36,11 @@
 		</div>
 
 		<div class="search-item keyword">
-			<label>검색어</label>
+			<label>기준ID / 기준명 / 대상 검색</label>
 			<input type="text"
 				name="searchKeyword"
 				value="${search.searchKeyword}"
-				placeholder="기준ID / 기준명 / 대상">
+				placeholder="내용을 입력하세요.">
 		</div>
 
 		<button type="submit" class="btn btn-main">검색</button>

@@ -26,6 +26,8 @@ public class IoDTO {
     private String workerName;
     private String whSec;
     private String whId;
+    private int lotCqty;
+    private String lotExpText;
 
     private String startDate;
     private String endDate;
