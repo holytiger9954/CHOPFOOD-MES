@@ -98,7 +98,7 @@
 							style="display: flex; align-items: center; gap: 8px; margin: 0;">
 
 							<input type="hidden" name="eqId" value="${eqp.eqId}"> <select
-								name="eqStatus" class="search-item select" id="eqStatusSelect">
+								name="eqStatus" class="search-item" id="eqStatusSelect">
 								<option value="20" ${eqp.eqStatus == 20 ? 'selected' : ''}>정지</option>
 								<option value="30">점검중</option>
 								<option value="40">고장</option>
@@ -142,7 +142,7 @@
 					<tr>
 						<th>작업장</th>
 						<td>
-							<a class="detail-link" href="${pageContext.request.contextPath}/workplace/detail?wpId=${eqp.eqWpid}">
+							<a class="toDetail" href="${pageContext.request.contextPath}/workplace/detail?wpId=${eqp.eqWpid}">
 								${eqp.wpName}
 							</a>
 						</td>
@@ -157,7 +157,7 @@
 
 						<th>관리업체</th>
 						<td>
-							<a class="detail-link" href="${pageContext.request.contextPath}/vendor/detail?vendorId=${eqp.eqVendor}">
+							<a class="toDetail" href="${pageContext.request.contextPath}/vendor/detail?vendorId=${eqp.eqVendor}">
 								${eqp.eqVendorName}(${eqp.eqVendor})
 							</a>
 						</td>
@@ -211,7 +211,7 @@
 						    data-content="${log.elogContent}">
 						    
 						    <td>
-						        <a class="detail-link"
+						        <a class="toDetail"
 						           href="javascript:void(0);">
 						            ${log.elogId}
 						        </a>
@@ -328,7 +328,7 @@
 						    data-reason="${run.eqStopReason}"
 							>
 								<td>
-									<a class="detail-link"
+									<a class="toDetail"
 									   href="javascript:void(0);">
 										${run.eqRunNo}   
 									</a>
@@ -445,7 +445,7 @@
 
 				<div class="search-item">
 					<label>가동 시작일시</label> <input type="text"
-						value="<fmt:formatDate value='${eqp.eqSdate}' pattern='yyyy-MM-dd HH:mm'/>"
+						value="<fmt:formatDate value='${currentRun.eqRunStime}'  pattern='yyyy-MM-dd HH:mm'/>"
 						readonly>
 				</div>
 
@@ -685,11 +685,6 @@
 </div>
 
 <style>
-
-.detail-link:hover {
-    text-decoration: underline;
-    color: var(--main-green);
-}
 
 .search-item input {
     min-width: 235px;

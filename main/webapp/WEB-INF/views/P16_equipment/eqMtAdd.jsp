@@ -58,10 +58,12 @@
 					<div class="grid-wrap">
 						<div class="search-item">
 							<label>점검 사유 <span class="red">*</span></label>
-					    <input type="text"
-					           name="elogReason"
-					           required
-					           placeholder="점검 사유를 입력하세요">
+					    <select name="elogReason" required>
+						 	<option value="">선택</option>
+						    <option value="정기점검">정기점검</option>
+						    <option value="소모품 교체">소모품 교체</option>
+						    <option value="긴급점검">긴급점검</option>
+					    </select>
 						</div>
 
 						<div class="search-item">
@@ -86,10 +88,10 @@
 					</div>
 
 					<div class="search-item">
-						<label>상세 내용</label>
+						<label>상세 내용 <span class="red">*</span></label>
 						<textarea name="elogContent"
 							      style="height:180px;"
-								  placeholder="설비 점검 상세 내용을 입력하세요."></textarea>
+								  placeholder="설비 점검 상세 내용을 입력하세요." required></textarea>
 					</div>
 
 				</div>
@@ -101,3 +103,60 @@
 	</form>
 
 </div>
+
+<style>
+.search-item select {
+    min-width: 262px;
+}
+</style>
+
+<script>
+
+document.querySelector("form")
+.addEventListener("submit", function(e) {
+
+const sdate =
+    document.querySelector("[name='elogSdate']").value;
+
+const edate =
+    document.querySelector("[name='elogEdate']").value;
+
+const now = new Date();
+
+const yyyy = now.getFullYear();
+const mm = String(now.getMonth() + 1).padStart(2, "0");
+const dd = String(now.getDate()).padStart(2, "0");
+const hh = String(now.getHours()).padStart(2, "0");
+const mi = String(now.getMinutes()).padStart(2, "0");
+
+const maxDate =
+    yyyy + "-" + mm + "-" + dd + "T" + hh + ":" + mi;
+
+// 시작일 미래 방지
+if (sdate > maxDate) {
+
+    alert("점검 시작일은 현재 시간보다 미래일 수 없습니다.");
+
+    e.preventDefault();
+    return;
+}
+
+// 종료일 미래 방지
+if (edate != "" && edate > maxDate) {
+
+    alert("점검 종료일은 현재 시간보다 미래일 수 없습니다.");
+
+    e.preventDefault();
+    return;
+}
+
+// 종료일 < 시작일 방지
+if (edate != "" && edate < sdate) {
+
+    alert("점검 종료일은 점검 시작일보다 빠를 수 없습니다.");
+
+    e.preventDefault();
+    return;
+}
+});
+</script>

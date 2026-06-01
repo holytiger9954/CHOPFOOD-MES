@@ -491,6 +491,22 @@
 		ORDER BY WP_ID
 
 	</select>
+<!--  설비 정지시에 가동시작시간 수정 -->
+	<select id="selectCurrentRun"
+        parameterType="string"
+        resultType="eqDTO">
+
+    SELECT
+        EQ_RUN_NO AS eqRunNo,
+        EQ_RUN_EQID AS eqRunEqid,
+        EQ_RUN_STIME + (9/24) AS eqRunStime,
+        EQ_RUN_ETIME + (9/24) AS eqRunEtime,
+        EQ_STOP_REASON AS eqStopReason
+    FROM EQ_RUN_LOG
+    WHERE EQ_RUN_EQID = #{eqId}
+      AND EQ_RUN_ETIME IS NULL
+
+</select>
 
 	<!-- 설비 등록 -->
 	<!-- 상태 기본값 = 정지(20) -->
@@ -533,7 +549,7 @@
 		ELOG_WORKER,
 		ELOG_USAGE
 		) VALUES (
-		'ELOG' || ELOG_SEQ.NEXTVAL,
+		'EL' || LPAD(ELOG_SEQ.NEXTVAL, 6, '0'),
 		#{elogEqid},
 		#{elogSdate},
 		#{elogEdate},

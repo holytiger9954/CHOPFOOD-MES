@@ -125,5 +125,10 @@ public class EqServiceImpl implements EqService {
 	public void updateEqRunReason(EqDTO eqDTO) {
 	    eqDAO.updateEqRunReason(eqDTO);
 	}
+	
+	@Override
+	public EqDTO selectCurrentRun(String eqId) {
+	    return eqDAO.selectCurrentRun(eqId);
+	}
 
 }

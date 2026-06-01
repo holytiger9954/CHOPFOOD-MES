@@ -67,6 +67,9 @@ public class EqDetailController {
 
 	    List<EqDTO> eqRunList =
 	            eqService.selectEqRunList(eqId, runPage);
+	    
+	    EqDTO currentRun =
+	            eqService.selectCurrentRun(eqId);
 
 	    model.addAttribute("eqp", eq);
 	    model.addAttribute("eqLogList", eqLogList);
@@ -74,6 +77,8 @@ public class EqDetailController {
 
 	    model.addAttribute("mtPage", mtPage);
 	    model.addAttribute("runPage", runPage);
+	    model.addAttribute("currentRun", currentRun);
+	    
 
 	    model.addAttribute("isAdmin", isAdmin);
 

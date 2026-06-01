@@ -53,6 +53,11 @@ public interface EqDAO {
 	
 	void updateEqRunReason(EqDTO eqDTO);
 	
+	EqDTO selectCurrentRun(String eqId);
+	
+	
+	
+	
 	
 
 }

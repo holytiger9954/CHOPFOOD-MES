@@ -52,5 +52,7 @@ public interface EqService {
 	void deleteEqLog(String elogId);
 	
 	void updateEqRunReason(EqDTO eqDto);
+	
+	EqDTO selectCurrentRun(String eqId);
 }
 

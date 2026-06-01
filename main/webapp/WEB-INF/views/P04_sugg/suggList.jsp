@@ -126,7 +126,7 @@
 								${dto.sugg_no}
 							</td>
 
-							<td class="suggTitle">
+							<td class="toDetail">
 							
 							    <c:choose>
 							

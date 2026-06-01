@@ -101,7 +101,7 @@
 
                             <td>${dto.not_no}</td>
 
-                            <td class="noticeTitle">
+                            <td class="toDetail">
                                 ${dto.not_title}
                             </td>
 

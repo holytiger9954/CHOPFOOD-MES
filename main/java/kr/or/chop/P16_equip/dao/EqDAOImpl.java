@@ -157,4 +157,9 @@ public class EqDAOImpl implements EqDAO {
 		sqlSession.update("mapper.P16_equipment.updateEqRunReason", eqDTO);
 	}
 
+	@Override
+	public EqDTO selectCurrentRun(String eqId) {
+		return sqlSession.selectOne("mapper.P16_equipment.selectCurrentRun", eqId);
+	}
+
 }
