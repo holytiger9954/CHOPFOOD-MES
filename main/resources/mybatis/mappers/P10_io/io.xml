@@ -137,7 +137,7 @@
 		IO.IO_QTY AS ioQty,
 		IO.IO_DATE AS ioDate,
 		
-		L.LOT_CQTY AS lotCqty,
+		L.LOT_FQTY AS lotFqty,
 		TO_CHAR(L.LOT_EXP, 'YYYY-MM-DD') AS lotExpText,
 
 		IO.IO_WORKER AS ioWorker,
@@ -242,12 +242,12 @@
 		    SELECT
 		        LOT_ID AS lotId,
 		        LOT_ITEM AS lotItem,
-		        LOT_CQTY AS lotCqty,
+		        LOT_FQTY AS lotFqty,
 		        TO_CHAR(LOT_EXP, 'YYYY-MM-DD') AS lotExpText,
 		        LOT_STATUS AS lotStatus
 		    FROM LOT
 		    WHERE LOT_ITEM = #{itemId}
-		    AND LOT_CQTY > 0
+		    AND LOT_FQTY > 0
 		    AND LOT_STATUS IN (10, 20)
 		    ORDER BY LOT_EXP ASC, LOT_ID ASC
 		)
@@ -477,15 +477,15 @@
 
 		UPDATE LOT
 		SET
-		LOT_CQTY = LOT_CQTY - #{ioQty},
+		LOT_FQTY = LOT_FQTY - #{ioQty},
 		LOT_STATUS =
 		CASE
-		WHEN LOT_CQTY - #{ioQty} = 0 THEN 30
-		WHEN LOT_CQTY - #{ioQty} > 0 THEN 20
+		WHEN LOT_FQTY - #{ioQty} = 0 THEN 30
+		WHEN LOT_FQTY - #{ioQty} > 0 THEN 20
 		ELSE LOT_STATUS
 		END
 		WHERE LOT_ID = #{ioLot}
-		AND LOT_CQTY >= #{ioQty}
+		AND LOT_FQTY >= #{ioQty}
 
 	</update>
 

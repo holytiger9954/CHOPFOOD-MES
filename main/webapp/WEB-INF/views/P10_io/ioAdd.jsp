@@ -246,7 +246,7 @@ window.addEventListener("load", function() {
 
 		lotTag.addEventListener("change", function() {
 			const selectedOption = this.options[this.selectedIndex];
-		    const lotQty = selectedOption.getAttribute("data-lot-cqty");
+		    const lotQty = selectedOption.getAttribute("data-lot-fqty");
 
 		    if (lotQty !== null && lotQty !== "") {
 		        qtyInput.value = formatNumber(lotQty);
@@ -356,8 +356,8 @@ window.addEventListener("load", function() {
 
 				for (let i = 0; i < result.length; i++) {
 					html += '<option value="' + result[i].lotId + '" ';
-					html += 'data-lot-cqty="' + result[i].lotCqty + '">';
-					html += result[i].lotId + ' / 잔량 ' + result[i].lotCqty;
+					html += 'data-lot-fqty="' + result[i].lotFqty + '">';
+					html += result[i].lotId + ' / 잔량 ' + result[i].lotFqty;
 					html += ' / 만료 ' + result[i].lotExpText;
 					html += '</option>';
 				}
@@ -368,7 +368,7 @@ window.addEventListener("load", function() {
 			        lotTag.selectedIndex = 1;
 
 			        const selectedOption = lotTag.options[lotTag.selectedIndex];
-			        const lotQty = selectedOption.getAttribute("data-lot-cqty");
+			        const lotQty = selectedOption.getAttribute("data-lot-fqty");
 
 			        qtyInput.value = formatNumber(lotQty);
 			    }
