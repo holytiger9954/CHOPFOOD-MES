@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.P20_report.io.io_report_mapper">
+
+    <sql id="ioRiskCase">
+        CASE
+            WHEN io.io_reason = '폐기' THEN 'HIGH'
+            WHEN TRUNC(l.lot_exp) - TRUNC(io.io_date) <![CDATA[<=]]> 0 THEN 'HIGH'
+            WHEN TRUNC(l.lot_exp) - TRUNC(io.io_date) <![CDATA[<=]]> 15 THEN 'WARNING'
+            WHEN (s.stock_reserve_qty / NULLIF(s.stock_prev_qty, 0)) * 100 <![CDATA[>=]]> 30 THEN 'WARNING'
+            ELSE 'LOW'
+        END
+    </sql>
+
+    <sql id="ioBaseFrom">
+        FROM io io
+        JOIN lot l
+            ON io.io_lot = l.lot_id
+        JOIN item i
+            ON l.lot_item = i.item_id
+        LEFT JOIN stock s
+            ON s.stock_item = i.item_id
+    </sql>
+
+    <sql id="ioBaseWhere">
+        WHERE io.io_usage = 'Y'
+
+        <choose>
+            <when test="startDate != null and startDate != ''">
+                AND io.io_date <![CDATA[>=]]> TO_DATE(#{startDate}, 'YYYY-MM-DD')
+            </when>
+            <otherwise>
+                AND io.io_date <![CDATA[>=]]> ADD_MONTHS(TRUNC(SYSDATE + (9/24)), -6)
+            </otherwise>
+        </choose>
+
+        <if test="endDate != null and endDate != ''">
+            AND io.io_date <![CDATA[<]]> TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+        </if>
+
+        <if test="riskLevel != null and riskLevel != ''">
+            AND (
+                <include refid="ioRiskCase"/>
+            ) = #{riskLevel}
+        </if>
+
+        <if test="ioType != null and ioType != ''">
+            AND io.io_type = #{ioType}
+        </if>
+
+        <if test="ioReason != null and ioReason != ''">
+            AND io.io_reason = #{ioReason}
+        </if>
+
+        <if test="itemKeyword != null and itemKeyword != ''">
+            AND (
+                UPPER(io.io_id) LIKE UPPER('%' || #{itemKeyword} || '%')
+                OR UPPER(l.lot_id) LIKE UPPER('%' || #{itemKeyword} || '%')
+                OR UPPER(i.item_id) LIKE UPPER('%' || #{itemKeyword} || '%')
+                OR UPPER(i.item_name) LIKE UPPER('%' || #{itemKeyword} || '%')
+            )
+        </if>
+    </sql>
+
+    <select id="selectIoSummary"
+            parameterType="kr.or.chop.P20_report.io.dto.IoReportSearchDTO"
+            resultType="kr.or.chop.P20_report.io.dto.IoReportSummaryDTO">
+
+        SELECT
+            NVL(SUM(io_qty), 0) AS totalIoQty,
+            NVL(SUM(lot_qty), 0) AS totalLotQty,
+            NVL(SUM(lot_fqty), 0) AS totalLotFqty,
+
+            NVL(SUM(
+                CASE
+                    WHEN risk_level = 'LOW' THEN 1
+                    ELSE 0
+                END
+            ), 0) AS lowCount,
+
+            NVL(SUM(
+                CASE
+                    WHEN risk_level = 'WARNING' THEN 1
+                    ELSE 0
+                END
+            ), 0) AS warningCount,
+
+            NVL(SUM(
+                CASE
+                    WHEN risk_level = 'HIGH' THEN 1
+                    ELSE 0
+                END
+            ), 0) AS highCount,
+
+            NVL(ROUND(
+                SUM(CASE WHEN risk_level = 'WARNING' THEN 1 ELSE 0 END)
+                / NULLIF(COUNT(*), 0) * 100,
+                2
+            ), 0) AS warningRate,
+
+            NVL(ROUND(
+                SUM(CASE WHEN risk_level = 'HIGH' THEN 1 ELSE 0 END)
+                / NULLIF(COUNT(*), 0) * 100,
+                2
+            ), 0) AS highRate
+
+        FROM (
+            SELECT
+                NVL(io.io_qty, 0) AS io_qty,
+                NVL(l.lot_qty, 0) AS lot_qty,
+                NVL(l.lot_fqty, 0) AS lot_fqty,
+                <include refid="ioRiskCase"/> AS risk_level
+            <include refid="ioBaseFrom"/>
+            <include refid="ioBaseWhere"/>
+        )
+
+    </select>
+
+    <select id="selectIoReportCount"
+            parameterType="kr.or.chop.P20_report.io.dto.IoReportSearchDTO"
+            resultType="int">
+
+        SELECT COUNT(*)
+        <include refid="ioBaseFrom"/>
+        <include refid="ioBaseWhere"/>
+
+    </select>
+
+    <select id="selectIoReportList"
+            parameterType="map"
+            resultType="kr.or.chop.P20_report.io.dto.IoReportListDTO">
+
+        SELECT *
+        FROM (
+            SELECT
+                ROWNUM AS rnum,
+                base_data.*
+            FROM (
+                SELECT
+                    TO_CHAR(io.io_date, 'YYYY-MM-DD') AS "ioDate",
+                    io.io_type AS "ioType",
+                    io.io_reason AS "ioReason",
+
+                    l.lot_id AS "lotId",
+                    i.item_id AS "itemId",
+                    i.item_name AS "itemName",
+
+                    NVL(io.io_qty, 0) AS "ioQty",
+                    NVL(l.lot_qty, 0) AS "lotQty",
+                    NVL(l.lot_fqty, 0) AS "lotFqty",
+
+                    NVL(s.stock_prev_qty, 0) AS "stockPrevQty",
+                    NVL(s.stock_avail_qty, 0) AS "stockAvailQty",
+                    NVL(s.stock_reserve_qty, 0) AS "stockReserveQty",
+
+                    NVL(ROUND(
+                        (s.stock_reserve_qty / NULLIF(s.stock_prev_qty, 0)) * 100,
+                        2
+                    ), 0) AS "reserveRate",
+
+                    <include refid="ioRiskCase"/> AS "riskLevel"
+
+                FROM io io
+                JOIN lot l
+                    ON io.io_lot = l.lot_id
+                JOIN item i
+                    ON l.lot_item = i.item_id
+                LEFT JOIN stock s
+                    ON s.stock_item = i.item_id
+
+                WHERE io.io_usage = 'Y'
+
+                <choose>
+                    <when test="search.startDate != null and search.startDate != ''">
+                        AND io.io_date <![CDATA[>=]]> TO_DATE(#{search.startDate}, 'YYYY-MM-DD')
+                    </when>
+                    <otherwise>
+                        AND io.io_date <![CDATA[>=]]> ADD_MONTHS(TRUNC(SYSDATE + (9/24)), -6)
+                    </otherwise>
+                </choose>
+
+                <if test="search.endDate != null and search.endDate != ''">
+                    AND io.io_date <![CDATA[<]]> TO_DATE(#{search.endDate}, 'YYYY-MM-DD') + 1
+                </if>
+
+                <if test="search.riskLevel != null and search.riskLevel != ''">
+                    AND (
+                        <include refid="ioRiskCase"/>
+                    ) = #{search.riskLevel}
+                </if>
+
+                <if test="search.ioType != null and search.ioType != ''">
+                    AND io.io_type = #{search.ioType}
+                </if>
+
+                <if test="search.ioReason != null and search.ioReason != ''">
+                    AND io.io_reason = #{search.ioReason}
+                </if>
+
+                <if test="search.itemKeyword != null and search.itemKeyword != ''">
+                    AND (
+                        UPPER(io.io_id) LIKE UPPER('%' || #{search.itemKeyword} || '%')
+                        OR UPPER(l.lot_id) LIKE UPPER('%' || #{search.itemKeyword} || '%')
+                        OR UPPER(i.item_id) LIKE UPPER('%' || #{search.itemKeyword} || '%')
+                        OR UPPER(i.item_name) LIKE UPPER('%' || #{search.itemKeyword} || '%')
+                    )
+                </if>
+
+                ORDER BY io.io_date DESC, io.io_id DESC
+            ) base_data
+            WHERE ROWNUM <![CDATA[<=]]> #{page.endRow}
+        )
+        WHERE rnum <![CDATA[>=]]> #{page.startRow}
+
+    </select>
+
+    <select id="selectIoRiskChartList"
+            parameterType="kr.or.chop.P20_report.io.dto.IoReportSearchDTO"
+            resultType="map">
+
+        SELECT
+            risk_level AS "riskLevel",
+            COUNT(*) AS "riskCount"
+        FROM (
+            SELECT
+                <include refid="ioRiskCase"/> AS risk_level
+            <include refid="ioBaseFrom"/>
+            <include refid="ioBaseWhere"/>
+        )
+        GROUP BY risk_level
+        ORDER BY
+            CASE risk_level
+                WHEN 'HIGH' THEN 1
+                WHEN 'WARNING' THEN 2
+                WHEN 'LOW' THEN 3
+                ELSE 4
+            END
+
+    </select>
+
+    <select id="selectIoTrendList"
+            parameterType="kr.or.chop.P20_report.io.dto.IoReportSearchDTO"
+            resultType="map">
+
+        SELECT
+            TO_CHAR(io.io_date, 'IYYY') || '-W' || TO_CHAR(io.io_date, 'IW') AS "ioDate",
+
+            SUM(
+                CASE
+                    WHEN (
+                        <include refid="ioRiskCase"/>
+                    ) = 'HIGH' THEN 1
+                    ELSE 0
+                END
+            ) AS "highCount",
+
+            SUM(
+                CASE
+                    WHEN (
+                        <include refid="ioRiskCase"/>
+                    ) = 'WARNING' THEN 1
+                    ELSE 0
+                END
+            ) AS "warningCount"
+
+        <include refid="ioBaseFrom"/>
+        <include refid="ioBaseWhere"/>
+
+        GROUP BY TO_CHAR(io.io_date, 'IYYY') || '-W' || TO_CHAR(io.io_date, 'IW')
+        ORDER BY TO_CHAR(io.io_date, 'IYYY') || '-W' || TO_CHAR(io.io_date, 'IW')
+
+    </select>
+    
+    <select id="selectIoAiTarget"
+	        parameterType="kr.or.chop.P20_report.io.dto.IoReportSearchDTO"
+	        resultType="kr.or.chop.common.ai.dto.IoAiPredictRequestDTO">
+	
+	    SELECT *
+	    FROM (
+	        SELECT
+	            NVL(io.io_qty, 0) AS "ioQty",
+	            NVL(l.lot_qty, 0) AS "lotQty",
+	            NVL(l.lot_fqty, 0) AS "lotFqty",
+	
+	            NVL(i.item_type, 0) AS "itemType",
+	            NVL(i.item_unit_price, 0) AS "itemUnitPrice",
+	
+	            TO_NUMBER(TO_CHAR(io.io_date, 'MM')) AS "ioMonth",
+	            TO_NUMBER(TO_CHAR(io.io_date, 'D')) AS "ioWeekday"
+	
+	        <include refid="ioBaseFrom"/>
+	        <include refid="ioBaseWhere"/>
+	
+	        ORDER BY
+	            CASE
+	                WHEN io.io_reason = '폐기' THEN 1
+	                WHEN TRUNC(l.lot_exp) - TRUNC(io.io_date) <![CDATA[<=]]> 0 THEN 1
+	                WHEN TRUNC(l.lot_exp) - TRUNC(io.io_date) <![CDATA[<=]]> 15 THEN 2
+	                ELSE 3
+	            END,
+	            io.io_date DESC
+	    )
+	    WHERE ROWNUM = 1
+	
+	</select>
+
+</mapper>
