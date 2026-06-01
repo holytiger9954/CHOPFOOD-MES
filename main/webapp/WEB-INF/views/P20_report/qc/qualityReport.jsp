@@ -439,11 +439,27 @@
 	
 	
 	
-    @media (max-width: 900px) {
-        .reportCard {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-    }
+/* ==============================
+   Mobile Layout
+============================== */
+
+@media screen and (max-width: 940px) {
+	
+	.card-value {
+		font-size: 20px !important;
+	}
+	
+	.reportCard .card {
+		width: 150px;
+	}
+	
+	.table tr th:nth-child(3), .table tr td:nth-child(3) {
+		display: none;
+	}
+	
+}
+
+
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

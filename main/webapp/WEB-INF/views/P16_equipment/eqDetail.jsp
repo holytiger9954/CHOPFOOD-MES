@@ -306,7 +306,7 @@
 			<div class="content-content-content-title">설비 가동이력</div>
 
 			<div class="table-wrap">
-				<table class="table">
+				<table class="table noneTr">
 
 					<thead>
 						<tr>
@@ -704,6 +704,7 @@
 .eqlog-header .modal-title {
     margin-bottom: 0;
 }
+
 </style>
 
 <script>
