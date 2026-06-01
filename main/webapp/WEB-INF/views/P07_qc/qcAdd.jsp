@@ -9,7 +9,7 @@
             <h2 class="page-title">품질검사 지시 등록</h2>
 
             <p class="page-subtitle">
-                새로운 품질검사 지시를 작성하세요.
+                새로운 품질검사 지시를 등록하세요.
             </p>
         </div>
 

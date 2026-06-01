@@ -8,7 +8,7 @@
     <div class="header-row">
         <div>
             <h2 class="page-title">품질검사 결과 등록</h2>
-            <p class="page-subtitle">진행 중인 품질검사 현황을 등록하세요.</p>
+            <p class="page-subtitle">품질검사 지시(${qc.qcId})의 결과를 수정하세요.</p>
         </div>
 
         <div>

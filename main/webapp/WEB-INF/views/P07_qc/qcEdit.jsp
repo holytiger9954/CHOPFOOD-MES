@@ -9,7 +9,7 @@
             <h2 class="page-title">품질검사 지시 수정</h2>
 
             <p class="page-subtitle">
-                ${qc.qcId}
+                품질검사 지시(${qc.qcId})의 내용을 수정하세요.
             </p>
         </div>
 

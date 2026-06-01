@@ -11,15 +11,15 @@
 
             <choose>
 			    <when test="startDate != null and startDate != ''">
-			        AND Q.QC_DATE <![CDATA[>=]]> TO_DATE(#{startDate}, 'YYYY-MM-DD')
+			        AND Q.QC_ODATE <![CDATA[>=]]> TO_DATE(#{startDate}, 'YYYY-MM-DD')
 			    </when>
 			    <otherwise>
-			        AND Q.QC_DATE <![CDATA[>=]]> ADD_MONTHS(TRUNC(SYSDATE + (9/24)), -6)
+			        AND Q.QC_ODATE <![CDATA[>=]]> ADD_MONTHS(TRUNC(SYSDATE + (9/24)), -6)
 			    </otherwise>
 			</choose>
 			
 			<if test="endDate != null and endDate != ''">
-			    AND Q.QC_DATE <![CDATA[<]]> TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+			    AND Q.QC_ODATE <![CDATA[<]]> TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
 			</if>
 
             <if test="status != 0">
