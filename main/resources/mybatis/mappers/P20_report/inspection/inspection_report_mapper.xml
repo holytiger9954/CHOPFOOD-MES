@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.P20_report.inspection.inspection_report_mapper">
+
+    <sql id="inspectionBaseData">
+	    SELECT
+	        inspection_type,
+	        target_type,
+	        inspection_date,
+	        inspection_result,
+	        inspection_reason,
+	        risk_score,
+	        CASE
+	            WHEN risk_score <![CDATA[>=]]> 4 THEN 'RISK'
+	            WHEN risk_score <![CDATA[>=]]> 2 THEN 'WARNING'
+	            ELSE 'NORMAL'
+	        END AS risk_level
+	    FROM (
+	        SELECT
+	            'EQUIPMENT' AS inspection_type,
+	            'EQUIPMENT' AS target_type,
+	            e.elog_sdate AS inspection_date,
+	            TO_CHAR(e.elog_result) AS inspection_result,
+	            TO_CHAR(e.elog_reason) AS inspection_reason,
+	            CASE
+	                WHEN e.elog_reason = '30' THEN 4
+	                WHEN e.elog_reason = '20' THEN 2
+	                ELSE 0
+	            END AS risk_score
+	        FROM eq_log e
+	        WHERE e.elog_usage = 'Y'
+	
+	        UNION ALL
+	
+	        SELECT
+	            'GHP' AS inspection_type,
+	            CASE
+	                WHEN g.glog_whid IS NOT NULL THEN 'WAREHOUSE'
+	                WHEN g.glog_wpid IS NOT NULL THEN 'WORKPLACE'
+	                ELSE 'GHP'
+	            END AS target_type,
+	            g.glog_date AS inspection_date,
+	            TO_CHAR(g.glog_result) AS inspection_result,
+	            NVL(g.glog_action, '정상') AS inspection_reason,
+	            CASE
+	                WHEN g.glog_result = '부적합' THEN 3
+	                ELSE 0
+	            END AS risk_score
+	        FROM ghp_log g
+	        WHERE g.glog_usage = 'Y'
+	    )
+	</sql>
+
+    <sql id="inspectionBaseWhere">
+        WHERE 1 = 1
+
+        <choose>
+            <when test="startDate != null and startDate != ''">
+                AND inspection_date <![CDATA[>=]]> TO_DATE(#{startDate}, 'YYYY-MM-DD')
+            </when>
+            <otherwise>
+                AND inspection_date <![CDATA[>=]]> ADD_MONTHS(TRUNC(SYSDATE + (9/24)), -6)
+            </otherwise>
+        </choose>
+
+        <if test="endDate != null and endDate != ''">
+            AND inspection_date <![CDATA[<]]> TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+        </if>
+
+        <if test="riskLevel != null and riskLevel != ''">
+            AND risk_level = #{riskLevel}
+        </if>
+
+        <if test="equipKeyword != null and equipKeyword != ''">
+            AND (
+                UPPER(inspection_type) LIKE UPPER('%' || #{equipKeyword} || '%')
+                OR UPPER(target_type) LIKE UPPER('%' || #{equipKeyword} || '%')
+                OR UPPER(inspection_result) LIKE UPPER('%' || #{equipKeyword} || '%')
+                OR UPPER(inspection_reason) LIKE UPPER('%' || #{equipKeyword} || '%')
+            )
+        </if>
+    </sql>
+
+    <select id="selectInspectionSummary"
+            parameterType="kr.or.chop.P20_report.inspection.dto.InspectionReportSearchDTO"
+            resultType="kr.or.chop.P20_report.inspection.dto.InspectionReportSummaryDTO">
+
+        SELECT
+            COUNT(*) AS totalInspectionCount,
+
+            NVL(SUM(
+                CASE
+                    WHEN risk_level = 'NORMAL' THEN 1
+                    ELSE 0
+                END
+            ), 0) AS normalCount,
+
+            NVL(SUM(
+                CASE
+                    WHEN risk_level = 'WARNING' THEN 1
+                    ELSE 0
+                END
+            ), 0) AS warningCount,
+
+            NVL(SUM(
+                CASE
+                    WHEN risk_level = 'RISK' THEN 1
+                    ELSE 0
+                END
+            ), 0) AS riskCount,
+
+            NVL(ROUND(
+                SUM(CASE WHEN risk_level = 'WARNING' THEN 1 ELSE 0 END)
+                / NULLIF(COUNT(*), 0) * 100,
+                2
+            ), 0) AS warningRate,
+
+            NVL(ROUND(
+                SUM(CASE WHEN risk_level = 'RISK' THEN 1 ELSE 0 END)
+                / NULLIF(COUNT(*), 0) * 100,
+                2
+            ), 0) AS riskRate
+
+        FROM (
+            <include refid="inspectionBaseData"/>
+        )
+        <include refid="inspectionBaseWhere"/>
+
+    </select>
+
+    <select id="selectInspectionReportCount"
+            parameterType="kr.or.chop.P20_report.inspection.dto.InspectionReportSearchDTO"
+            resultType="int">
+
+        SELECT COUNT(*)
+        FROM (
+            <include refid="inspectionBaseData"/>
+        )
+        <include refid="inspectionBaseWhere"/>
+
+    </select>
+
+    <select id="selectInspectionReportList"
+            parameterType="map"
+            resultType="kr.or.chop.P20_report.inspection.dto.InspectionReportListDTO">
+
+        SELECT *
+        FROM (
+            SELECT
+                ROWNUM AS rnum,
+                base_data.*
+            FROM (
+                SELECT
+                    inspection_type AS "inspectionType",
+                    target_type AS "targetType",
+                    TO_CHAR(inspection_date, 'YYYY-MM-DD') AS "inspectionDate",
+                    inspection_result AS "inspectionResult",
+                    inspection_reason AS "inspectionReason",
+                    risk_level AS "riskLevel"
+                FROM (
+                    <include refid="inspectionBaseData"/>
+                )
+                WHERE 1 = 1
+
+                <choose>
+                    <when test="search.startDate != null and search.startDate != ''">
+                        AND inspection_date <![CDATA[>=]]> TO_DATE(#{search.startDate}, 'YYYY-MM-DD')
+                    </when>
+                    <otherwise>
+                        AND inspection_date <![CDATA[>=]]> ADD_MONTHS(TRUNC(SYSDATE + (9/24)), -6)
+                    </otherwise>
+                </choose>
+
+                <if test="search.endDate != null and search.endDate != ''">
+                    AND inspection_date <![CDATA[<]]> TO_DATE(#{search.endDate}, 'YYYY-MM-DD') + 1
+                </if>
+
+                <if test="search.riskLevel != null and search.riskLevel != ''">
+                    AND risk_level = #{search.riskLevel}
+                </if>
+
+                <if test="search.equipKeyword != null and search.equipKeyword != ''">
+                    AND (
+                        UPPER(inspection_type) LIKE UPPER('%' || #{search.equipKeyword} || '%')
+                        OR UPPER(target_type) LIKE UPPER('%' || #{search.equipKeyword} || '%')
+                        OR UPPER(inspection_result) LIKE UPPER('%' || #{search.equipKeyword} || '%')
+                        OR UPPER(inspection_reason) LIKE UPPER('%' || #{search.equipKeyword} || '%')
+                    )
+                </if>
+
+                ORDER BY inspection_date DESC
+            ) base_data
+            WHERE ROWNUM <![CDATA[<=]]> #{page.endRow}
+        )
+        WHERE rnum <![CDATA[>=]]> #{page.startRow}
+
+    </select>
+
+    <select id="selectInspectionRiskChartList"
+            parameterType="kr.or.chop.P20_report.inspection.dto.InspectionReportSearchDTO"
+            resultType="map">
+
+        SELECT
+            risk_level AS "riskLevel",
+            COUNT(*) AS "riskCount"
+        FROM (
+            <include refid="inspectionBaseData"/>
+        )
+        <include refid="inspectionBaseWhere"/>
+        GROUP BY risk_level
+        ORDER BY
+            CASE risk_level
+                WHEN 'RISK' THEN 1
+                WHEN 'WARNING' THEN 2
+                WHEN 'NORMAL' THEN 3
+                ELSE 4
+            END
+
+    </select>
+
+    <select id="selectInspectionTrendList"
+            parameterType="kr.or.chop.P20_report.inspection.dto.InspectionReportSearchDTO"
+            resultType="map">
+
+        SELECT
+            TO_CHAR(inspection_date, 'IYYY') || '-W' || TO_CHAR(inspection_date, 'IW') AS "inspectionDate",
+
+            SUM(
+                CASE
+                    WHEN risk_level = 'RISK' THEN 1
+                    ELSE 0
+                END
+            ) AS "riskCount",
+
+            SUM(
+                CASE
+                    WHEN risk_level = 'WARNING' THEN 1
+                    ELSE 0
+                END
+            ) AS "warningCount"
+
+        FROM (
+            <include refid="inspectionBaseData"/>
+        )
+        <include refid="inspectionBaseWhere"/>
+        GROUP BY TO_CHAR(inspection_date, 'IYYY') || '-W' || TO_CHAR(inspection_date, 'IW')
+        ORDER BY TO_CHAR(inspection_date, 'IYYY') || '-W' || TO_CHAR(inspection_date, 'IW')
+
+    </select>
+    
+    <select id="selectInspectionAiTarget"
+	        parameterType="kr.or.chop.P20_report.inspection.dto.InspectionReportSearchDTO"
+	        resultType="kr.or.chop.common.ai.dto.InspectionAiPredictRequestDTO">
+	
+	    SELECT *
+	    FROM (
+	        SELECT
+	            inspection_type AS "inspectionType",
+	            target_type AS "targetType",
+	            TO_NUMBER(TO_CHAR(inspection_date, 'MM')) AS "inspectionMonth",
+	            TO_NUMBER(TO_CHAR(inspection_date, 'D')) AS "inspectionWeekday"
+	        FROM (
+	            <include refid="inspectionBaseData"/>
+	        )
+	        <include refid="inspectionBaseWhere"/>
+	        ORDER BY
+	            CASE risk_level
+	                WHEN 'RISK' THEN 1
+	                WHEN 'WARNING' THEN 2
+	                WHEN 'NORMAL' THEN 3
+	                ELSE 4
+	            END,
+	            inspection_date DESC
+	    )
+	    WHERE ROWNUM = 1
+	
+	</select>
+
+</mapper>
