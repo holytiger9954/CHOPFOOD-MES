@@ -14,28 +14,29 @@
         LEFT JOIN plan p
             ON w.work_plan = p.plan_id
         LEFT JOIN item i
-    		ON l.lot_item = i.item_id
+            ON l.lot_item = i.item_id
         LEFT JOIN emp e
             ON q.qc_worker = e.emp_id
     </sql>
 
     <sql id="qcBaseWhere">
-        WHERE q.qc_qty IS NOT NULL
+        WHERE l.lot_qty IS NOT NULL
           AND q.qc_pass_qty IS NOT NULL
-          AND q.qc_qty > 0
+          AND l.lot_qty > 0
+          AND q.qc_usage = 'Y'
 
         <choose>
-		    <when test="startDate != null and startDate != ''">
-		        AND q.qc_date <![CDATA[>=]]> TO_DATE(#{startDate}, 'YYYY-MM-DD')
-		    </when>
-		    <otherwise>
-		        AND q.qc_date <![CDATA[>=]]> ADD_MONTHS(TRUNC(SYSDATE + (9/24)), -6)
-		    </otherwise>
-		</choose>
-		
-		<if test="endDate != null and endDate != ''">
-		    AND q.qc_date <![CDATA[<]]> TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
-		</if>
+            <when test="startDate != null and startDate != ''">
+                AND q.qc_date <![CDATA[>=]]> TO_DATE(#{startDate}, 'YYYY-MM-DD')
+            </when>
+            <otherwise>
+                AND q.qc_date <![CDATA[>=]]> ADD_MONTHS(TRUNC(SYSDATE + (9/24)), -6)
+            </otherwise>
+        </choose>
+
+        <if test="endDate != null and endDate != ''">
+            AND q.qc_date <![CDATA[<]]> TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+        </if>
 
         <if test="itemType != null and itemType != ''">
             AND TO_CHAR(i.item_type) = #{itemType}
@@ -53,130 +54,120 @@
         <if test="riskLevel != null and riskLevel != ''">
             AND
             CASE
-                WHEN ((q.qc_qty - q.qc_pass_qty) / q.qc_qty) * 100 >= 3 THEN 'HIGH'
-                WHEN ((q.qc_qty - q.qc_pass_qty) / q.qc_qty) * 100 >= 1 THEN 'MEDIUM'
+                WHEN ((l.lot_qty - q.qc_pass_qty) / NULLIF(l.lot_qty, 0)) * 100 >= 3 THEN 'HIGH'
+                WHEN ((l.lot_qty - q.qc_pass_qty) / NULLIF(l.lot_qty, 0)) * 100 >= 1 THEN 'MEDIUM'
                 ELSE 'LOW'
             END = #{riskLevel}
         </if>
     </sql>
 
     <select id="selectQcSummary"
-	        parameterType="kr.or.chop.P20_report.qc.dto.QcReportSearchDTO"
-	        resultType="kr.or.chop.P20_report.qc.dto.QcReportSummaryDTO">
-	
-	    SELECT
-	        NVL(SUM(qc_qty), 0) AS totalQcQty,
-	
-	        NVL(SUM(qc_qty - defect_qty), 0) AS totalPassQty,
-	
-	        NVL(SUM(defect_qty), 0) AS totalDefectQty,
-	
-	        NVL(ROUND(
-	            (SUM(defect_qty) / NULLIF(SUM(qc_qty), 0)) * 100,
-	            2
-	        ), 0) AS defectRate,
-	
-	        NVL(SUM(
-	            CASE
-	                WHEN risk_level = 'HIGH' THEN 1
-	                ELSE 0
-	            END
-	        ), 0) AS highRiskCount,
-	
-	        NVL(ROUND(
-	            (
-	                SUM(
-	                    CASE
-	                        WHEN risk_level = 'HIGH' THEN 1
-	                        ELSE 0
-	                    END
-	                ) / NULLIF(COUNT(*), 0)
-	            ) * 100,
-	            2
-	        ), 0) AS highRiskRate
-	
-	    FROM (
-	        SELECT
-	            q.qc_id,
-	            q.qc_qty,
-	            q.qc_pass_qty,
-	
-	            NVL(dl.defect_qty, 0) AS defect_qty,
-	
-	            CASE
-	                WHEN (NVL(dl.defect_qty, 0) / NULLIF(q.qc_qty, 0)) * 100 >= 3 THEN 'HIGH'
-	                WHEN (NVL(dl.defect_qty, 0) / NULLIF(q.qc_qty, 0)) * 100 >= 1 THEN 'MEDIUM'
-	                ELSE 'LOW'
-	            END AS risk_level
-	
-	        FROM qc q
-	
-	        JOIN lot l
-	            ON q.qc_lot = l.lot_id
-	
-	        LEFT JOIN "WORK" w
-	            ON l.lot_work = w.work_id
-	
-	        LEFT JOIN plan p
-	            ON w.work_plan = p.plan_id
-	
-	        LEFT JOIN item i
-   				ON l.lot_item = i.item_id
-	
-	        LEFT JOIN emp e
-	            ON q.qc_worker = e.emp_id
-	
-	        LEFT JOIN (
-	            SELECT
-	                dlog_qcid,
-	                SUM(NVL(dlog_qty, 0)) AS defect_qty
-	            FROM def_log
-	            GROUP BY dlog_qcid
-	        ) dl
-	            ON q.qc_id = dl.dlog_qcid
-	
-	        WHERE q.qc_qty IS NOT NULL
-	          AND q.qc_pass_qty IS NOT NULL
-	          AND q.qc_qty > 0
-	          AND q.qc_usage = 'Y'
-	
-	        <choose>
-	            <when test="startDate != null and startDate != ''">
-	                AND q.qc_date <![CDATA[>=]]> TO_DATE(#{startDate}, 'YYYY-MM-DD')
-	            </when>
-	            <otherwise>
-	                AND q.qc_date <![CDATA[>=]]> ADD_MONTHS(TRUNC(SYSDATE + (9/24)), -6)
-	            </otherwise>
-	        </choose>
-	
-	        <if test="endDate != null and endDate != ''">
-	            AND q.qc_date <![CDATA[<]]> TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
-	        </if>
-	
-	        <if test="itemType != null and itemType != ''">
-	            AND TO_CHAR(i.item_type) = #{itemType}
-	        </if>
-	
-	        <if test="itemKeyword != null and itemKeyword != ''">
-	            AND (
-	                UPPER(i.item_name) LIKE UPPER('%' || #{itemKeyword} || '%')
-	                OR UPPER(i.item_id) LIKE UPPER('%' || #{itemKeyword} || '%')
-	                OR UPPER(l.lot_id) LIKE UPPER('%' || #{itemKeyword} || '%')
-	                OR UPPER(q.qc_id) LIKE UPPER('%' || #{itemKeyword} || '%')
-	            )
-	        </if>
-	
-	        <if test="riskLevel != null and riskLevel != ''">
-	            AND
-	            CASE
-	                WHEN (NVL(dl.defect_qty, 0) / NULLIF(q.qc_qty, 0)) * 100 >= 3 THEN 'HIGH'
-	                WHEN (NVL(dl.defect_qty, 0) / NULLIF(q.qc_qty, 0)) * 100 >= 1 THEN 'MEDIUM'
-	                ELSE 'LOW'
-	            END = #{riskLevel}
-	        </if>
-	    )
-	
-	</select>
+            parameterType="kr.or.chop.P20_report.qc.dto.QcReportSearchDTO"
+            resultType="kr.or.chop.P20_report.qc.dto.QcReportSummaryDTO">
+
+        SELECT
+            NVL(SUM(qc_qty), 0) AS totalQcQty,
+
+            NVL(SUM(qc_pass_qty), 0) AS totalPassQty,
+
+            NVL(SUM(defect_qty), 0) AS totalDefectQty,
+
+            NVL(ROUND(
+                (SUM(defect_qty) / NULLIF(SUM(qc_qty), 0)) * 100,
+                2
+            ), 0) AS defectRate,
+
+            NVL(SUM(
+                CASE
+                    WHEN risk_level = 'HIGH' THEN 1
+                    ELSE 0
+                END
+            ), 0) AS highRiskCount,
+
+            NVL(ROUND(
+                (
+                    SUM(
+                        CASE
+                            WHEN risk_level = 'HIGH' THEN 1
+                            ELSE 0
+                        END
+                    ) / NULLIF(COUNT(*), 0)
+                ) * 100,
+                2
+            ), 0) AS highRiskRate
+
+        FROM (
+            SELECT
+                q.qc_id,
+                l.lot_qty AS qc_qty,
+                q.qc_pass_qty,
+                (l.lot_qty - q.qc_pass_qty) AS defect_qty,
+
+                CASE
+                    WHEN ((l.lot_qty - q.qc_pass_qty) / NULLIF(l.lot_qty, 0)) * 100 >= 3 THEN 'HIGH'
+                    WHEN ((l.lot_qty - q.qc_pass_qty) / NULLIF(l.lot_qty, 0)) * 100 >= 1 THEN 'MEDIUM'
+                    ELSE 'LOW'
+                END AS risk_level
+
+            FROM qc q
+
+            JOIN lot l
+                ON q.qc_lot = l.lot_id
+
+            LEFT JOIN "WORK" w
+                ON l.lot_work = w.work_id
+
+            LEFT JOIN plan p
+                ON w.work_plan = p.plan_id
+
+            LEFT JOIN item i
+                ON l.lot_item = i.item_id
+
+            LEFT JOIN emp e
+                ON q.qc_worker = e.emp_id
+
+            WHERE l.lot_qty IS NOT NULL
+              AND q.qc_pass_qty IS NOT NULL
+              AND l.lot_qty > 0
+              AND q.qc_usage = 'Y'
+
+            <choose>
+                <when test="startDate != null and startDate != ''">
+                    AND q.qc_date <![CDATA[>=]]> TO_DATE(#{startDate}, 'YYYY-MM-DD')
+                </when>
+                <otherwise>
+                    AND q.qc_date <![CDATA[>=]]> ADD_MONTHS(TRUNC(SYSDATE + (9/24)), -6)
+                </otherwise>
+            </choose>
+
+            <if test="endDate != null and endDate != ''">
+                AND q.qc_date <![CDATA[<]]> TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+            </if>
+
+            <if test="itemType != null and itemType != ''">
+                AND TO_CHAR(i.item_type) = #{itemType}
+            </if>
+
+            <if test="itemKeyword != null and itemKeyword != ''">
+                AND (
+                    UPPER(i.item_name) LIKE UPPER('%' || #{itemKeyword} || '%')
+                    OR UPPER(i.item_id) LIKE UPPER('%' || #{itemKeyword} || '%')
+                    OR UPPER(l.lot_id) LIKE UPPER('%' || #{itemKeyword} || '%')
+                    OR UPPER(q.qc_id) LIKE UPPER('%' || #{itemKeyword} || '%')
+                )
+            </if>
+
+            <if test="riskLevel != null and riskLevel != ''">
+                AND
+                CASE
+                    WHEN ((l.lot_qty - q.qc_pass_qty) / NULLIF(l.lot_qty, 0)) * 100 >= 3 THEN 'HIGH'
+                    WHEN ((l.lot_qty - q.qc_pass_qty) / NULLIF(l.lot_qty, 0)) * 100 >= 1 THEN 'MEDIUM'
+                    ELSE 'LOW'
+                END = #{riskLevel}
+            </if>
+        )
+
+    </select>
 
     <select id="selectQcReportCount"
             parameterType="kr.or.chop.P20_report.qc.dto.QcReportSearchDTO"
@@ -185,129 +176,121 @@
         SELECT COUNT(*)
         <include refid="qcBaseFrom"/>
         <include refid="qcBaseWhere"/>
+        AND (l.lot_qty - q.qc_pass_qty) > 0
 
     </select>
 
     <select id="selectQcReportList"
-	        parameterType="map"
-	        resultType="kr.or.chop.P20_report.qc.dto.QcReportListDTO">
-	
-	    SELECT *
-	    FROM (
-	        SELECT
-	            ROWNUM AS rnum,
-	            base_data.*
-	        FROM (
-	            SELECT
-	                q.qc_id AS qcId,
-	                TO_CHAR(q.qc_date, 'YYYY-MM-DD') AS qcDate,
-	
-	                l.lot_id AS lotId,
-	
-	                i.item_id AS itemId,
-	                i.item_name AS itemName,
-	                TO_CHAR(i.item_type) AS itemType,
-	                TO_CHAR(i.item_qc_type) AS itemQcType,
-	
-	                q.qc_qty AS qcQty,
-	                q.qc_pass_qty AS qcPassQty,
-	
-	                NVL(dl.defect_qty, 0) AS defectQty,
-	
-	                CASE
-	                    WHEN NVL(q.qc_qty, 0) = 0 THEN 0
-	                    ELSE ROUND(
-	                        NVL(dl.defect_qty, 0) / q.qc_qty * 100,
-	                        2
-	                    )
-	                END AS defectRate,
-	
-	                TO_CHAR(q.qc_status) AS qcStatus,
-	                TO_CHAR(q.qc_type) AS qcType,
-	
-	                CASE
-	                    WHEN (NVL(dl.defect_qty, 0) / NULLIF(q.qc_qty, 0)) * 100 >= 3 THEN 'HIGH'
-	                    WHEN (NVL(dl.defect_qty, 0) / NULLIF(q.qc_qty, 0)) * 100 >= 1 THEN 'MEDIUM'
-	                    ELSE 'LOW'
-	                END AS riskLevel,
-	
-	                e.emp_id AS workerId,
-	                e.emp_name AS workerName
-	
-	            FROM qc q
-	
-	            JOIN lot l
-	                ON q.qc_lot = l.lot_id
-	
-	            LEFT JOIN "WORK" w
-	                ON l.lot_work = w.work_id
-	
-	            LEFT JOIN plan p
-	                ON w.work_plan = p.plan_id
-	
-	            LEFT JOIN item i
-	                ON l.lot_item = i.item_id
-	
-	            LEFT JOIN emp e
-	                ON q.qc_worker = e.emp_id
-	
-	            LEFT JOIN (
-	                SELECT
-	                    dlog_qcid,
-	                    SUM(NVL(dlog_qty, 0)) AS defect_qty
-	                FROM def_log
-	                GROUP BY dlog_qcid
-	            ) dl
-	                ON q.qc_id = dl.dlog_qcid
-	
-	            WHERE q.qc_qty IS NOT NULL
-	              AND q.qc_pass_qty IS NOT NULL
-	              AND q.qc_qty > 0
-	              AND dl.defect_qty > 0
-	              AND q.qc_usage = 'Y'
-	
-	            <choose>
-	                <when test="search.startDate != null and search.startDate != ''">
-	                    AND q.qc_date <![CDATA[>=]]> TO_DATE(#{search.startDate}, 'YYYY-MM-DD')
-	                </when>
-	                <otherwise>
-	                    AND q.qc_date <![CDATA[>=]]> ADD_MONTHS(TRUNC(SYSDATE + (9/24)), -6)
-	                </otherwise>
-	            </choose>
-	
-	            <if test="search.endDate != null and search.endDate != ''">
-	                AND q.qc_date <![CDATA[<]]> TO_DATE(#{search.endDate}, 'YYYY-MM-DD') + 1
-	            </if>
-	
-	            <if test="search.itemType != null and search.itemType != ''">
-	                AND TO_CHAR(i.item_type) = #{search.itemType}
-	            </if>
-	
-	            <if test="search.itemKeyword != null and search.itemKeyword != ''">
-	                AND (
-	                    UPPER(i.item_name) LIKE UPPER('%' || #{search.itemKeyword} || '%')
-	                    OR UPPER(i.item_id) LIKE UPPER('%' || #{search.itemKeyword} || '%')
-	                    OR UPPER(l.lot_id) LIKE UPPER('%' || #{search.itemKeyword} || '%')
-	                    OR UPPER(q.qc_id) LIKE UPPER('%' || #{search.itemKeyword} || '%')
-	                )
-	            </if>
-	
-	            <if test="search.riskLevel != null and search.riskLevel != ''">
-	                AND
-	                CASE
-	                    WHEN (NVL(dl.defect_qty, 0) / NULLIF(q.qc_qty, 0)) * 100 >= 3 THEN 'HIGH'
-	                    WHEN (NVL(dl.defect_qty, 0) / NULLIF(q.qc_qty, 0)) * 100 >= 1 THEN 'MEDIUM'
-	                    ELSE 'LOW'
-	                END = #{search.riskLevel}
-	            </if>
-	
-	            ORDER BY q.qc_date DESC, q.qc_id DESC
-	        ) base_data
-	        WHERE ROWNUM <![CDATA[<=]]> #{page.endRow}
-	    )
-	    WHERE rnum <![CDATA[>=]]> #{page.startRow}
-	
-	</select>
+            parameterType="map"
+            resultType="kr.or.chop.P20_report.qc.dto.QcReportListDTO">
+
+        SELECT *
+        FROM (
+            SELECT
+                ROWNUM AS rnum,
+                base_data.*
+            FROM (
+                SELECT
+                    q.qc_id AS qcId,
+                    TO_CHAR(q.qc_date, 'YYYY-MM-DD') AS qcDate,
+
+                    l.lot_id AS lotId,
+
+                    i.item_id AS itemId,
+                    i.item_name AS itemName,
+                    TO_CHAR(i.item_type) AS itemType,
+                    TO_CHAR(i.item_qc_type) AS itemQcType,
+
+                    q.qc_qty AS qcQty,
+                    q.qc_pass_qty AS qcPassQty,
+
+                    (l.lot_qty - q.qc_pass_qty) AS defectQty,
+
+                    CASE
+                        WHEN NVL(l.lot_qty, 0) = 0 THEN 0
+                        ELSE ROUND(
+                            (l.lot_qty - q.qc_pass_qty) / l.lot_qty * 100,
+                            2
+                        )
+                    END AS defectRate,
+
+                    TO_CHAR(q.qc_status) AS qcStatus,
+                    TO_CHAR(q.qc_type) AS qcType,
+
+                    CASE
+                        WHEN ((l.lot_qty - q.qc_pass_qty) / NULLIF(l.lot_qty, 0)) * 100 >= 3 THEN 'HIGH'
+                        WHEN ((l.lot_qty - q.qc_pass_qty) / NULLIF(l.lot_qty, 0)) * 100 >= 1 THEN 'MEDIUM'
+                        ELSE 'LOW'
+                    END AS riskLevel,
+
+                    e.emp_id AS workerId,
+                    e.emp_name AS workerName
+
+                FROM qc q
+
+                JOIN lot l
+                    ON q.qc_lot = l.lot_id
+
+                LEFT JOIN "WORK" w
+                    ON l.lot_work = w.work_id
+
+                LEFT JOIN plan p
+                    ON w.work_plan = p.plan_id
+
+                LEFT JOIN item i
+                    ON l.lot_item = i.item_id
+
+                LEFT JOIN emp e
+                    ON q.qc_worker = e.emp_id
+
+                WHERE l.lot_qty IS NOT NULL
+                  AND q.qc_pass_qty IS NOT NULL
+                  AND l.lot_qty > 0
+                  AND (l.lot_qty - q.qc_pass_qty) > 0
+                  AND q.qc_usage = 'Y'
+
+                <choose>
+                    <when test="search.startDate != null and search.startDate != ''">
+                        AND q.qc_date <![CDATA[>=]]> TO_DATE(#{search.startDate}, 'YYYY-MM-DD')
+                    </when>
+                    <otherwise>
+                        AND q.qc_date <![CDATA[>=]]> ADD_MONTHS(TRUNC(SYSDATE + (9/24)), -6)
+                    </otherwise>
+                </choose>
+
+                <if test="search.endDate != null and search.endDate != ''">
+                    AND q.qc_date <![CDATA[<]]> TO_DATE(#{search.endDate}, 'YYYY-MM-DD') + 1
+                </if>
+
+                <if test="search.itemType != null and search.itemType != ''">
+                    AND TO_CHAR(i.item_type) = #{search.itemType}
+                </if>
+
+                <if test="search.itemKeyword != null and search.itemKeyword != ''">
+                    AND (
+                        UPPER(i.item_name) LIKE UPPER('%' || #{search.itemKeyword} || '%')
+                        OR UPPER(i.item_id) LIKE UPPER('%' || #{search.itemKeyword} || '%')
+                        OR UPPER(l.lot_id) LIKE UPPER('%' || #{search.itemKeyword} || '%')
+                        OR UPPER(q.qc_id) LIKE UPPER('%' || #{search.itemKeyword} || '%')
+                    )
+                </if>
+
+                <if test="search.riskLevel != null and search.riskLevel != ''">
+                    AND
+                    CASE
+                        WHEN ((l.lot_qty - q.qc_pass_qty) / NULLIF(l.lot_qty, 0)) * 100 >= 3 THEN 'HIGH'
+                        WHEN ((l.lot_qty - q.qc_pass_qty) / NULLIF(l.lot_qty, 0)) * 100 >= 1 THEN 'MEDIUM'
+                        ELSE 'LOW'
+                    END = #{search.riskLevel}
+                </if>
+
+                ORDER BY q.qc_date DESC, q.qc_id DESC
+            ) base_data
+            WHERE ROWNUM <![CDATA[<=]]> #{page.endRow}
+        )
+        WHERE rnum <![CDATA[>=]]> #{page.startRow}
+
+    </select>
 
     <select id="selectItemTypeList"
             resultType="kr.or.chop.P20_report.qc.dto.ReportSelectDTO">
@@ -315,9 +298,10 @@
         SELECT DISTINCT
             TO_CHAR(item_type) AS code,
             CASE
-                WHEN TO_CHAR(item_type) = '10' THEN '완제품'
+                WHEN TO_CHAR(item_type) = '10' THEN '원자재'
                 WHEN TO_CHAR(item_type) = '20' THEN '반제품'
-                WHEN TO_CHAR(item_type) = '30' THEN '원자재'
+                WHEN TO_CHAR(item_type) = '30' THEN '완제품'
+                WHEN TO_CHAR(item_type) = '40' THEN '기타자재'
                 ELSE TO_CHAR(item_type)
             END AS name
         FROM item
@@ -332,11 +316,11 @@
 
         SELECT
             TO_CHAR(q.qc_date, 'YYYY-MM-DD') AS qcDate,
-            NVL(SUM(q.qc_qty), 0) AS qcQty,
+            NVL(SUM(l.lot_qty), 0) AS qcQty,
             NVL(SUM(q.qc_pass_qty), 0) AS qcPassQty,
-            NVL(SUM(q.qc_qty - q.qc_pass_qty), 0) AS defectQty,
+            NVL(SUM(l.lot_qty - q.qc_pass_qty), 0) AS defectQty,
             NVL(ROUND(
-                (SUM(q.qc_qty - q.qc_pass_qty) / NULLIF(SUM(q.qc_qty), 0)) * 100,
+                (SUM(l.lot_qty - q.qc_pass_qty) / NULLIF(SUM(l.lot_qty), 0)) * 100,
                 2
             ), 0) AS defectRate
         <include refid="qcBaseFrom"/>
@@ -356,8 +340,8 @@
         FROM (
             SELECT
                 CASE
-                    WHEN ((q.qc_qty - q.qc_pass_qty) / q.qc_qty) * 100 >= 3 THEN 'HIGH'
-                    WHEN ((q.qc_qty - q.qc_pass_qty) / q.qc_qty) * 100 >= 1 THEN 'MEDIUM'
+                    WHEN ((l.lot_qty - q.qc_pass_qty) / NULLIF(l.lot_qty, 0)) * 100 >= 3 THEN 'HIGH'
+                    WHEN ((l.lot_qty - q.qc_pass_qty) / NULLIF(l.lot_qty, 0)) * 100 >= 1 THEN 'MEDIUM'
                     ELSE 'LOW'
                 END AS risk_level
             <include refid="qcBaseFrom"/>
