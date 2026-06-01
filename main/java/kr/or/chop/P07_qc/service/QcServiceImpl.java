@@ -25,6 +25,11 @@ public class QcServiceImpl implements QcService{
 	public List<QcDTO> selectQcList(QcDTO dto, PageInfo pageInfo) {
 		return qcDAO.selectQcList(dto, pageInfo);
 	}
+	
+	@Override
+	public List<QcDTO> selectQcWorkerList(String searchKeyword) {
+		return qcDAO.selectQcWorkerList(searchKeyword);
+	}
 
 	@Override
 	public QcDTO selectQcSummary(QcDTO dto) {

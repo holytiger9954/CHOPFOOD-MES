@@ -25,6 +25,9 @@ public class QcDTO {
 
 	private String directorName;
 	private String workerName;
+	
+	private String empId;
+	private String empName;
 
 	
 	private String qcWorker;

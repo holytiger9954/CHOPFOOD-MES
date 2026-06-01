@@ -23,6 +23,11 @@ public class QcDAOImpl implements QcDAO {
 	public int selectQcCount(QcDTO dto) {
 		return sqlSession.selectOne(namespace + "selectQcCount", dto);
 	}
+	
+	@Override
+	public List<QcDTO> selectQcWorkerList(String searchKeyword) {
+		return sqlSession.selectList("kr.or.chop.P07_qc.selectQcWorkerList", searchKeyword);
+	}
 
 	@Override
 	public List<QcDTO> selectQcList(QcDTO dto, PageInfo pageInfo) {

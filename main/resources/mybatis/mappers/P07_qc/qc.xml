@@ -323,6 +323,29 @@
 	      AND QC_STATUS IN (10, 20)
 	
 	</update>
+	
+	<select id="selectQcWorkerList"
+		parameterType="string"
+		resultType="kr.or.chop.P07_qc.dto.QcDTO">
+	
+		SELECT
+			EMP_ID AS empId,
+			EMP_NAME AS empName
+		FROM EMP
+		<where>
+			EMP_DEPTNO = 20
+			AND EMP_INOFFICE = 0
+	
+			<if test="_parameter != null and _parameter != ''">
+				AND (
+					UPPER(EMP_ID) LIKE UPPER('%' || #{_parameter} || '%')
+					OR UPPER(EMP_NAME) LIKE UPPER('%' || #{_parameter} || '%')
+				)
+			</if>
+		</where>
+		ORDER BY EMP_ID
+	
+	</select>
 
     <update id="deleteQc"
             parameterType="string">

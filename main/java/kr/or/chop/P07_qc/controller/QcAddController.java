@@ -40,5 +40,11 @@ public class QcAddController {
 
 		return "redirect:/quality/list";
 	}
+	
+	@RequestMapping("/workerList")
+	@ResponseBody
+	public List<QcDTO> workerList(String searchKeyword) {
+		return qcService.selectQcWorkerList(searchKeyword);
+	}
 
 }

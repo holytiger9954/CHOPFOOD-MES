@@ -11,6 +11,7 @@ public interface QcDAO {
 	List<QcDTO> selectQcList(QcDTO dto, PageInfo pageinfo);
 	QcDTO selectQcSummary(QcDTO dto);
 	QcDTO selectQcDetail(String qcId);
+	List<QcDTO> selectQcWorkerList(String searchKeyword);
 	int insertQc(QcDTO dto);
 	int updateQc(QcDTO dto);
 	int deleteQc(String qcId);

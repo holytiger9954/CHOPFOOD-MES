@@ -325,7 +325,7 @@ function bind() {
 function loadWorkerList(keyword) {
     const workerTbody = document.querySelector("#workerTbody");
 
-    fetch("${pageContext.request.contextPath}/work/workerList?searchKeyword="
+    fetch("${pageContext.request.contextPath}/quality/workerList?searchKeyword="
         + encodeURIComponent(keyword))
         .then(function(response) {
             return response.json();
@@ -334,6 +334,9 @@ function loadWorkerList(keyword) {
             let html = "";
 
             for (let i = 0; i < result.length; i++) {
+            	if(result[i] == null) {
+            		continue;
+            	}
                 html += "<tr class='workers'>";
                 html += "<td>" + result[i].empId + "</td>";
                 html += "<td>" + result[i].empName + "</td>";

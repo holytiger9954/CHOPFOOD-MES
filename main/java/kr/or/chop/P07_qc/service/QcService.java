@@ -23,6 +23,8 @@ public interface QcService {
 	
 	List<QcDTO> selectQcLotList();
 	
+	List<QcDTO> selectQcWorkerList(String searchKeyword);
+	
 	int updateQcResult(QcDTO dto);
 	
 	List<QcDTO> selectDefectTypeList();

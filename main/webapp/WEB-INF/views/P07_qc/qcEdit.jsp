@@ -360,7 +360,7 @@ function bind() {
 function loadWorkerList(keyword) {
     const workerTbody = document.querySelector("#workerTbody");
 
-    fetch("${pageContext.request.contextPath}/work/workerList?searchKeyword="
+    fetch("${pageContext.request.contextPath}/quality/workerList?searchKeyword="
         + encodeURIComponent(keyword))
         .then(function(response) {
             return response.json();
