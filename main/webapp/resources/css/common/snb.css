@@ -181,7 +181,7 @@ button.snb-menu {
     display: none;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 1200px) {
 
     /* 기존 PC 사이드바 숨김 */
     .snb {

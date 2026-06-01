@@ -839,6 +839,9 @@ body.modal-open {
 
 @media screen and (max-width: 768px) {
 	
+	.page-route {
+		font-size: 12px;
+	}
 	
 	.content-content {
 		padding: 0px;
@@ -847,6 +850,7 @@ body.modal-open {
 	
 	.search-box {
 		gap: 8px;
+		justify-content: flex-end;
 	}
 	
 	.search-item input, .search-item select {

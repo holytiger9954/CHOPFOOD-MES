@@ -477,26 +477,50 @@
     	font-size: 18px;
     	color: black
     }
-
-    @media (max-width: 1000px) {
-        .emp-info-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .emp-activity-wrap {
-            flex-wrap: wrap;
-        }
-
-        .emp-profile-card {
-            align-items: flex-start;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .emp-profile-status {
-            position: static;
-        }
+    
+    .table {
+    	table-layout: fixed;
+    	width: 100%;
     }
+    
+    .table td {
+	    white-space: nowrap; /* 줄바꿈 방지 */
+	    overflow: hidden; /* 영역 밖 텍스트 숨김 */
+	    text-overflow: ellipsis; /* 말줄임표(...) 표시 */
+    }
+    
+    
+/* ==============================
+   Mobile Layout
+============================== */
+
+@media screen and (max-width: 768px) {
+	
+	.table tr th:nth-child(3), .table tr td:nth-child(3) {
+		width: 300px;
+	}
+	
+}
+
+/*     @media (max-width: 1000px) { */
+/*         .emp-info-grid { */
+/*             grid-template-columns: 1fr; */
+/*         } */
+
+/*         .emp-activity-wrap { */
+/*             flex-wrap: wrap; */
+/*         } */
+
+/*         .emp-profile-card { */
+/*             align-items: flex-start; */
+/*             flex-direction: column; */
+/*             gap: 20px; */
+/*         } */
+
+/*         .emp-profile-status { */
+/*             position: static; */
+/*         } */
+/*     } */
 </style>
 
 <script>

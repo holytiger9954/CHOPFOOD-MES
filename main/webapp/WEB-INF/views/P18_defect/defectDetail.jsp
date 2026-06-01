@@ -63,7 +63,7 @@
                             <th>불량 유형명</th>
                             <td>${def.defTypeName}</td>
 
-                            <th>불량 유형 코드</th>
+                            <th>유형 코드</th>
                             <td>${def.defTypeId}</td>
                         </tr>
 
@@ -99,7 +99,7 @@
                 <div class="card def-total-card">
                     <div class="card-title">전체 누적 개수</div>
                     <div class="card-value">
-                        <fmt:formatNumber value="${totalDefectCnt}" pattern="#,###" /><span> 건</span>
+                        <fmt:formatNumber value="${totalDefectCnt}" pattern="#,###" />
                     </div>
                     <div class="card-subtitle">
                         전체 누적 발생 수량
@@ -145,7 +145,7 @@
 						        <th style="width: 120px;">불량수량</th>
 						        <th style="width: 140px;">검사일</th>
 						        <th>조치내용</th>
-						        <th>폐기여부</th>
+						        <th>폐기</th>
                             </tr>
                         </thead>
 
@@ -294,7 +294,7 @@
     text-decoration: underline;
 }
 
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 768px) {
     .def-summary-grid {
         grid-template-columns: 1fr;
     }
@@ -302,6 +302,20 @@
     .def-total-card {
         min-height: 160px;
     }
+    	
+	.table tr th:nth-child(2), .table tr td:nth-child(2) {
+		display: none;
+	}
+	
+	.table tr th, .table tr td {
+		width: 100px !important;
+	}
+    	
+	.table tr th:nth-child(5), .table tr td:nth-child(5) {
+		width: 260px !important;
+	}
+	
+	
 }
 
 </style>

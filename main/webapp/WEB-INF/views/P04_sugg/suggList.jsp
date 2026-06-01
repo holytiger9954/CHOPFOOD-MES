@@ -267,6 +267,24 @@
 
 </div>
 
+<style>
+
+
+/* ==============================
+   Mobile Layout
+============================== */
+
+@media screen and (max-width: 768px) {
+	
+	.table tr th:nth-child(5), .table tr td:nth-child(5),
+	.table tr th:nth-child(6), .table tr td:nth-child(6) {
+		display: none;
+	}
+	
+}
+
+</style>
+
 <script>
 
 window.addEventListener("load", () => {

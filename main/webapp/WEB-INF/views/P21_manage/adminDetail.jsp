@@ -386,95 +386,38 @@
     	color: black
     }
 
-/*     .emp-activity-section { */
-/*         margin-top: 10px; */
+
+/*     @media (max-width: 1000px) { */
+/*         .emp-info-grid { */
+/*             grid-template-columns: 1fr; */
+/*         } */
+
+/*         .emp-activity-wrap { */
+/*             flex-wrap: wrap; */
+/*         } */
+
+/*         .emp-profile-card { */
+/*             align-items: flex-start; */
+/*             flex-direction: column; */
+/*             gap: 20px; */
+/*         } */
+
+/*         .emp-profile-status { */
+/*             position: static; */
+/*         } */
 /*     } */
+    
+    
+/* ==============================
+   Mobile Layout
+============================== */
 
-/*     .emp-activity-section .emp-section-title { */
-/*         margin-bottom: 20px; */
-/*     } */
-
-/*     .emp-activity-wrap { */
-/*         display: flex; */
-/*         justify-content: center; */
-/*         gap: 24px; */
-/*     } */
-
-/*     .emp-activity-card { */
-/*         width: 165px; */
-/*         min-height: 130px; */
-/*         padding: 20px 16px; */
-
-/*         border: 1px solid var(--gray); */
-/*         border-radius: 8px; */
-/*         background-color: #fff; */
-
-/*         text-align: center; */
-/*     } */
-
-/*     .activity-title { */
-/*         margin: 0 0 14px; */
-
-/*         font-size: 16px; */
-/*         font-weight: 700; */
-/*     } */
-
-/*     .activity-count { */
-/*         margin: 0 0 12px; */
-
-/*         font-size: 32px; */
-/*         font-weight: 800; */
-/*         line-height: 1; */
-/*     } */
-
-/*     .activity-count span { */
-/*         margin-left: 6px; */
-
-/*         font-size: 16px; */
-/*         font-weight: 700; */
-/*         color: black; */
-/*     } */
-
-/*     .activity-sub { */
-/*         margin: 0; */
-
-/*         font-size: 12px; */
-/*         color: var(--dark-gray); */
-/*     } */
-
-/*     .activity-wait { */
-/*         color: var(--warning); */
-/*     } */
-
-/*     .activity-progress { */
-/*         color: var(--success); */
-/*     } */
-
-/*     .activity-done { */
-/*         color: var(--info); */
-/*     } */
-
-/*     .activity-delay { */
-/*         color: var(--danger); */
-/*     } */
-
-    @media (max-width: 1000px) {
-        .emp-info-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .emp-activity-wrap {
-            flex-wrap: wrap;
-        }
-
-        .emp-profile-card {
-            align-items: flex-start;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .emp-profile-status {
-            position: static;
-        }
-    }
+@media screen and (max-width: 768px) {
+	
+	.card {
+		width: 150px;
+	}
+	
+}
+    
 </style>

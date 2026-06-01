@@ -10,6 +10,20 @@
     .defList:hover {
         background-color: #f5f5f5;
     }
+    
+    	
+/* ==============================
+   Mobile Layout
+============================== */
+
+@media screen and (max-width: 768px) {
+	
+	.table tr th:last-child, .table tr td:last-child {
+		width: 620px;
+	}
+	
+}
+	
 </style>
 
 <div class="content">

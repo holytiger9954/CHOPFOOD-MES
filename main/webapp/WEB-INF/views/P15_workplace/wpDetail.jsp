@@ -52,7 +52,7 @@
 						<tr>
 							<th>작업장 유형</th>
 							<td>${wpDTO.wpType}</td>
-							<th>마지막 점검일</th>
+							<th>마지막 점검</th>
 							<c:if test="${not empty wpDTO.lastGlogDate}">
 								<td>${wpDTO.lastGlogDate}</td>
 							</c:if>
@@ -95,7 +95,7 @@
 			</div>
 			
 			<div class="table-wrap">
-				<table class="table">
+				<table class="table glog">
 					<thead>
 						<tr>
 							<th style="width: 150px">점검 이력 번호</th>
@@ -148,6 +148,19 @@
 	    color: var(--main-green);
 	    text-decoration: underline;
 	}
+	
+/* ==============================
+   Mobile Layout
+============================== */
+
+@media screen and (max-width: 768px) {
+	
+	.glog tr th:nth-child(2), .glog tr td:nth-child(2) {
+		display: none;
+	}
+	
+}
+
 </style>
 
 <script>

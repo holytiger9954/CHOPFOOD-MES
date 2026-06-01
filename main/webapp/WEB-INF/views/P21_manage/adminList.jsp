@@ -206,6 +206,19 @@
     color: var(--main-green);
     text-decoration: underline;
 }
+
+
+/* ==============================
+   Mobile Layout
+============================== */
+
+@media screen and (max-width: 768px) {
+	
+	.table tr th:nth-child(6), .table tr td:nth-child(6) {
+		display: none;
+	}
+	
+}
 </style>
 
 <script>
