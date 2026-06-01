@@ -96,39 +96,39 @@
         
         <div class="def-summary-grid">
 
-                <div class="card def-total-card">
-                    <div class="card-title">전체 누적 개수</div>
-                    <div class="card-value">
-                        <fmt:formatNumber value="${totalDefectCnt}" pattern="#,###" />
-                    </div>
-                    <div class="card-subtitle">
-                        전체 누적 발생 수량
-                    </div>
-                </div>
+           <div class="card def-total-card">
+               <div class="card-title">전체 누적 개수</div>
+               <div class="card-value">
+                   <fmt:formatNumber value="${totalDefectCnt}" pattern="#,###" />
+               </div>
+               <div class="card-subtitle">
+                   전체 누적 발생 수량
+               </div>
+           </div>
 
-                <div class="card def-chart-card">
-                    <div class="def-chart-head">
-                        <div>
-                            <div class="card-title">발생 추이</div>
-                            <div class="card-subtitle">최근 6개월 월별 발생 수량</div>
-                        </div>
-                    </div>
+           <div class="card def-chart-card">
+               <div class="def-chart-head">
+                   <div>
+                       <div class="card-title">발생 추이</div>
+                       <div class="card-subtitle">최근 6개월 월별 발생 수량</div>
+                   </div>
+               </div>
 
-                    <div class="def-chart-wrap">
-                        <canvas id="defTrendChart"></canvas>
-                    </div>
+               <div class="def-chart-wrap">
+                   <canvas id="defTrendChart"></canvas>
+               </div>
 
-                    <div id="defTrendData" style="display:none;">
-                        <c:forEach var="trend" items="${trendList}">
-                            <span class="trend-item"
-                                  data-label="${trend.trendDate}"
-                                  data-count="${trend.trendCnt}">
-                            </span>
-                        </c:forEach>
-                    </div>
-                </div>
+               <div id="defTrendData" style="display:none;">
+                   <c:forEach var="trend" items="${trendList}">
+                       <span class="trend-item"
+                             data-label="${trend.trendDate}"
+                             data-count="${trend.trendCnt}">
+                       </span>
+                   </c:forEach>
+               </div>
+           </div>
 
-            </div>
+       </div>
 
             <div class="def-history-area">
 
@@ -217,6 +217,7 @@
     display: flex;
 	gap: 20px;
 	align-items: flex-start;
+	justify-content: center;
 	
     margin-top: 20px;
     padding: 0 20px;
