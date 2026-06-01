@@ -8,7 +8,7 @@
 		<div>
 			<h2 class="page-title">입출고 이력 수정</h2>
 			<p class="page-subtitle">
-				입출고 이력(${io.ioId})의 정보를 수정하세요.
+				입출고 이력(${io.ioId})의 내용을 수정하세요.
 			</p>
 		</div>
 

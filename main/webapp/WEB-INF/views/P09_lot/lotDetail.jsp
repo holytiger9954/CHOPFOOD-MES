@@ -18,7 +18,7 @@
 
 		<div>
 			<h2 class="page-title">LOT 상세</h2>
-			<p class="page-subtitle">LOT 정보와 사용 이력을 확인할 수 있습니다.</p>
+			<p class="page-subtitle">LOT(${lot.lotId})의 상세 정보와 수량을 확인하세요.</p>
 		</div>
 
 		<div>

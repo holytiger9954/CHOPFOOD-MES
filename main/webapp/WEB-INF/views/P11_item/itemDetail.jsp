@@ -8,7 +8,7 @@
 	<div class="header-row">
 		<div>
 			<h2 class="page-title">품목 상세</h2>
-			<p class="page-subtitle">품목의 상세 정보와 LOT 현황을 알 수 있습니다.</p>
+			<p class="page-subtitle">${itemDTO.itemName}(${itemDTO.itemId})의 상세 정보를 확인하세요.</p>
 		</div>
 
 		<div>

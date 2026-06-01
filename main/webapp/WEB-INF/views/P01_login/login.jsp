@@ -158,6 +158,8 @@
 				} else if (data.reason == "wrongPw") {
 					message.innerText = "ⓘ 비밀번호가 일치하지 않습니다";
 					document.querySelector("#empPw").focus();
+				} else if (data.reason == "retired") {
+					message.innerText = "ⓘ 퇴사자는 로그인할 수 없습니다.";
 				} else {
 					message.innerText = "ⓘ 로그인 할 수 없습니다. 관리자에게 문의해주세요."
 				}

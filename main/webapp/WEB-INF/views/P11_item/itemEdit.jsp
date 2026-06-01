@@ -7,8 +7,8 @@
 	<div class="header-row">
 
 		<div>
-			<h2 class="page-title">품목 수정 (${itemDTO.itemId})</h2>
-			<p class="page-subtitle">품목을 수정하세요.</p>
+			<h2 class="page-title">품목 수정</h2>
+			<p class="page-subtitle">${itemDTO.itemName}(${itemDTO.itemId})의 정보를 수정하세요.</p>
 		</div>
 
 		<div>

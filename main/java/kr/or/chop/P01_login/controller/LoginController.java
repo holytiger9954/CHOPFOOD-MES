@@ -55,6 +55,10 @@ public class LoginController {
 		} else if (!encPw.equals(resultEmpDTO.getEmpPw())) {
 			result.put("result", "fail");
 			result.put("reason", "wrongPw");
+		} else if (resultEmpDTO.getEmpAuth() == 0) {
+			result.put("result", "fail");
+			result.put("reason", "retired");
+
 		} else {
 			result.put("result", "success");
 			result.put("emp", resultEmpDTO);

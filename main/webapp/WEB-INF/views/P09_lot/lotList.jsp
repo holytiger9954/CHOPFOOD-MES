@@ -9,7 +9,7 @@
 	<div class="header-row">
 		<div>
 			<h2 class="page-title">LOT 관리</h2>
-			<p class="page-subtitle">LOT 목록을 조회할 수 있습니다.</p>
+			<p class="page-subtitle">LOT 목록을 조회하고, 유통기한을 확인하세요.</p>
 		</div>
 
 		<div>
@@ -24,7 +24,7 @@
 	        <div class="card-value">
 	        	<fmt:formatNumber value="${totalCount}" pattern="#,###"/>
 	        </div>
-	        <div class="card-subtitle">사용가능/사용중 기준</div>
+	        <div class="card-subtitle">사용 가능한 LOT 기준</div>
 	    </div>
 	
 	    <div class="card safe lot-card ${fn:contains(lotDTO.itemTypeList, '10') ? 'active' : ''}"
@@ -33,7 +33,7 @@
 	        <div class="card-value">
 	        	<fmt:formatNumber value="${rawCount}" pattern="#,###"/>
 	        </div>
-	        <div class="card-subtitle">사용가능/사용중 기준</div>
+	        <div class="card-subtitle">사용 가능 원자재</div>
 	    </div>
 	
 	    <div class="card warning lot-card ${fn:contains(lotDTO.itemTypeList, '20') ? 'active' : ''}"
@@ -42,7 +42,7 @@
 	        <div class="card-value">
 	        	<fmt:formatNumber value="${semiCount}" pattern="#,###"/>
 	        </div>
-	        <div class="card-subtitle">사용가능/사용중 기준</div>
+	        <div class="card-subtitle">사용 가능 반제품</div>
 	    </div>
 	
 	    <div class="card success lot-card ${fn:contains(lotDTO.itemTypeList, '30') ? 'active' : ''}"
@@ -51,7 +51,7 @@
 	        <div class="card-value">
 	        	<fmt:formatNumber value="${finCount}" pattern="#,###"/>
 	        </div>
-	        <div class="card-subtitle">사용가능/사용중 기준</div>
+	        <div class="card-subtitle">사용 가능 완제품</div>
 	    </div>
 	    
 	    <div class="card info lot-card ${fn:contains(lotDTO.itemTypeList, '40') ? 'active' : ''}"
@@ -60,14 +60,14 @@
 	        <div class="card-value">
 	        	<fmt:formatNumber value="${etcCount}" pattern="#,###"/>
 	        </div>
-	        <div class="card-subtitle">사용가능/사용중 기준</div>
+	        <div class="card-subtitle">사용 가능 기타 자재</div>
 	    </div>
 	    
 	    <div class="card danger lot-card ${lotDTO.expStatus == '임박' ? 'active' : ''}"
 	         data-card-type="exp">
 	        <div class="card-title">유통기한 임박</div>
 	        <div class="card-value">${expCount}</div>
-	        <div class="card-subtitle">사용가능/사용중 기준</div>
+	        <div class="card-subtitle">품목별 유통기한 임박 LOT</div>
 	    </div>
 	</div>
 

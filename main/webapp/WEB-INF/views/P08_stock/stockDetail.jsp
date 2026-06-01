@@ -9,7 +9,7 @@
         <div>
             <h2 class="page-title">재고 상세</h2>
             <p class="page-subtitle">
-                재고 정보와 현재 보유 현황을 확인할 수 있습니다.
+                재고(${stock.stockId})의 상세 정보와 현재 보유 현황을 확인하세요.
             </p>
         </div>
 

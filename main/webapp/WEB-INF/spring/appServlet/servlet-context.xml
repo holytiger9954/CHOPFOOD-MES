@@ -56,5 +56,57 @@
 	
 	<context:component-scan base-package="kr.or.chop" />
 	
+	<beans:bean id="loginInterceptor"
+	class="kr.or.chop.filter.LoginInterceptor"/>
+	
+	<beans:bean id="authInterceptor"
+	class="kr.or.chop.filter.AuthInterceptor"/>
+
+<interceptors>
+
+	<interceptor>
+		<mapping path="/**"/>
+
+		<exclude-mapping path="/login"/>
+		<exclude-mapping path="/login.do"/>
+		
+		<exclude-mapping path="/login/tempPw"/>
+		<exclude-mapping path="/login/tempPw.do"/>
+		
+		<exclude-mapping path="/login/changePw"/>
+		<exclude-mapping path="/login/changePw.do"/>
+
+		<exclude-mapping path="/resources/**"/>
+		<exclude-mapping path="/upload/**"/>
+		<exclude-mapping path="/css/**"/>
+		<exclude-mapping path="/js/**"/>
+		<exclude-mapping path="/images/**"/>
+		<exclude-mapping path="/favicon.ico"/>
+
+		<beans:ref bean="loginInterceptor"/>
+	</interceptor>
+	
+	<interceptor>
+		<mapping path="/**"/>
+	
+		<exclude-mapping path="/login"/>
+		<exclude-mapping path="/login.do"/>
+		<exclude-mapping path="/login/tempPw"/>
+		<exclude-mapping path="/login/tempPw.do"/>
+		<exclude-mapping path="/login/changePw"/>
+		<exclude-mapping path="/login/changePw.do"/>
+	
+		<exclude-mapping path="/resources/**"/>
+		<exclude-mapping path="/upload/**"/>
+		<exclude-mapping path="/css/**"/>
+		<exclude-mapping path="/js/**"/>
+		<exclude-mapping path="/images/**"/>
+		<exclude-mapping path="/favicon.ico"/>
+	
+		<beans:ref bean="authInterceptor"/>
+	</interceptor>
+
+</interceptors>
+	
 	
 </beans:beans>

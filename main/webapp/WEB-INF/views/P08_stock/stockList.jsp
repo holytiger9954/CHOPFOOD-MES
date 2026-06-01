@@ -11,7 +11,7 @@
         <div>
             <h2 class="page-title">재고 관리</h2>
             <p class="page-subtitle">
-                재고 현황을 조회하고 등록할 수 있습니다.
+                모든 품목의 재고 현황을 조회하세요.
             </p>
         </div>
 
@@ -30,28 +30,28 @@
 	         data-card-type="all">
 	        <div class="card-title">전체 재고 목록</div>
 	        <div class="card-value">${stockTotalCount}</div>
-<!-- 	        <div class="card-subtitle">전체 창고</div> -->
+	        <div class="card-subtitle">모든 품목에 대한 재고</div>
 	    </div>
 	
 	    <div class="card safe stock-card ${fn:contains(search.stockStatusList, '안전') ? 'active' : ''}"
 	         data-card-type="safe">
 	        <div class="card-title">안전 재고</div>
 	        <div class="card-value">${safeCount}</div>
-<!-- 	        <div class="card-subtitle">적재율 80% 미만</div> -->
+	        <div class="card-subtitle">안전재고 수량 110% 이상 보유</div>
 	    </div>
 	
 	    <div class="card warning stock-card ${fn:contains(search.stockStatusList, '위험') ? 'active' : ''}"
 	         data-card-type="warning">
 	        <div class="card-title">위험 재고</div>
 	        <div class="card-value">${warningCount}</div>
-<!-- 	        <div class="card-subtitle">80% 이상 100% 미만</div> -->
+	        <div class="card-subtitle">안전재고 수량 100% 이상 110% 미만 보유</div>
 	    </div>
 	
 	    <div class="card danger stock-card ${fn:contains(search.stockStatusList, '부족') ? 'active' : ''}"
 	         data-card-type="danger">
 	        <div class="card-title">부족 재고</div>
 	        <div class="card-value">${dangerCount}</div>
-<!-- 	        <div class="card-subtitle">100% 이상</div> -->
+	        <div class="card-subtitle">안전재고 수량 100% 미만 보유</div>
 	    </div>
 	</div>
 

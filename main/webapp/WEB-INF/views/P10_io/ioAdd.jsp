@@ -6,7 +6,7 @@
 
 	<div class="header-row">
 		<div>
-			<h2 class="page-title">입출고 이력 등록</h2>
+			<h2 class="page-title">새로운 입출고 이력을 등록하세요.</h2>
 			<p class="page-subtitle">새로운 입출고 이력을 등록할 수 있습니다.</p>
 		</div>
 

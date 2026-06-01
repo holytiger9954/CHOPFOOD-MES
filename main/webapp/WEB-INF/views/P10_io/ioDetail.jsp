@@ -11,7 +11,7 @@
             <h2 class="page-title">입출고 이력 상세</h2>
 
             <p class="page-subtitle">
-                선택한 입출고 이력의 상세 정보를 확인할 수 있습니다.
+                입출고 이력(${io.ioId})의 상세 정보를 확인하세요.
             </p>
         </div>
 
