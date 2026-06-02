@@ -295,10 +295,10 @@
             </button>
 
             <div class="mobile-snb-submenu">
-                <a href="${ctx}/report/work" class="${uri.contains('/report/work') ? 'active' : ''}">작업 실적</a>
+                <a href="${ctx}/report/work" class="${uri.contains('/report/work') ? 'active' : ''}">생산</a>
                 <a href="${ctx}/report/quality" class="${uri.contains('/report/quality') ? 'active' : ''}">품질</a>
-                <a href="${ctx}/report/inout" class="${uri.contains('/report/inout') ? 'active' : ''}">입출고</a>
-                <a href="${ctx}/report/facility" class="${uri.contains('/report/facility') ? 'active' : ''}">설비</a>
+                <a href="${ctx}/report/io" class="${uri.contains('/report/io') ? 'active' : ''}">재고/입출고</a>
+                <a href="${ctx}/report/inspection" class="${uri.contains('/report/inspection') ? 'active' : ''}">점검</a>
             </div>
         </div>
 
