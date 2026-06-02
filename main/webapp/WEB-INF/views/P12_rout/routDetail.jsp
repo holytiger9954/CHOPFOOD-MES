@@ -76,10 +76,20 @@
 
                         <tr>
                             <th>품목명</th>
-                            <td>${rout.itemName}</td>
+                            <td>
+	                            <a class="toDetail"
+	                               href="${pageContext.request.contextPath}/item/detail?itemId=${rout.routItem}">
+	                                ${rout.itemName}
+	                            </a>
+	                        </td>
                             
                             <th>품목 코드</th>
-                            <td>${rout.routItem}</td>
+                            <td>
+	                            <a class="toDetail"
+	                               href="${pageContext.request.contextPath}/item/detail?itemId=${rout.routItem}">
+	                                ${rout.routItem}
+	                            </a>
+	                        </td>
                         </tr>
 
                         <tr>
