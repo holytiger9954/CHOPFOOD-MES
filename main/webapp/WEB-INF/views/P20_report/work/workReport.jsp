@@ -220,7 +220,6 @@
                         <th style="width: 120px;">작업일</th>
                         <th style="width: 120px;">작업번호</th>
                         <th>품목</th>
-                        <th style="width: 120px;">계획수량</th>
                         <th style="width: 120px;">지시수량</th>
                         <th style="width: 120px;">생산수량</th>
                         <th style="width: 100px;">달성률</th>
@@ -234,9 +233,6 @@
                             <td>${work.workDate}</td>
                             <td class="workId">${work.workId}</td>
                             <td class="item-name-cell">${work.itemName}(${work.itemId})</td>
-                            <td>
-                                <fmt:formatNumber value="${work.planQty}" pattern="#,###"/>
-                            </td>
                             <td>
                                 <fmt:formatNumber value="${work.orderQty}" pattern="#,###"/>
                             </td>
@@ -265,7 +261,7 @@
 
                     <c:if test="${empty workList}">
                         <tr>
-                            <td colspan="8" style="text-align: center;">
+                            <td colspan="7" style="text-align: center;">
                                 조회된 작업 실적 데이터가 없습니다.
                             </td>
                         </tr>

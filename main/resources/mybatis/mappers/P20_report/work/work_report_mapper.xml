@@ -76,9 +76,9 @@
 	        NVL(SUM(prod_qty), 0) AS totalProdQty,
 	
 	        NVL(ROUND(
-	            SUM(prod_qty) / NULLIF(SUM(plan_qty), 0) * 100,
-	            2
-	        ), 0) AS achievementRate,
+			    SUM(prod_qty) / NULLIF(SUM(order_qty), 0) * 100,
+			    2
+			), 0) AS achievementRate,
 	
 	        NVL(SUM(delay_count), 0) AS delayCount,
 	        NVL(SUM(risk_count), 0) AS riskCount
@@ -156,9 +156,9 @@
                     NVL(w.work_prev_qty, 0) AS "prodQty",
 
                     CASE
-                        WHEN NVL(w.work_order_qty, 0) = 0 THEN 0
-                        ELSE ROUND(NVL(w.work_prev_qty, 0) / NULLIF(p.plan_fin_qty, 0) * 100, 2)
-                    END AS "achievementRate",
+					    WHEN NVL(w.work_order_qty, 0) = 0 THEN 0
+					    ELSE ROUND(NVL(w.work_prev_qty, 0) / NULLIF(w.work_order_qty, 0) * 100, 2)
+					END AS "achievementRate",
 
                     <include refid="workRiskCase"/> AS "riskLevel"
 

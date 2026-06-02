@@ -178,56 +178,50 @@
 			    <c:choose>
 			
 			        <c:when test="${not empty aiResult}">
-			
-			            예상 재고 위험도 :
-			            <strong>${aiResult.riskLevel}</strong>
-			            <br>
-			
-			            LOW
-			            <fmt:formatNumber value="${aiResult.lowProb}"
-			                              pattern="0.##"/>%
-			
-			            /
-			
-			            WARNING
-			            <fmt:formatNumber value="${aiResult.warningProb}"
-			                              pattern="0.##"/>%
-			
-			            /
-			
-			            HIGH
-			            <fmt:formatNumber value="${aiResult.highProb}"
-			                              pattern="0.##"/>%
-			
-			            <br>
-			
-			            <c:choose>
-			
-			                <c:when test="${aiResult.riskLevel == 'HIGH'}">
-			
-			                    재고 위험도가 높게 예측되었습니다.
-			                    폐기 이력과 유통기한 임박 LOT,
-			                    예약재고 비율을 우선 확인하세요.
-			
-			                </c:when>
-			
-			                <c:when test="${aiResult.riskLevel == 'WARNING'}">
-			
-			                    일부 재고 품목에서 주의 패턴이 감지되었습니다.
-			                    유통기한과 예약재고 현황을 확인하세요.
-			
-			                </c:when>
-			
-			                <c:otherwise>
-			
-			                    현재 조건에서는
-			                    재고 위험도가 낮게 예측되었습니다.
-			
-			                </c:otherwise>
-			
-			            </c:choose>
-			
-			        </c:when>
+
+					    예상 재고 위험도 :
+					    <strong>${aiResult.riskLevel}</strong>
+					    <br>
+					
+					    예측 신뢰도 :
+					    <strong>
+					        <c:choose>
+					            <c:when test="${aiResult.riskLevel == 'LOW'}">
+					                <fmt:formatNumber value="${aiResult.lowProb}" pattern="0.##"/>%
+					            </c:when>
+					
+					            <c:when test="${aiResult.riskLevel == 'WARNING'}">
+					                <fmt:formatNumber value="${aiResult.warningProb}" pattern="0.##"/>%
+					            </c:when>
+					
+					            <c:when test="${aiResult.riskLevel == 'HIGH'}">
+					                <fmt:formatNumber value="${aiResult.highProb}" pattern="0.##"/>%
+					            </c:when>
+					        </c:choose>
+					    </strong>
+					    <br><br>
+					
+					    <c:choose>
+					
+					        <c:when test="${aiResult.riskLevel == 'HIGH'}">
+					            재고 위험도가 높게 예측되었습니다.
+					            폐기 이력과 유통기한 임박 LOT,
+					            예약재고 비율을 우선 확인하세요.
+					        </c:when>
+					
+					        <c:when test="${aiResult.riskLevel == 'WARNING'}">
+					            일부 재고 품목에서 주의 패턴이 감지되었습니다.
+					            유통기한과 예약재고 현황을 확인하세요.
+					        </c:when>
+					
+					        <c:otherwise>
+					            현재 조건에서는
+					            재고 위험도가 낮게 예측되었습니다.
+					        </c:otherwise>
+					
+					    </c:choose>
+					
+					</c:when>
 			
 			        <c:when test="${not empty aiErrorMessage}">
 			            ${aiErrorMessage}
@@ -251,13 +245,10 @@
                 <thead>
                     <tr>
                         <th style="width: 110px;">입출고일</th>
-                        <th style="width: 90px;">유형</th>
-                        <th style="width: 90px;">사유</th>
+                        <th style="width: 110px;">구분</th>
                         <th style="width: 130px;">LOT</th>
                         <th>품목</th>
-                        <th style="width: 110px;">입출고수량</th>
-                        <th style="width: 110px;">현재재고</th>
-                        <th style="width: 110px;">예약재고</th>
+                        <th style="width: 120px;">입출고수량</th>
                         <th style="width: 100px;">예약비율</th>
                         <th style="width: 110px;">위험도</th>
                     </tr>
@@ -267,18 +258,11 @@
                     <c:forEach var="io" items="${ioList}">
                         <tr>
                             <td>${io.ioDate}</td>
-                            <td>${io.ioType}</td>
-                            <td>${io.ioReason}</td>
+                            <td>${io.ioType}(${io.ioReason})</td>
                             <td>${io.lotId}</td>
                             <td class="item-name-cell">${io.itemName}(${io.itemId})</td>
                             <td>
                                 <fmt:formatNumber value="${io.ioQty}" pattern="#,###"/>
-                            </td>
-                            <td>
-                                <fmt:formatNumber value="${io.stockAvailQty}" pattern="#,###"/>
-                            </td>
-                            <td>
-                                <fmt:formatNumber value="${io.stockReserveQty}" pattern="#,###"/>
                             </td>
                             <td>${io.reserveRate}%</td>
                             <td>
@@ -302,7 +286,7 @@
 
                     <c:if test="${empty ioList}">
                         <tr>
-                            <td colspan="10" style="text-align: center;">
+                            <td colspan="8" style="text-align: center;">
                                 조회된 재고/입출고 데이터가 없습니다.
                             </td>
                         </tr>
