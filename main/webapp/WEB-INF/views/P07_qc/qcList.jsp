@@ -204,6 +204,30 @@
 	window.addEventListener("load", function (){
 		const startDate = document.querySelector("#startDate");
 		const endDate = document.querySelector("#endDate");
+		
+		document.querySelector("form").addEventListener("submit", function(e) {
+
+		    const targets = this.querySelectorAll("input[type=text], textarea");
+
+		    for (let i = 0; i < targets.length; i++) {
+
+		        if (targets[i].value.trim() === "") {
+
+		            alert("공백만 입력할 수 없습니다.");
+
+		            targets[i].focus();
+
+		            e.preventDefault();
+		            return false;
+		        }
+		    }
+		});
+		
+		document.querySelectorAll("input, textarea").forEach(el => {
+		    el.addEventListener("blur", function() {
+		        this.value = this.value.trim();
+		    });
+		});
 
 		function syncDateLimit() {
 		    if (startDate.value !== "") {

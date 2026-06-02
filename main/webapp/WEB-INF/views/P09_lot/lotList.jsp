@@ -274,6 +274,30 @@ window.addEventListener("load", function () {
 
     const cards = document.querySelectorAll(".lotCard .card");
     const form = document.querySelector(".search-box");
+    
+    document.querySelector("form").addEventListener("submit", function(e) {
+
+        const targets = this.querySelectorAll("input[type=text], textarea");
+
+        for (let i = 0; i < targets.length; i++) {
+
+            if (targets[i].value.trim() === "") {
+
+                alert("공백만 입력할 수 없습니다.");
+
+                targets[i].focus();
+
+                e.preventDefault();
+                return false;
+            }
+        }
+    });
+    
+    document.querySelectorAll("input, textarea").forEach(el => {
+        el.addEventListener("blur", function() {
+            this.value = this.value.trim();
+        });
+    });
 
     const itemTypeMap = {
         raw: "10",

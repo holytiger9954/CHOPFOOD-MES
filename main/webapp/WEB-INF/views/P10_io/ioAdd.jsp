@@ -563,6 +563,41 @@ window.addEventListener("load", function() {
 			e.preventDefault();
 			return;
 		}
+		
+		const ioDay = document.querySelector("input[name='ioDay']");
+	    const ioTime = document.querySelector("input[name='ioTime']");
+		const today = new Date().toISOString().split("T")[0];
+
+		if (ioDay.value > today) {
+		    alert("미래 날짜는 입력할 수 없습니다.");
+		    ioDay.focus();
+		    e.preventDefault();
+		    return;
+		}
+		
+
+	    if (ioDay.value.trim() === "") {
+	        alert("일자를 입력하세요.");
+	        ioDay.focus();
+	        e.preventDefault();
+	        return false;
+	    }
+
+	    if (ioTime.value.trim() === "") {
+	        alert("시간을 입력하세요.");
+	        ioTime.focus();
+	        e.preventDefault();
+	        return false;
+	    }
+		
+		const ioMsg = document.querySelector("textarea[name='ioMsg']");
+
+		if (ioMsg.value !== "" && ioMsg.value.trim() === "") {
+		    alert("비고는 공백만 입력할 수 없습니다.");
+		    ioMsg.focus();
+		    e.preventDefault();
+		    return;
+		}
 
 		document.querySelector("#itemTypeHidden").value = itemTypeSelect.value;
 

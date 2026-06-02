@@ -581,6 +581,32 @@ window.addEventListener("load", function() {
 	preventNegative(qtyInput);
 
 	form.addEventListener("submit", function(e) {
+		
+		const ioDay = document.querySelector("input[name='ioDay']");
+	    const ioTime = document.querySelector("input[name='ioTime']");
+
+	    if (ioDay.value === "") {
+	        alert("일자를 입력하세요.");
+	        ioDay.focus();
+	        e.preventDefault();
+	        return;
+	    }
+
+	    if (ioTime.value === "") {
+	        alert("시간을 입력하세요.");
+	        ioTime.focus();
+	        e.preventDefault();
+	        return;
+	    }
+	    
+	    const today = new Date().toISOString().split("T")[0];
+
+	    if (ioDay.value > today) {
+	        alert("미래 날짜는 입력할 수 없습니다.");
+	        ioDay.focus();
+	        e.preventDefault();
+	        return;
+	    }
 
 		const requiredLabels =
 			document.querySelectorAll("label .red");
@@ -589,6 +615,15 @@ window.addEventListener("load", function() {
 
 			const label =
 				requiredLabels[i].closest("label");
+			
+			const ioMsg = document.querySelector("textarea[name='ioMsg']");
+
+			if (ioMsg.value !== "" && ioMsg.value.trim() === "") {
+			    alert("비고는 공백만 입력할 수 없습니다.");
+			    ioMsg.focus();
+			    e.preventDefault();
+			    return;
+			}
 
 			if (label.offsetParent === null) {
 				continue;
