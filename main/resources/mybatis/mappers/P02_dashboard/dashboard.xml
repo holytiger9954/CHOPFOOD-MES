@@ -618,12 +618,15 @@
 			wd.work_day_cnt * 12 AS total_hour,
 			NVL(rh.run_hour, 0) AS run_hour,
 
-			ROUND(
-				NVL(rh.run_hour, 0)
-				/
-				NULLIF(wd.work_day_cnt * 12, 0)
-				* 100,
-				1
+			LEAST(
+			    ROUND(
+			        NVL(rh.run_hour, 0)
+			        /
+			        NULLIF(wd.work_day_cnt * 14, 0)
+			        * 100,
+			        1
+			    ),
+			    100
 			) AS run_rate
 
 		FROM eq_work_day wd
