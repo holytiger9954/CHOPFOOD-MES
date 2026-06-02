@@ -95,7 +95,7 @@
                     <div style="
                             display:flex;
                             align-items:center;
-                            gap:20px;">
+                            gap:20px; flex-wrap: wrap;">
 
                         <label style="
                                 font-weight:bold;

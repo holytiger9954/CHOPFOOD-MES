@@ -55,11 +55,25 @@
 		<button type="submit" id="submitBtn" class="btn btn-main">로그인</button>
 	</form>
 	
-	<a id="movePw" href="${pageContext.request.contextPath}/login/tempPw">비밀번호를 잊어버리셨나요?</a>
+	<div>
+		<a id="movePw" href="${pageContext.request.contextPath}/login/tempPw">비밀번호를 잊어버리셨나요?</a>
+		<br>
+		<div class="address-info">[확인용 임시 계정]<br>ID : emp1001 / PW : emp1001**</div>
+	</div>
 
 </div>
 
 <style>
+
+	.sub-title {
+		text-align: center;
+	}
+	
+	.address-info {
+		text-align: center;
+		color: var(--dark-gray);
+		font-size: 12px;
+	}
 
 	input:-webkit-autofill,
 	input:-webkit-autofill:hover,
@@ -97,6 +111,50 @@
 	#movePw:hover {
 		color: var(--main-green);
 	}
+	
+	
+	
+@media screen and (max-width: 480px) {
+
+	.content {
+		min-height: 100vh !important;
+		height: 100vh !important;
+
+		display: flex !important;
+		flex-direction: column !important;
+		justify-content: center !important;
+		align-items: center !important;
+
+		box-sizing: border-box;
+		padding: 20px;
+		gap: 24px !important;
+	}
+
+	.logo {
+		width: 100%;
+		text-align: center;
+	}
+
+	.logo img {
+		display: block !important;
+		margin: 0 auto !important;
+	}
+
+	.title {
+		margin-bottom: 30px !important;
+	}
+
+	.input {
+		margin-top: 10px !important;
+	}
+
+	#movePw {
+		display: block;
+		text-align: center;
+		margin: 0 auto;
+	}
+
+}
 	
 </style>
 

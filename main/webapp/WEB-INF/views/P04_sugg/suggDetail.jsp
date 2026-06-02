@@ -68,7 +68,8 @@
                     <div style="
                             display:flex;
                             justify-content:space-between;
-                            align-items:flex-start;">
+                            align-items:flex-start;"
+                         class = "titleSec">
 
                         <div style="
                                 font-size:22px;
@@ -452,6 +453,17 @@
     border: 1px solid #ddd;
     padding: 0 10px;
 }
+
+
+
+
+@media screen and (max-width: 480px) {
+	.titleSec {
+		display: flex;
+		flex-direction: column;
+	}
+}
+
 </style>
 
 <script>

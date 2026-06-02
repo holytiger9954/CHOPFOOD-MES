@@ -166,6 +166,7 @@ function dateCheck() {
         }
     });
 }
+
 </script>
 
 <style>
@@ -178,5 +179,17 @@ function dateCheck() {
 .table tbody tr:hover .noticeTitle {
     color: var(--main-green);
     text-decoration: underline;
+}
+
+
+@media screen and (max-width: 480px) {
+	.table tr th:nth-child(3), .table tr td:nth-child(3),
+	.table tr th:nth-child(4), .table tr td:nth-child(4) {
+	 	display: none;
+	}
+	
+	.table {
+		font-size: 12px;
+	}
 }
 </style>

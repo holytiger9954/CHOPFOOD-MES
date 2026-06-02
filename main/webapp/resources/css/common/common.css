@@ -937,6 +937,14 @@ body.mobile-snb-open .btn-top {
         right: 20px;
         bottom: 80px;
     }
+    
+    
+@media screen and (max-width: 480px) {
+	main .content {
+		padding: 0px;	
+	}
+
+}
 
 	
 }

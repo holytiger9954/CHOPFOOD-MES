@@ -367,57 +367,18 @@ function dateCheck() {
  	color:  var(--main-green); 
  	text-decoration: underline; 
  } 
-/* .search-box { */
-/* 	display: flex; */
-/* 	align-items: flex-end; */
-/* 	gap: 10px; */
-/* 	flex-wrap: nowrap; */
-/* } */
 
-/* .date-item { */
-/* 	width: auto; */
-/* } */
 
-/* .date-row { */
-/* 	display: flex; */
-/* 	align-items: center; */
-/* 	gap: 8px; */
-/* } */
 
-/* /* .date-row input { */ *
-/* /* 	width: 230px; */ *
-/* /* 	min-width: 230px; */ *
-/* /* } */ */
 
-/* /* .status-item select { */ *
-/* /* 	width: 110px; */ *
-/* /* 	min-width: 110px; */ *
-/* /* } */ */
-
-/* /* .keyword input { */ */
-/* /* 	width: 240px; */ */
-/* /* 	min-width: 240px; */ */
-/* /* } */ */
-
-/* .search-btn-area { */
-/* 	display: flex; */
-/* 	align-items: center; */
-/* 	gap: 8px; */
-/* 	flex-wrap: nowrap; */
-/* 	min-width: 145px; */
-/* } */
-/* .reset-btn { */
-/* 	width: 66px; */
-/* 	white-space: nowrap; */
-/* 	text-align:center; */
-/* } */
-/* 	.date-row input, */
-/* 	.status-item select, */
-/* 	.keyword input { */
-/* 		width: 100%; */
-/* 	} */
-/* 	.search-btn-area { */
-/* 		width: 100%; */
-/* 	} */
-/* } */
+@media screen and (max-width: 480px) {
+	.table tr th:nth-child(3), .table tr td:nth-child(3),
+	.table tr th:nth-child(4), .table tr td:nth-child(4) {
+	 	display: none;
+	}
+	
+	.table {
+		font-size: 12px;
+	}
+}
 </style>

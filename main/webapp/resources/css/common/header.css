@@ -243,3 +243,18 @@
     font-size: 12px;
     color: #888;
 }
+
+
+
+
+
+
+
+@media screen and (max-width: 480px) {
+
+	.profile-name {
+		display: none;
+	}
+		
+}
+

@@ -158,7 +158,7 @@
     <div class="table-section">
     	<h3 class="emp-section-title">알림 내역</h3>
     	<div class="table-wrap">
-    		<table class="table">
+    		<table class="table alarmList">
 		        <thead>
 		            <tr>
 		                <th>유형</th>
@@ -210,7 +210,7 @@
         <h3 class="emp-section-title">금일 작업 사항</h3>
         
         <div class="table-wrap">
-        	<table class="table">
+        	<table class="table workList">
         		<thead>
         			<tr>
         				<th>작업번호</th>
@@ -502,25 +502,34 @@
 	
 }
 
-/*     @media (max-width: 1000px) { */
-/*         .emp-info-grid { */
-/*             grid-template-columns: 1fr; */
-/*         } */
 
-/*         .emp-activity-wrap { */
-/*             flex-wrap: wrap; */
-/*         } */
-
-/*         .emp-profile-card { */
-/*             align-items: flex-start; */
-/*             flex-direction: column; */
-/*             gap: 20px; */
-/*         } */
-
-/*         .emp-profile-status { */
-/*             position: static; */
-/*         } */
-/*     } */
+@media screen and (max-width: 600px) {
+  
+	.emp-info-grid {
+		display: flex;
+		flex-direction: column;
+	}
+	
+	.card-wrap {
+		flex-wrap: wrap;
+	}
+	
+	.alarmList tr th:nth-child(2), .alarmList tr td:nth-child(2),
+	.alarmList tr th:nth-child(4), .alarmList tr td:nth-child(4) {
+		display: none;
+	}
+	
+/* 	.workList tr th:nth-child(2), .workList tr td:nth-child(2), */
+	.workList tr th:nth-child(4), .workList tr td:nth-child(4),
+	.workList tr th:nth-child(5), .workList tr td:nth-child(5) {
+		display: none;
+	}
+	
+	.workList tr th:nth-child(3) {
+		width: 120px;
+	}
+  
+}
 </style>
 
 <script>

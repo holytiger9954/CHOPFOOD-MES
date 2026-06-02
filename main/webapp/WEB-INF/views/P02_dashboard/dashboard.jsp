@@ -261,7 +261,7 @@
 						</div>
 					</div>
 					<div class="table-wrap">
-						<table class="table workTable">
+						<table class="table workTable noticeList">
 							<tbody>
 								<c:if test="${empty recentNoticeList or recentNoticeList == null}">
 									<tr>
@@ -292,7 +292,7 @@
 						</div>
 					</div>
 					<div class="table-wrap">
-						<table class="table workTable">
+						<table class="table workTable suggList">
 							<tbody>
 								<c:if test="${empty recentSuggList or recentSuggList == null}">
 									<tr>
@@ -327,7 +327,7 @@
 				주요 KPI 지표
 			</div>
 			<div class="table-wrap kpi">
-				<table class="table">
+				<table class="table kpiList">
 					<thead>
 						<tr>
 							<th>구분</th>
@@ -606,6 +606,39 @@
 	}
 	.card3 .card, .card4 .card {
 		width: 49%;
+	}
+	
+}
+
+@media screen and (max-width: 600px) {
+	.card-wrap {
+		flex-wrap: wrap;
+	}
+	
+	.card-wrap .card {
+		width: 100%;
+	}
+	
+	.card4 .card {
+		max-width: 200px;
+	}
+	
+	.noticeList tr th:nth-child(2), .noticeList tr td:nth-child(2),
+	.noticeList tr th:nth-child(3), .noticeList tr td:nth-child(3) {
+		display: none;
+	}
+	
+	.suggList tr th:nth-child(4), .suggList tr td:nth-child(4),
+	.suggList tr th:nth-child(3), .suggList tr td:nth-child(3) {
+		display: none;
+	}
+	
+	.table-wrap.kpi {
+		padding: 0px;
+	}
+
+	.kpiList tr th:nth-child(4), .kpiList tr td:nth-child(4) {
+		display: none;
 	}
 	
 }
