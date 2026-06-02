@@ -55,7 +55,7 @@
 							<div class="search-btn-area">
 
 								<input type="text" name="eqManager" id="eqManager"
-									placeholder="책임자 조회" readonly>
+									placeholder="책임자 조회" readonly required> 
 
 								<button type="button" class="btn btn-main" id="openManagerModal">
 									조회</button>
@@ -69,7 +69,7 @@
 							<div class="search-btn-area">
 
 								<input type="text" name="eqVendor" id="eqVendor"
-									placeholder="거래처 조회" readonly>
+									placeholder="거래처 조회" readonly required>
 
 								<button type="button" class="btn btn-main" id="openVendorModal">
 
@@ -83,8 +83,8 @@
 					<div class="grid-wrap">
 
 						<div class="search-item">
-							<label>작업구역</label> 
-							<select id="wpType">
+							<label>작업구역 <span class="red">*</span></label> 
+							<select id="wpType" required>
 								<option value="" disabled selected>작업구역 선택</option>
 								<option value="10">전처리</option>
 								<option value="20">배합</option>
@@ -100,8 +100,8 @@
 						</div>
 						
 						<div class="search-item">
-							<label>작업장</label> 
-							<select name="eqWpid" id="eqWpid"
+							<label>작업장<span class="red">*</span></label> 
+							<select name="eqWpid" id="eqWpid" required
 									style="width: 240px;">
 								<option value="" disabled selected>작업장 선택</option>
 							</select>
@@ -475,6 +475,34 @@
 			}
 		});
 	});
+	
+	document.querySelector("form")
+    .addEventListener("submit", function(e) {
+
+    if (!document.querySelector("#eqManager").value) {
+        alert("설비 책임자를 선택해주세요.");
+        e.preventDefault();
+        return;
+    }
+
+    if (!document.querySelector("#eqVendor").value) {
+        alert("관리업체를 선택해주세요.");
+        e.preventDefault();
+        return;
+    }
+
+    if (!document.querySelector("#wpType").value) {
+        alert("작업구역을 선택해주세요.");
+        e.preventDefault();
+        return;
+    }
+
+    if (!document.querySelector("#eqWpid").value) {
+        alert("작업장을 선택해주세요.");
+        e.preventDefault();
+        return;
+    }
+});
 </script>
 
 <style>

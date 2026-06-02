@@ -51,7 +51,7 @@
 
 						<div class="search-item">
 							<label>점검 종료일</label>
-							<input type="datetime-local" name="elogEdate">
+							<input type="datetime-local" name="elogEdate" required>
 						</div>
 					</div>
 

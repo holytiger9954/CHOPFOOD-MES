@@ -8,7 +8,7 @@
         <div>
             <h2 class="page-title">설비 관리</h2>
             <p class="page-subtitle">
-                설비 목록을 조회하고 등록하세요
+                설비 목록을 조회하고 등록하세요.
             </p>
         </div>
 
