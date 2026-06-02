@@ -322,6 +322,7 @@ button.snb-menu {
         font-size: 24px;
         line-height: 1;
         cursor: pointer;
+        text-align: center;
     }
 
     .mobile-snb-body {
