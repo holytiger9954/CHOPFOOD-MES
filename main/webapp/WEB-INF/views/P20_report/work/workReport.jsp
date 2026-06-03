@@ -434,12 +434,6 @@
    Mobile Layout
 ============================== */
 
-@media (max-width: 900px) {
-    .reportCard {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-}
-
 @media screen and (max-width: 940px) {
 	
 	.card-value {
@@ -501,6 +495,9 @@
 	}
 	
 }
+	
+	
+	
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
