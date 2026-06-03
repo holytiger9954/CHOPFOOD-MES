@@ -397,3 +397,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.title = serviceName;
 });
+
+/* ==============================
+   검색어 trim 자동으로 먹게
+============================== */
+
+document.addEventListener("DOMContentLoaded", function() {
+
+    document.querySelectorAll("form.search-box").forEach(form => {
+
+        form.addEventListener("submit", function() {
+
+            const keyword = form.querySelector(
+                "input[name='searchKeyword']"
+            );
+
+            if (keyword) {
+                keyword.value = keyword.value.trim();
+            }
+
+        });
+
+    });
+
+});
