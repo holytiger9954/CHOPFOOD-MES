@@ -167,7 +167,7 @@
 
             <div class="snb-submenu">
                 <a href="${ctx}/admin/list" class="snb-submenu-link ${uri.contains('/admin/') ? 'active' : ''}">사원 관리</a>
-                <a href="${ctx}/alarm/add" class="snb-submenu-link ${uri.contains('/alarm/') ? 'active' : ''}">알림 생성</a>
+                <a href="${ctx}/alarm/list" class="snb-submenu-link ${uri.contains('/alarm/') ? 'active' : ''}">알림 관리</a>
             </div>
         </div>
 
@@ -310,7 +310,7 @@
 
             <div class="mobile-snb-submenu">
                 <a href="${ctx}/admin/list" class="${uri.contains('/admin/') ? 'active' : ''}">사원 관리</a>
-                <a href="${ctx}/alarm/add" class="${uri.contains('/alarm/') ? 'active' : ''}">알림 생성</a>
+                <a href="${ctx}/alarm/list" class="${uri.contains('/alarm/') ? 'active' : ''}">알림 관리</a>
             </div>
         </div>
 
