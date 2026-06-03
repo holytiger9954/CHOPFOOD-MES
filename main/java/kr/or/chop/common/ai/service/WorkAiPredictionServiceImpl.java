@@ -12,7 +12,7 @@ import kr.or.chop.common.ai.dto.WorkAiPredictResponseDTO;
 @Service
 public class WorkAiPredictionServiceImpl implements WorkAiPredictionService {
 
-    private static final String AI_SERVER_URL = "http://192.168.0.50:8000/predict/work";
+    private static final String AI_SERVER_URL = "http://116.36.205.25:9007/predict/work";
 
     @Override
     public WorkAiPredictResponseDTO predict(WorkAiPredictRequestDTO requestDTO) {

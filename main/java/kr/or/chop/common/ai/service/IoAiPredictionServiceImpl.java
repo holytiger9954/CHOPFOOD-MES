@@ -12,7 +12,7 @@ import kr.or.chop.common.ai.dto.IoAiPredictResponseDTO;
 @Service
 public class IoAiPredictionServiceImpl implements IoAiPredictionService {
 
-	private static final String AI_SERVER_URL = "http://192.168.0.50:8000/predict/io";
+	private static final String AI_SERVER_URL = "http://116.36.205.25:9007/predict/io";
 
 	@Override
 	public IoAiPredictResponseDTO predict(IoAiPredictRequestDTO requestDTO) {

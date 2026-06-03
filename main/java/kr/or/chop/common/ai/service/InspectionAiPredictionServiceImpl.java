@@ -13,7 +13,7 @@ import kr.or.chop.common.ai.dto.InspectionAiPredictResponseDTO;
 public class InspectionAiPredictionServiceImpl implements InspectionAiPredictionService {
 
     private static final String AI_SERVER_URL =
-            "http://192.168.0.50:8000/predict/inspection";
+            "http://116.36.205.25:9007/predict/inspection";
 
     @Override
     public InspectionAiPredictResponseDTO predict(InspectionAiPredictRequestDTO requestDTO) {
