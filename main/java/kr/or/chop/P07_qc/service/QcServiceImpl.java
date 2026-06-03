@@ -111,90 +111,72 @@ public class QcServiceImpl implements QcService{
 	@Override
 	@Transactional
 	public int updateQcResult(QcDTO dto) {
-
 	    QcDTO origin = qcDAO.selectQcDetail(dto.getQcId());
-
 	    if (origin == null) {
 	        throw new RuntimeException("품질검사 정보를 찾을 수 없습니다.");
 	    }
-
-	    // 원본 검사 정보 기준으로 다시 세팅
 	    dto.setQcLot(origin.getQcLot());
 	    dto.setQcType(origin.getQcType());
 	    dto.setQcQty(origin.getQcQty());
 	    dto.setLotQty(origin.getLotQty());
-
 	    int failQty = 0;
 	    int disposeQty = 0;
-
 	    if (dto.getDefectQty() != null) {
 	        for (int i = 0; i < dto.getDefectQty().length; i++) {
-
 	            failQty += dto.getDefectQty()[i];
-
 	            if (dto.getDefectDiscard() != null
 	                    && dto.getDefectDiscard().length > i
 	                    && "Y".equals(dto.getDefectDiscard()[i])) {
-
 	                disposeQty += dto.getDefectQty()[i];
 	            }
 	        }
 	    }
-
 	    if (failQty > dto.getQcQty()) {
 	        throw new RuntimeException("불량 수량 합계는 검사 수량보다 클 수 없습니다.");
 	    }
-
 	    int passQty = dto.getQcQty() - failQty;
-
 	    int multiplier = 1;
-
 	    if ("20".equals(dto.getQcType())) {
 	        multiplier = 100;
 	    }
-
 	    int inQty = passQty * multiplier;
 	    int realDisposeQty = disposeQty * multiplier;
-
-	    // LOT 수량 초과 방지
 	    if (inQty > dto.getLotQty()) {
 	        inQty = dto.getLotQty();
 	    }
-
 	    if (realDisposeQty > dto.getLotQty()) {
 	        realDisposeQty = dto.getLotQty();
 	    }
-
-	    // 검사 기준 합격 수량
 	    dto.setQcPassQty(passQty);
-
-	    // LOT/STOCK 반영용 실제 수량
 	    dto.setInQty(inQty);
 	    dto.setDisposeQty(realDisposeQty);
-
-	    if (dto.getQcStatus() == 30 && origin.getQcStatus() != 30) {
-	        qcDAO.plusStockByQcResult(dto);
-	        qcDAO.updateLotByQcResult(dto);
-	    }
-
 	    int result = qcDAO.updateQcResult(dto);
-
+	    if (dto.getQcStatus() == 30) {
+	        int lotResult = qcDAO.updateLotByQcResult(dto);
+	        System.out.println("lot update result = " + lotResult);
+	        if (lotResult == 0) {
+	            throw new RuntimeException("LOT 상태 변경에 실패했습니다.");
+	        }
+	        qcDAO.plusStockByQcResult(dto);
+	    }
 	    qcDAO.deleteDefLog(dto.getQcId());
-
 	    if (dto.getDefectType() != null) {
 	        for (int i = 0; i < dto.getDefectType().length; i++) {
 	            QcDTO def = new QcDTO();
-
 	            def.setQcId(dto.getQcId());
 	            def.setDefType(dto.getDefectType()[i]);
 	            def.setDefQty(dto.getDefectQty()[i]);
-	            def.setDefAction(dto.getDefectAction()[i]);
-	            def.setDefDiscard(dto.getDefectDiscard()[i]);
-
+	            if (dto.getDefectAction() != null && dto.getDefectAction().length > i) {
+	                def.setDefAction(dto.getDefectAction()[i]);
+	            }
+	            if (dto.getDefectDiscard() != null && dto.getDefectDiscard().length > i) {
+	                def.setDefDiscard(dto.getDefectDiscard()[i]);
+	            } else {
+	                def.setDefDiscard("N");
+	            }
 	            qcDAO.insertDefLog(def);
 	        }
 	    }
-
 	    return result;
 	}
 

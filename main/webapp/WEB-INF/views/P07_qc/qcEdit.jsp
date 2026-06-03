@@ -375,7 +375,7 @@ function bind() {
     	
     	document.querySelector("form").addEventListener("submit", function(e) {
 
-    	    const targets = this.querySelectorAll("input[type=text], textarea");
+    	    const targets = this.querySelectorAll("input[type=text]");
 
     	    for (let i = 0; i < targets.length; i++) {
 

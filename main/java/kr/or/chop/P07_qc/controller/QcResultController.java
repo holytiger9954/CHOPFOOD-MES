@@ -32,6 +32,8 @@ public class QcResultController {
 
 	@RequestMapping("/insertDo")
 	public String resultInsertDo(QcDTO qcDTO) {
+		
+		System.out.println(qcDTO);
 
 		qcService.updateQcResult(qcDTO);
 

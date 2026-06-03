@@ -89,7 +89,7 @@
 
                         <th>현재재고</th>
                         <td>
-                        	<fmt:formatNumber value="${stock.stockAvailQty}" pattern="#,###"/> ${stock.itemUnit}
+                        	<fmt:formatNumber value="${stock.stockPrevQty}" pattern="#,###"/> ${stock.itemUnit}
                         </td>
                     </tr>
 
@@ -99,7 +99,7 @@
 
                         <th>가용재고</th>
                         <td>
-                        	<fmt:formatNumber value="${stock.stockPrevQty}" pattern="#,###"/> ${stock.itemUnit}
+                        	<fmt:formatNumber value="${stock.stockAvailQty}" pattern="#,###"/> ${stock.itemUnit}
                         </td>
                     </tr>
 

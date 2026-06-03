@@ -35,7 +35,7 @@
 								
 								<c:forEach var="work" items="${workList}">
 									<tr class="workTr"
-										onclick="window.location.href='${pageContext.request.contextPath}/work/detail?${work.workId}">
+										onclick="window.location.href='${pageContext.request.contextPath}/work/detail?workId=${work.workId}'">
 										<td class="workId">${work.workId}</td>
 										<td>${work.itemName} (${work.item})</td>
 										<td>

@@ -93,7 +93,7 @@
 
             <div class="search-item" style="display:flex; flex-direction:column; flex:1;">
                 <label>불량 수량</label>
-                <input type="text" id="failQty" placeholder="불량 수량" readonly>
+                <input type="text" id="failQty" value="0" placeholder="불량 수량" readonly>
             </div>
         </div>
 
@@ -121,7 +121,7 @@
 
             <div class="search-item" style="display:flex; flex-direction:column; flex:1;">
                 <label>폐기 수량</label>
-                <input type="text" id="disposeQty" placeholder="폐기 수량" readonly>
+                <input type="text" id="disposeQty" value="0" placeholder="폐기 수량" readonly>
             </div>
         </div>
 
@@ -289,6 +289,11 @@ input[readonly] {
     transform: scale(1.05);
 }
 
+.table tbody tr:hover {
+	background-color: white;
+	cursor: default;
+}
+
 
 
 @media screen and (max-width: 480px) {
@@ -351,36 +356,27 @@ function bind() {
         loadSectionList(this.value);
     });
 
+    document.querySelectorAll("input, textarea").forEach(el => {
+        el.addEventListener("blur", function() {
+            this.value = this.value.trim();
+        });
+    });
+
     form.addEventListener("submit", function(e) {
-    	
-    	document.querySelector("form").addEventListener("submit", function(e) {
+//      const targets = this.querySelectorAll("input[type=text], textarea");
 
-    	    const targets = this.querySelectorAll("input[type=text], textarea");
+//      for (let i = 0; i < targets.length; i++) {
 
-    	    for (let i = 0; i < targets.length; i++) {
+//          if (targets[i].value.trim() === "") {
 
-    	        if (targets[i].value.trim() === "") {
+//              alert("공백만 입력할 수 없습니다.");
 
-    	            alert("공백만 입력할 수 없습니다.");
+//              targets[i].focus();
 
-    	            targets[i].focus();
-
-    	            e.preventDefault();
-    	            return false;
-    	        }
-    	    }
-    	});
-    	
-    	document.querySelectorAll("input, textarea").forEach(el => {
-    	    el.addEventListener("blur", function() {
-    	        this.value = this.value.trim();
-    	    });
-    	});
-    	
-        if (!validateForm()) {
-            e.preventDefault();
-            return;
-        }
+//              e.preventDefault();
+//              return false;
+//          }
+//      }
     });
 }
 
