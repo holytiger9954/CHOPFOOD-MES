@@ -379,3 +379,27 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+
+/* ==============================
+   브라우저 탭 제목 자동 설정
+============================== */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const serviceName = "CHOP";
+    const pageTitle = document.querySelector(".page-title");
+
+    if (pageTitle && pageTitle.textContent.trim() !== "") {
+        document.title = pageTitle.textContent.trim() + " | " + serviceName;
+        return;
+    }
+
+    const h1Title = document.querySelector("h1");
+
+    if (h1Title && h1Title.textContent.trim() !== "") {
+        document.title = h1Title.textContent.trim() + " | " + serviceName;
+        return;
+    }
+
+    document.title = serviceName;
+});

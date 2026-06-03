@@ -8,6 +8,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><tiles:insertAttribute name="title" ignore="true" /></title>
 
+<link rel="icon"
+      href="${pageContext.request.contextPath}/resources/img/icon/favicon_green.ico?v=1">
+
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/common/common.css">
 <link rel="stylesheet"
