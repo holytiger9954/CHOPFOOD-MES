@@ -229,8 +229,8 @@
 
                 <tbody>
                     <c:forEach var="work" items="${workList}">
-                        <tr>
-                            <td>${work.workDate}</td>
+                        <tr onclick="window.location.href='${pageContext.request.contextPath}/work/detail?workId=${work.workId}'">
+                            <td >${work.workDate}</td>
                             <td class="workId">${work.workId}</td>
                             <td class="item-name-cell">${work.itemName}(${work.itemId})</td>
                             <td>

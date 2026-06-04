@@ -256,10 +256,10 @@
 
                 <tbody>
                     <c:forEach var="io" items="${ioList}">
-                        <tr>
+                        <tr onclick="window.location.href='${pageContext.request.contextPath}/lot/detail?lotId=${io.lotId}'">
                             <td>${io.ioDate}</td>
                             <td>${io.ioType}(${io.ioReason})</td>
-                            <td>${io.lotId}</td>
+                            <td class="lotId">${io.lotId}</td>
                             <td class="item-name-cell">${io.itemName}(${io.itemId})</td>
                             <td>
                                 <fmt:formatNumber value="${io.ioQty}" pattern="#,###"/>
@@ -301,6 +301,11 @@
 </div>
 
 <style>
+
+	.table tbody tr:hover .lotId {
+		color: var(--main-green);
+		text-decoration: underline;
+	}
     .content {
         min-width: 0;
         overflow-x: hidden;
