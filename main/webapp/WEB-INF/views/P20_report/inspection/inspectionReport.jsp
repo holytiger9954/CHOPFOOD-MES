@@ -212,7 +212,7 @@
 
                 <tbody>
                     <c:forEach var="inspection" items="${inspectionList}">
-                        <tr>
+                        <tr class="">
                             <td>${inspection.inspectionDate}</td>
                             <td>${inspection.targetName}</td>
 							<td>
@@ -417,6 +417,15 @@
 
     .trend-chart-box {
         height: 300px;
+    }
+    
+    
+    
+    /* hover */
+    
+    .table tbody tr:hover {
+    	background-color: white;
+    	cursor: default;
     }
 
 /* ==============================
