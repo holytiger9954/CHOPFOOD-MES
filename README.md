@@ -25,6 +25,6 @@
 >> - OS : Windows 10
 > ### 기술 스택
 >> - Front-end : HTML, CSS, JavaScript, Ajax(fetch)
->> - Back-end : Java, Spring, JSP
+>> - Back-end : Java, Spring, JSP, REST API
 >> - WAS : Apache Tomcat
->> - AI Machine Learning : Python, FastAPI, REST API
+>> - AI Machine Learning : Python, FastAPI
